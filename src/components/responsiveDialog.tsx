@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +6,6 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog";
 import {
     Drawer,
@@ -18,33 +15,31 @@ import {
     DrawerFooter,
     DrawerHeader,
     DrawerTitle,
-    DrawerTrigger,
 } from "@/components/ui/drawer";
+import { Dispatch, ReactNode } from "react";
 
 export function ResponsiveDialog({
     open,
     setOpen,
+    title,
+    description,
     children,
 }: {
     open: boolean;
-    setOpen: React.Dispatch<boolean>;
-    children: React.ReactNode;
+    setOpen: Dispatch<boolean>;
+    title?: string;
+    description?: string;
+    children?: ReactNode;
 }) {
     const isDesktop = useMediaQuery("(min-width: 768px)");
 
     if (isDesktop) {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                    <Button variant="outline">Edit Profile</Button>
-                </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>Edit profile</DialogTitle>
-                        <DialogDescription>
-                            Make changes to your profile here. Click save when
-                            you're done.
-                        </DialogDescription>
+                        <DialogTitle>{title}</DialogTitle>
+                        <DialogDescription>{description}</DialogDescription>
                     </DialogHeader>
                     {children}
                 </DialogContent>
@@ -54,16 +49,10 @@ export function ResponsiveDialog({
 
     return (
         <Drawer open={open} onOpenChange={setOpen}>
-            <DrawerTrigger asChild>
-                <Button variant="outline">Edit Profile</Button>
-            </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader className="text-left">
-                    <DrawerTitle>Edit profile</DrawerTitle>
-                    <DrawerDescription>
-                        Make changes to your profile here. Click save when
-                        you're done.
-                    </DrawerDescription>
+                    <DrawerTitle>{title}</DrawerTitle>
+                    <DrawerDescription>{description}</DrawerDescription>
                 </DrawerHeader>
                 {children}
                 <DrawerFooter className="pt-2">

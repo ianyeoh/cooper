@@ -52,15 +52,17 @@ export default function LoginPage() {
                 <p className="text-sm">by Ian Yeoh</p>
             </div>
             <div className="relative bg-background h-[100%] sm:w-[50%] w-full flex flex-col items-center justify-center p-8">
-                <div className="absolute inline sm:hidden top-7 left-7">
+                <div className="absolute flex sm:hidden top-7 justify-center px-9 w-screen">
                     <div className="flex space-x-3 items-center">
                         <WalletMinimal />
                         <h1 className="text-lg font-medium">Budgeting</h1>
                     </div>
-                    <ThemeBtn className="absolute top-6 right-6" />
+                    <ThemeBtn className="ml-auto" />
                 </div>
 
                 <div className="max-w-[400px] space-y-6 mx-6">
+                    <ThemeBtn className="absolute top-7 right-9 hidden sm:flex" />
+
                     <div className="flex flex-col space-y-2 text-center px-8">
                         <h1 className="text-2xl font-semibold tracking-tight">
                             Sign in
