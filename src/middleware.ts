@@ -20,7 +20,7 @@ async function authenticated(request: NextRequest) {
         if (result.status !== 200) {
             throw new Error("Session not found.");
         }
-    } catch (error) {
+    } catch {
         return false;
     }
 
@@ -63,13 +63,14 @@ export const config = {
     matcher: [
         /*
          * Match all request paths except for the ones starting with:
-         * - api (API routes)
+         * - api/auth
+         * - api/ping
          * - _next/static (static files)
          * - _next/image (image optimization files)
          * - favicon.ico, sitemap.xml, robots.txt (metadata files)
          */
         {
-            source: "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+            source: "/((?!api/auth|api/ping|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
             missing: [
                 { type: "header", key: "next-router-prefetch" },
                 { type: "header", key: "purpose", value: "prefetch" },
@@ -77,7 +78,7 @@ export const config = {
         },
 
         {
-            source: "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+            source: "/((?!api/auth|api/ping|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
             has: [
                 { type: "header", key: "next-router-prefetch" },
                 { type: "header", key: "purpose", value: "prefetch" },
@@ -85,7 +86,7 @@ export const config = {
         },
 
         {
-            source: "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+            source: "/((?!api/auth|api/ping|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
             has: [{ type: "header", key: "x-present" }],
             missing: [{ type: "header", key: "x-missing", value: "prefetch" }],
         },

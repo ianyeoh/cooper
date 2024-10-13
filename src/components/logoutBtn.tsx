@@ -6,7 +6,7 @@ import axios from "@/lib/axios";
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { DropdownMenuItem } from "@/components/ui/dropdownMenu";
 
 export default function LogoutButton(props: {
     as: "button" | "dropdownMenuItem";

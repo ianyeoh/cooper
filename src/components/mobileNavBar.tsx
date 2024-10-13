@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scrollArea";
 import { ChartColumn, Menu, X } from "lucide-react";
 import Link from "next/link";
 

@@ -17,18 +17,18 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/dropdownMenu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { IBudgetTransaction } from "@/lib/schemas/db/budgetTransaction";
 import { DataTablePagination } from "@/components/tablePagination";
 import { DataTableViewOptions } from "@/components/tableViewOptions";
 import NewTransactionButton from "@/components/newTransactionBtn";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import DataTableTextFilter from "@/components/tableTextFilter";
-import DataTable from "@/components/table";
+import DataTable from "@/components/dataTable";
+import DataTableDateFilter from "@/components/tableDateFilter";
+import DataTableAccountsFilter from "@/components/tableAccountsFilter";
 import { MoreHorizontal } from "lucide-react";
 import { format } from "date-fns";
-import DataTableDateFilter from "./tableDateFilter";
 
 // import { DataTableColumnHeader } from "@/components/tableColumnHeader";
 
@@ -131,9 +131,14 @@ function TransactionActions({
     );
 }
 
-export function TransactionsTable({ data }: { data: IBudgetTransaction[] }) {
+export function TransactionsTable({
+    searchParams, // next.js URL search params
+    data,
+}: {
+    searchParams: { [key: string]: string | string[] | undefined };
+    data: IBudgetTransaction[];
+}) {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-    const isDesktop = useMediaQuery("(min-width: 768px)");
 
     const table = useReactTable({
         data,
@@ -149,13 +154,14 @@ export function TransactionsTable({ data }: { data: IBudgetTransaction[] }) {
 
     return (
         <div className="w-full space-y-3">
-            <div className="flex gap-4 items-center w-full">
+            <div className="flex gap-2 items-center w-full">
                 <DataTableTextFilter
                     table={table}
                     filteredColumn="description"
                 />
+                <DataTableDateFilter />
+                <DataTableAccountsFilter />
                 <DataTableViewOptions table={table} />
-                <DataTableDateFilter table={table} filteredColumn="date" />
                 <div className="ml-auto">
                     <NewTransactionButton />
                 </div>
