@@ -49,7 +49,7 @@ function DateRangeFilterBtn({
     );
 }
 
-export function DateRangeFilter({
+export default function TableDateRangeFilter({
     date: dateRange,
     onDateRangeChange,
     className,

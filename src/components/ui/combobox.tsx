@@ -1,15 +1,8 @@
-import { Dispatch, useState } from "react";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { CreditCard } from "lucide-react";
+"use client";
+
+import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,16 +19,15 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 
-export default function DataTableAccountsFilter({
-    accounts,
-    selectedAccount,
-    onAccountChange,
+export default function Combobox({
+    items,
+    itemName,
 }: {
-    accounts: string[];
-    selectedAccount: string | undefined;
-    onAccountChange: Dispatch<string | undefined>;
+    items: string[];
+    itemName: string;
 }) {
-    const [open, setOpen] = useState<boolean>(false);
+    const [open, setOpen] = React.useState(false);
+    const [value, setValue] = React.useState("");
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -44,31 +36,27 @@ export default function DataTableAccountsFilter({
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className={cn(
-                        "justify-between gap-2",
-                        !selectedAccount && "text-muted-foreground"
-                    )}
+                    className="w-[200px] justify-between"
                 >
-                    <CreditCard size={15} />
-
-                    {selectedAccount
-                        ? accounts.find((item) => item === selectedAccount)
-                        : "Account"}
+                    {value
+                        ? items.find((item) => item === value)
+                        : `Select ${itemName}...`}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0">
                 <Command>
-                    <CommandInput placeholder="Search account..." />
+                    <CommandInput placeholder={`Search ${itemName}...`} />
                     <CommandList>
-                        <CommandEmpty>{"No accounts found."}</CommandEmpty>
+                        <CommandEmpty>{`No ${itemName} found.`}</CommandEmpty>
                         <CommandGroup>
-                            {accounts.map((account) => (
+                            {items.map((item) => (
                                 <CommandItem
-                                    key={account}
-                                    value={account}
+                                    key={item}
+                                    value={item}
                                     onSelect={(currentValue) => {
-                                        onAccountChange(
-                                            currentValue === selectedAccount
+                                        setValue(
+                                            currentValue === value
                                                 ? ""
                                                 : currentValue
                                         );
@@ -78,12 +66,12 @@ export default function DataTableAccountsFilter({
                                     <Check
                                         className={cn(
                                             "mr-2 h-4 w-4",
-                                            selectedAccount === account
+                                            value === item
                                                 ? "opacity-100"
                                                 : "opacity-0"
                                         )}
                                     />
-                                    {account}
+                                    {item}
                                 </CommandItem>
                             ))}
                         </CommandGroup>

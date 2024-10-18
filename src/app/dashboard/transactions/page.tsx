@@ -1,35 +1,33 @@
-import { TransactionsTable } from "@/components/transactionsTable";
-import { IBudgetTransaction } from "@/lib/schemas/db/budgetTransaction";
+import { headers } from "next/headers";
+import TransactionsTable from "@/components/transactionsTable";
+import BudgetTransaction, {
+    IBudgetTransaction,
+} from "@/lib/schemas/db/budgetTransaction";
+import { DateRange } from "react-day-picker";
 
-const transactions: IBudgetTransaction[] = [
-    {
-        account: "CBA",
-        date: new Date(),
-        description: "Chubby Buns",
-        category: "Food",
-        amount: -3299,
-    },
-    {
-        account: "ANZ",
-        date: new Date(),
-        description: "Metro Liverpool",
-        category: "Transportation",
-        amount: 5632,
-        comments: "For Lexus",
-    },
-    {
-        account: "UBank",
-        date: new Date(),
-        description: "GYG Liverpool",
-        category: "Food",
-        amount: 1299,
-    },
-];
+async function getTransactionData(dateRange: DateRange) {
+    let query = BudgetTransaction.find();
+    const records = await query.exec();
+    return records;
+}
 
-export default function TransactionsPage() {
+export default async function TransactionsPage({
+    searchParams, // next.js URL search params
+}: {
+    searchParams?: { [key: string]: string | string[] | undefined };
+}) {
+    const headersList = headers();
+
+    let data: IBudgetTransaction[] = [];
+
     return (
         <div className="mt-2 w-full">
-            <TransactionsTable data={transactions} />
+            <TransactionsTable
+                initialData={data}
+                initialDateRange={undefined}
+                initialAccount={undefined}
+                serverHostname={headersList.get("host") ?? "localhost"}
+            />
         </div>
     );
 }

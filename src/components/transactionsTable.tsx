@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
     ColumnDef,
-    ColumnFiltersState,
     getCoreRowModel,
-    useReactTable,
-    getFilteredRowModel,
     getPaginationRowModel,
+    useReactTable,
 } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,10 +24,11 @@ import { DataTableViewOptions } from "@/components/tableViewOptions";
 import NewTransactionButton from "@/components/newTransactionBtn";
 import DataTableTextFilter from "@/components/tableTextFilter";
 import DataTable from "@/components/dataTable";
-import DataTableDateFilter from "@/components/tableDateFilter";
 import DataTableAccountsFilter from "@/components/tableAccountsFilter";
+import TableDateRangeFilter from "@/components/tableDateRangeFilter";
 import { MoreHorizontal } from "lucide-react";
 import { format } from "date-fns";
+import { DateRange } from "react-day-picker";
 
 // import { DataTableColumnHeader } from "@/components/tableColumnHeader";
 
@@ -131,26 +131,62 @@ function TransactionActions({
     );
 }
 
-export function TransactionsTable({
-    searchParams, // next.js URL search params
-    data,
+export default function TransactionsTable({
+    initialData,
+    initialDateRange,
+    initialAccount,
+    serverHostname,
 }: {
-    searchParams: { [key: string]: string | string[] | undefined };
-    data: IBudgetTransaction[];
+    initialData: IBudgetTransaction[];
+    initialDateRange: DateRange | undefined;
+    initialAccount: string | undefined;
+    serverHostname: string;
 }) {
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const [data, setData] = useState<IBudgetTransaction[]>(initialData);
+
+    /* Table data filters */
+    const [dateRange, setDateRange] = useState<DateRange | undefined>(
+        initialDateRange
+    );
+    const [account, setAccount] = useState<string | undefined>(initialAccount);
 
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        onColumnFiltersChange: setColumnFilters,
-        getFilteredRowModel: getFilteredRowModel(),
-        state: {
-            columnFilters,
-        },
     });
+
+    function query(key: string, value: string | undefined) {
+        if (!value) {
+            const existingQuery = searchParams.get(key);
+            if (!existingQuery) {
+                return "";
+            }
+            return `${key}=${existingQuery}`;
+        }
+        return `${key}=${value}`;
+    }
+
+    /* Re-fetch data from server when filters change. Avoids fetching on first load. */
+    const [isFirstLoad, setIsFirstLoad] = useState<boolean>(true);
+    useEffect(() => {
+        if (isFirstLoad) {
+            setIsFirstLoad(false);
+        } else {
+            /* Do something meaningful */
+            console.log("Date range/account changed");
+            router.replace(
+                `?${query("dateRange", JSON.stringify(dateRange))}&${query(
+                    "account",
+                    account
+                )}`,
+                { scroll: true }
+            );
+        }
+    }, [dateRange, account]);
 
     return (
         <div className="w-full space-y-3">
@@ -159,15 +195,25 @@ export function TransactionsTable({
                     table={table}
                     filteredColumn="description"
                 />
-                <DataTableDateFilter />
-                <DataTableAccountsFilter />
+                <TableDateRangeFilter
+                    date={dateRange}
+                    onDateRangeChange={setDateRange}
+                />
+                <DataTableAccountsFilter
+                    accounts={["CBA", "NZ"]}
+                    selectedAccount={account}
+                    onAccountChange={setAccount}
+                />
                 <DataTableViewOptions table={table} />
                 <div className="ml-auto">
                     <NewTransactionButton />
                 </div>
             </div>
             <DataTable table={table} columns={columns} />
-            <DataTablePagination table={table} />
+            <DataTablePagination
+                table={table}
+                pageSizes={[10, 20, 30, 40, 50]}
+            />
         </div>
     );
 }

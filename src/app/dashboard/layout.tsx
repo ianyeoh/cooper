@@ -10,15 +10,12 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdownMenu";
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ChartColumn } from "lucide-react";
 import LogoutButton from "@/components/logoutBtn";
 import ThemeBtn from "@/components/themeBtn";
 import { UserProfileType } from "@/lib/schemas/get/user";
-import { initials } from "@/lib/utils";
 import Session from "@/lib/schemas/db/sessions";
-import { Button } from "@/components/ui/button";
 import SearchBar from "@/components/searchBar";
 import MobileNavBar from "@/components/mobileNavBar";
 
