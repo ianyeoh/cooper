@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     description: "Custom expense tracking solution",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
@@ -23,7 +23,15 @@ export default function RootLayout({
                     disableTransitionOnChange
                 >
                     {children}
-                    <Toaster />
+                    <Toaster
+                        closeButton
+                        toastOptions={{
+                            classNames: {
+                                toast: "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg group-[.toaster]:pointer-events-auto",
+                                closeButton: "bg-inherit",
+                            },
+                        }}
+                    />
                 </ThemeProvider>
             </body>
         </html>

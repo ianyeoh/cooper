@@ -1,13 +1,13 @@
-import BudgetTransaction from "@/lib/schemas/db/budgetTransaction";
-import { transactionsSchema } from "@/lib/schemas/post/transactions";
 import { NextRequest, NextResponse } from "next/server";
+import Transaction from "@/lib/schemas/db/transactions";
+import { transactionsSchema } from "@/lib/schemas/post/transactions";
 
 // GET /api/transactions
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
 
-    const totalRecords = await BudgetTransaction.countDocuments({}).exec();
-    let query = BudgetTransaction.find();
+    const totalRecords = await Transaction.countDocuments({}).exec();
+    let query = Transaction.find();
 
     const limit = searchParams.get("limit");
     if (limit != null && !Number.isNaN(Number(limit)))
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: parseResult.error }, { status: 400 });
     }
 
-    await BudgetTransaction.create(parseResult.data);
+    await Transaction.create(parseResult.data);
 
     return NextResponse.json(
         {

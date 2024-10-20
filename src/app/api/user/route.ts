@@ -1,5 +1,5 @@
-import Session from "@/lib/schemas/db/sessions";
 import { NextRequest, NextResponse } from "next/server";
+import Session from "@/lib/schemas/db/sessions";
 
 // GET /api/user
 export async function GET(request: NextRequest) {

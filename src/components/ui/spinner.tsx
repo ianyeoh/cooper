@@ -42,13 +42,7 @@ export function Spinner({
 }: SpinnerContentProps) {
     return (
         <span className={spinnerVariants({ show })}>
-            <Loader2
-                className={cn(
-                    loaderVariants({ size }),
-                    className,
-                    "text-background"
-                )}
-            />
+            <Loader2 className={cn(loaderVariants({ size }), className)} />
             {children}
         </span>
     );

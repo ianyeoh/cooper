@@ -1,6 +1,6 @@
+import { NextRequest, NextResponse } from "next/server";
 import Session from "@/lib/schemas/db/sessions";
 import { sessionSchema } from "@/lib/schemas/post/auth";
-import { NextRequest, NextResponse } from "next/server";
 
 // POST /api/auth/session
 export async function POST(request: NextRequest) {

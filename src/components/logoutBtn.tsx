@@ -39,6 +39,7 @@ export default function LogoutButton(props: {
                 <DropdownMenuItem
                     onClick={handleLogout}
                     disabled={loading}
+                    className={loading ? "justify-center" : ""}
                     {...rest}
                 >
                     {loading ? <Spinner size="small" /> : "Log out"}

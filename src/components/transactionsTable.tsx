@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
     ColumnDef,
     getCoreRowModel,
@@ -18,7 +18,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdownMenu";
 import { Checkbox } from "@/components/ui/checkbox";
-import { IBudgetTransaction } from "@/lib/schemas/db/budgetTransaction";
+import { ITransaction } from "@/lib/schemas/db/transactions";
 import { DataTablePagination } from "@/components/tablePagination";
 import { DataTableViewOptions } from "@/components/tableViewOptions";
 import NewTransactionButton from "@/components/newTransactionBtn";
@@ -39,7 +39,7 @@ const currencyAUD = new Intl.NumberFormat("en-AU", {
     trailingZeroDisplay: "stripIfInteger",
 });
 
-const columns: ColumnDef<IBudgetTransaction>[] = [
+const columns: ColumnDef<ITransaction>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -101,11 +101,7 @@ const columns: ColumnDef<IBudgetTransaction>[] = [
     },
 ];
 
-function TransactionActions({
-    transaction,
-}: {
-    transaction: IBudgetTransaction;
-}) {
+function TransactionActions({ transaction }: { transaction: ITransaction }) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -137,14 +133,13 @@ export default function TransactionsTable({
     initialAccount,
     serverHostname,
 }: {
-    initialData: IBudgetTransaction[];
+    initialData: ITransaction[];
     initialDateRange: DateRange | undefined;
     initialAccount: string | undefined;
     serverHostname: string;
 }) {
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const [data, setData] = useState<IBudgetTransaction[]>(initialData);
+    const [data, setData] = useState<ITransaction[]>(initialData);
 
     /* Table data filters */
     const [dateRange, setDateRange] = useState<DateRange | undefined>(
@@ -159,32 +154,26 @@ export default function TransactionsTable({
         getPaginationRowModel: getPaginationRowModel(),
     });
 
-    function query(key: string, value: string | undefined) {
-        if (!value) {
-            const existingQuery = searchParams.get(key);
-            if (!existingQuery) {
-                return "";
-            }
-            return `${key}=${existingQuery}`;
-        }
-        return `${key}=${value}`;
-    }
-
     /* Re-fetch data from server when filters change. Avoids fetching on first load. */
     const [isFirstLoad, setIsFirstLoad] = useState<boolean>(true);
     useEffect(() => {
         if (isFirstLoad) {
             setIsFirstLoad(false);
         } else {
-            /* Do something meaningful */
-            console.log("Date range/account changed");
-            router.replace(
-                `?${query("dateRange", JSON.stringify(dateRange))}&${query(
-                    "account",
-                    account
-                )}`,
-                { scroll: true }
-            );
+            // Build query string
+            const queryInput: { [key: string]: string } = {};
+
+            if (dateRange != null) {
+                queryInput.from = JSON.stringify(dateRange.from);
+                queryInput.to = JSON.stringify(dateRange.to);
+            }
+
+            if (account != null) {
+                queryInput.account = account;
+            }
+
+            const searchParams = new URLSearchParams(queryInput);
+            router.replace(`?${searchParams.toString()}`, { scroll: true });
         }
     }, [dateRange, account]);
 

@@ -2,10 +2,12 @@ import { useState } from "react";
 import { ResponsiveDialog } from "@/components/responsiveDialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import NewTransactionForm from "@/components/forms/newTransactionForm";
+import { NewTransactionForm } from "@/components/forms/newTransactionForm";
 
 export default function NewTransactionButton() {
     const [open, setOpen] = useState<boolean>(false);
+
+    function onSubmit() {}
 
     return (
         <>
@@ -25,7 +27,7 @@ export default function NewTransactionButton() {
                 title="Create new transaction"
                 description="Manually enter a new transaction"
             >
-                <NewTransactionForm />
+                <NewTransactionForm onSubmit={onSubmit} />
             </ResponsiveDialog>
         </>
     );

@@ -1,3 +1,4 @@
+import connectToDb from "@/lib/db";
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
@@ -20,5 +21,9 @@ const sessionSchema = new Schema<ISession>({
 const Session =
     (mongoose.models.Session as mongoose.Model<ISession>) ||
     mongoose.model<ISession>("Session", sessionSchema);
+
+connectToDb().then((success) => {
+    if (!success) throw new Error("Failed to connect to database.");
+});
 
 export default Session;

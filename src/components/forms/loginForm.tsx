@@ -71,7 +71,7 @@ export function LoginForm({
                         disabled={form.formState.isSubmitting}
                     >
                         {form.formState.isSubmitting ? (
-                            <Spinner size="small" />
+                            <Spinner size="small" className="text-background"/>
                         ) : (
                             "Sign in"
                         )}
