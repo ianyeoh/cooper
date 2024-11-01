@@ -1,41 +1,63 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# IDEA Ignores #
+################
+*.iml
+*.ipr
+*.iws
+.idea/
+out/
+local.properties
 
-.env
+# Generic Android ignores #
+###########################
+bin/
+target
+gen/
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-.yarn/install-state.gz
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
 
-# testing
-/coverage
+# Packages #
+############
+*.7z
+*.dmg
+*.gz
+*.iso
+*.rar
+*.tar
+*.zip
 
-# next.js
-/.next/
-/out/
+# Logs and databases #
+######################
+log/
+*.log
+*.sql
+*.sqlite
 
-# production
-/build
-
-# misc
+# OS generated files #
+######################
 .DS_Store
-*.pem
+.DS_Store?
+ehthumbs.db
+Icon?
+Thumbs.db
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# VCS #
+#######
+.svn
+.svn/
+CVS
 
-# local env files
-.env*.local
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# Sentry Config File
-.env.sentry-build-plugin
+# XCode 4 #
+###########
+*.xcuserstate
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+xcuserdata/

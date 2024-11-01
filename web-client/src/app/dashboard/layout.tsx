@@ -15,7 +15,7 @@ import { ChartColumn } from "lucide-react";
 import LogoutButton from "@/components/logoutBtn";
 import ThemeBtn from "@/components/themeBtn";
 import { UserProfileType } from "@/lib/schemas/get/user";
-import Session from "@/lib/schemas/db/sessions";
+import Session from "../../../../schemas/db/sessions";
 import SearchBar from "@/components/searchBar";
 import MobileNavBar from "@/components/mobileNavBar";
 
