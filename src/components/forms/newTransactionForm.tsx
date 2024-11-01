@@ -21,7 +21,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import {
     transactionsSchema,
@@ -30,6 +29,12 @@ import {
 import axios from "@/lib/axios";
 import { toast } from "sonner";
 import { accountListSchema, AccountListType } from "@/lib/schemas/get/account";
+import { Popover, PopoverContent } from "@/components/ui/popover";
+import { PopoverTrigger } from "@radix-ui/react-popover";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 export function NewTransactionForm({
     onSubmit,
@@ -141,17 +146,54 @@ export function NewTransactionForm({
 
                         <FormField
                             control={form.control}
-                            name="description"
+                            name="date"
                             render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Password"
-                                            type="password"
-                                            {...field}
-                                        />
-                                    </FormControl>
+                                <FormItem className="flex flex-col">
+                                    <FormLabel>Date</FormLabel>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <FormControl>
+                                                <Button
+                                                    variant={"outline"}
+                                                    className={cn(
+                                                        "pl-3 text-left font-normal",
+                                                        !field.value &&
+                                                            "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    {field.value ? (
+                                                        format(
+                                                            field.value,
+                                                            "PPP"
+                                                        )
+                                                    ) : (
+                                                        <span>Select date</span>
+                                                    )}
+                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                </Button>
+                                            </FormControl>
+                                        </PopoverTrigger>
+                                        <PopoverContent
+                                            className="w-auto p-0"
+                                            align="start"
+                                        >
+                                            <Calendar
+                                                mode="single"
+                                                selected={field.value}
+                                                onSelect={field.onChange}
+                                                disabled={(date) =>
+                                                    date > new Date() ||
+                                                    date <
+                                                        new Date("1900-01-01")
+                                                }
+                                                initialFocus
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+                                    <FormDescription>
+                                        Your date of birth is used to calculate
+                                        your age.
+                                    </FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}
