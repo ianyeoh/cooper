@@ -4,7 +4,7 @@ import swaggerJSDoc from "swagger-jsdoc";
 
 const docsRouter = Router();
 
-// Parses JSDoc comments automatically into Swagger API docs
+// Auto-generate Swagger API docs from JSDoc annotations
 const options = {
     failOnErrors: true, // Throw errors when parsing JSDoc into Swagger
     definition: {
@@ -14,7 +14,7 @@ const options = {
             version: "1.0.0",
         },
     },
-    apis: ["./src/routes/*.mjs"],
+    apis: ["./src/routes/*.ts"],
 };
 
 const swaggerSpec = swaggerJSDoc(options);

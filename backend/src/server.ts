@@ -1,15 +1,16 @@
 // Must be imported first
-import "./instrument.mjs";
-import * as Sentry from "@sentry/node";
+import "./instrument.ts";
+import * as Sentry from "https://deno.land/x/sentry/index.mjs";
 
 // Other imports
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import { config } from "dotenv";
 import mongoose from "mongoose";
-import docsRouter from "./docs.mjs";
-import authRouter from "./routes/auth.mjs";
+import docsRouter from "./docs.ts";
+import authRouter from "./routes/auth.ts";
+import process from "node:process";
 
-// Derive configuration variables from environment
+// Get configuration variables from environment
 config(); // Load variables from .env file into process.env
 const env = process.env.ENV === "development" ? process.env.ENV : "production";
 const port = process.env.PORT || 3000;
@@ -27,7 +28,7 @@ app.use("/auth", authRouter);
 Sentry.setupExpressErrorHandler(app);
 
 // Optional fallthrough error handler
-app.use(function onError(err, req, res, next) {
+app.use(function onError(_err: Error, _req: Request, res: Response, _next: NextFunction) {
     // The error id is attached to `res.sentry` to be returned
     // and optionally displayed to the user for support.
     res.statusCode = 500;

@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/node";
+import * as Sentry from "https://deno.land/x/sentry/index.mjs";
 
 Sentry.init({
     dsn: "https://c4fdc05bdc40c4922eae82cac765e637@sentry.ianyeoh.com/4",
