@@ -1,77 +1,72 @@
-import { Router, Request, Response, NextFunction } from "express";
+import z from "zod";
+import { authedProcedure, publicProcedure, t } from "../trpc.ts";
+import { compareSaltedHash } from "../lib/hashing.ts";
+import { TRPCError } from "@trpc/server";
+import { addMinutes } from "date-fns";
+import User from "../db/users.ts";
+import Session from "../db/sessions.ts";
 
-const authRouter = Router();
+export const authRouter = t.router({
+    login: publicProcedure
+        .input(
+            z.object({
+                username: z.string().min(2),
+                password: z.string().min(2),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const existingUser = await User.findOne({
+                username: input.username,
+            }).exec();
 
-/**
- * @openapi
- * /login:
- *   post:
- *     description: Welcome to swagger-jsdoc!
- *     responses:
- *       200:
- *         description: Returns a mysterious string.
- */
-authRouter.post("/login", (_req: Request, _res: Response, _next: NextFunction) => {
-//   const parseResult = loginSchema.safeParse(body);
+            if (!existingUser) {
+                throw new TRPCError({
+                    code: "UNAUTHORIZED",
+                    message: "Invalid username or password.",
+                });
+            }
 
-//   if (!parseResult.success) {
-//       return NextResponse.json({ error: parseResult.error }, { status: 400 });
-//   }
+            const passwordMatch = compareSaltedHash(
+                input.password,
+                existingUser.password
+            );
 
-//   const dbConnection = await connectToDb();
-//   if (!dbConnection.success) {
-//       return NextResponse.json(
-//           { error: dbConnection.error },
-//           { status: 500 }
-//       );
-//   }
+            if (!passwordMatch) {
+                throw new TRPCError({
+                    code: "UNAUTHORIZED",
+                    message: "Invalid username or password.",
+                });
+            }
 
-//   const existingUser = await User.findOne({
-//       username: parseResult.data.username,
-//   }).exec();
-//   if (!existingUser) {
-//       return NextResponse.json(
-//           { error: "Invalid username and password combination." },
-//           { status: 401 }
-//       );
-//   }
+            const ip = ctx.req.ip ?? "Unknown";
+            const userAgent = ctx.req.get("user-agent");
 
-//   const passwordMatch = compareSaltedHash(
-//       parseResult.data.password,
-//       existingUser.password
-//   );
-//   if (!passwordMatch) {
-//       return NextResponse.json(
-//           { error: "Invalid username or password." },
-//           { status: 401 }
-//       );
-//   }
+            const session = new Session({
+                username: input.username,
+                ip,
+                userAgent,
+                started: new Date(),
+                expires: addMinutes(new Date(), 30),
+            });
 
-//   const ip = (request.headers.get("x-forwarded-for") ?? "127.0.0.1").split(
-//       ","
-//   )[0];
-//   const userAgent = request.headers.get("user-agent");
+            await session.save();
 
-//   const session = new Session({
-//       username: parseResult.data.username,
-//       ip,
-//       userAgent,
-//       started: new Date(),
-//       expires: addMinutes(new Date(), 30),
-//   });
+            ctx.res.cookie("id", session.id, {
+                secure: true,
+                expires: session.expires,
+                httpOnly: true,
+                sameSite: "strict",
+            });
 
-//   await session.save();
-
-//   cookies().set("id", session.id, {
-//       secure: true,
-//       expires: session.expires,
-//       httpOnly: true,
-//       sameSite: "strict",
-//   });
-//   return NextResponse.json(
-//       { message: "Logged in successfully." },
-//       { status: 200 }
-//   );
+            return;
+        }),
+    logout: authedProcedure.query(async ({ ctx }) => {
+        await Session.findByIdAndDelete(ctx.sessionId.value);
+        ctx.res.clearCookie("id");
+        return;
+    }),
 });
 
+// export type definition of API
+export type AppRouter = typeof authRouter;
 export default authRouter;

@@ -1,8 +1,9 @@
-import * as Sentry from "https://deno.land/x/sentry/index.mjs";
+import * as Sentry from "@sentry/node";
 
 Sentry.init({
     dsn: "https://c4fdc05bdc40c4922eae82cac765e637@sentry.ianyeoh.com/4",
 
     // Tracing
     tracesSampleRate: 1.0, //  Capture 100% of the transactions
+    disableInstrumentationWarnings: true // Deno CLI does not support --import
 });

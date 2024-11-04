@@ -1,14 +1,15 @@
 // Must be imported first
 import "./instrument.ts";
-import * as Sentry from "https://deno.land/x/sentry/index.mjs";
+import * as Sentry from "@sentry/node";
 
 // Other imports
+import * as trpcExpress from "@trpc/server/adapters/express";
 import express, { Request, Response, NextFunction } from "express";
 import { config } from "dotenv";
 import mongoose from "mongoose";
-import docsRouter from "./docs.ts";
-import authRouter from "./routes/auth.ts";
 import process from "node:process";
+import { createContext, t } from "./trpc.ts";
+import authRouter from "./routes/auth.ts";
 
 // Get configuration variables from environment
 config(); // Load variables from .env file into process.env
@@ -17,18 +18,32 @@ const port = process.env.PORT || 3000;
 const mongoURL = process.env.MONGO_URL;
 const mongoDB = process.env.MONGO_DB;
 
+// Express initialisation
 const app = express();
+const appRouter = t.router({
+    auth: authRouter,
+});
 
-// Middleware and route handlers
+// Express middleware and route handlers
 app.use(express.json());
-app.use("/docs", docsRouter);
-app.use("/auth", authRouter);
+app.use(
+    "/api",
+    trpcExpress.createExpressMiddleware({
+        router: appRouter,
+        createContext,
+    })
+);
 
 // The error handler must be registered before any other error middleware and after all controllers
 Sentry.setupExpressErrorHandler(app);
 
 // Optional fallthrough error handler
-app.use(function onError(_err: Error, _req: Request, res: Response, _next: NextFunction) {
+app.use(function onError(
+    _err: Error,
+    _req: Request,
+    res: Response,
+    _next: NextFunction
+) {
     // The error id is attached to `res.sentry` to be returned
     // and optionally displayed to the user for support.
     res.statusCode = 500;
@@ -38,6 +53,7 @@ app.use(function onError(_err: Error, _req: Request, res: Response, _next: NextF
 // Server startup sequence
 console.log(`[server]: Running in ${env} mode`);
 
+// Check if MongoDB connection string is set
 if (mongoURL == null) {
     console.log(
         `[server]: No MongoDB connection string set in environment or .env file`
@@ -45,6 +61,7 @@ if (mongoURL == null) {
     throw new Error("Missing MONGO_URL environment variable");
 }
 
+// Default MongoDB database name if not set
 console.log(`[server]: Attempting to connect to MongoDB...`);
 if (mongoDB == null) {
     console.log(
@@ -52,6 +69,7 @@ if (mongoDB == null) {
     );
 }
 
+// Connect with Mongoose client
 mongoose
     .connect(mongoURL, {
         dbName: mongoDB || "cooper",
@@ -61,6 +79,7 @@ mongoose
             `[server]: Connected to MongoDB successfully, starting server...`
         );
 
+        // Start server
         app.listen(port, () => {
             console.log(
                 `[server]: Server is running at http://localhost:${port}`
