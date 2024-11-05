@@ -2,7 +2,9 @@ import * as trpcExpress from "@trpc/server/adapters/express";
 import { initTRPC, TRPCError } from "@trpc/server";
 import Session from "./db/sessions.ts";
 
-// tRPC setup
+/**
+ * tRPC setup:
+ */ 
 export const createContext = ({
     req,
     res,
@@ -13,11 +15,17 @@ export const createContext = ({
     };
 };
 type Context = Awaited<ReturnType<typeof createContext>>;
-
 export const t = initTRPC.context<Context>().create();
 
-// tRPC base procedures
+/**
+ * tRPC base procedures:
+ */
+
+// Accessible by any request
 export const publicProcedure = t.procedure;
+// Only accessible by requests with HTTP-only cookie "id" (session id) set,
+// which is set by authenticating with the login route. Session id is then
+// attached to ctx.sessionId!
 export const authedProcedure = t.procedure.use(async function isAuthed({
     ctx,
     next,

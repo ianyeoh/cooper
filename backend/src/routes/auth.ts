@@ -1,6 +1,6 @@
 import z from "zod";
 import { authedProcedure, publicProcedure, t } from "../trpc.ts";
-import { compareSaltedHash } from "../lib/hashing.ts";
+import { compareSaltedHash, saltedHash } from "../lib/hashing.ts";
 import { TRPCError } from "@trpc/server";
 import { addMinutes } from "date-fns";
 import User from "../db/users.ts";
@@ -65,8 +65,34 @@ export const authRouter = t.router({
         ctx.res.clearCookie("id");
         return;
     }),
+    signup: publicProcedure
+        .input(
+            z.object({
+                username: z.string().min(2),
+                password: z.string().min(2),
+            })
+        )
+        .mutation(async ({ input }) => {
+            const existingUser = await User.findOne({
+                username: input.username,
+            }).exec();
+
+            if (existingUser) {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Username already exists.",
+                });
+            }
+
+            await User.create({
+                username: input.username,
+                password: saltedHash(input.password),
+            });
+
+            return;
+        }),
 });
 
 // export type definition of API
-export type AppRouter = typeof authRouter;
+export type AuthRouter = typeof authRouter;
 export default authRouter;

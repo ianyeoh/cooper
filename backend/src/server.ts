@@ -1,8 +1,8 @@
-// Must be imported first
+// Sentry (error logging) instrumentation, must be imported first
 import "./instrument.ts";
 import * as Sentry from "@sentry/node";
 
-// Other imports
+// All other imports
 import * as trpcExpress from "@trpc/server/adapters/express";
 import express, { Request, Response, NextFunction } from "express";
 import { config } from "dotenv";
@@ -10,6 +10,8 @@ import mongoose from "mongoose";
 import process from "node:process";
 import { createContext, t } from "./trpc.ts";
 import authRouter from "./routes/auth.ts";
+import utilsRouter from "./routes/utils.ts";
+import usersRouter from "./routes/users.ts";
 
 // Get configuration variables from environment
 config(); // Load variables from .env file into process.env
@@ -18,10 +20,14 @@ const port = process.env.PORT || 3000;
 const mongoURL = process.env.MONGO_URL;
 const mongoDB = process.env.MONGO_DB;
 
-// Express initialisation
+/**
+ * Express initialisation
+ */
 const app = express();
 const appRouter = t.router({
     auth: authRouter,
+    utils: utilsRouter,
+    user: usersRouter,
 });
 
 // Express middleware and route handlers
@@ -32,9 +38,9 @@ app.use(
         router: appRouter,
         createContext,
     })
-);
+); // tRPC route handler
 
-// The error handler must be registered before any other error middleware and after all controllers
+// The Sentry error handler must be registered before any other error middleware but after all routers
 Sentry.setupExpressErrorHandler(app);
 
 // Optional fallthrough error handler
@@ -50,7 +56,9 @@ app.use(function onError(
     res.end(res.sentry + "\n");
 });
 
-// Server startup sequence
+/**
+ * Server startup sequence
+ */
 console.log(`[server]: Running in ${env} mode`);
 
 // Check if MongoDB connection string is set
@@ -90,6 +98,10 @@ mongoose
             }
         });
     })
-    .catch((err) => {
+    .catch((err: Error) => {
         console.log(`[server]: Failed to connect to MongoDB: ${err}`);
     });
+
+
+// Export only the type of our app router for tRPC on the client
+export type AppRouter = typeof appRouter;

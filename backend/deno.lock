@@ -4,7 +4,8 @@
     "jsr:@std/assert@1": "1.0.7",
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "npm:@sentry/node@^8.36.0": "8.36.0_@opentelemetry+api@1.9.0_@opentelemetry+core@1.27.0__@opentelemetry+api@1.9.0_@opentelemetry+instrumentation@0.53.0__@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.27.0__@opentelemetry+api@1.9.0_@opentelemetry+semantic-conventions@1.27.0",
-    "npm:@trpc/server@^10.45.2": "10.45.2",
+    "npm:@trpc/client@^11.0.0-rc.608": "11.0.0-rc.608_@trpc+server@11.0.0-rc.608",
+    "npm:@trpc/server@^11.0.0-rc.608": "11.0.0-rc.608",
     "npm:@types/node@*": "22.5.4",
     "npm:bcryptjs@^2.4.3": "2.4.3",
     "npm:date-fns@^4.1.0": "4.1.0",
@@ -414,8 +415,14 @@
         "@sentry/types"
       ]
     },
-    "@trpc/server@10.45.2": {
-      "integrity": "sha512-wOrSThNNE4HUnuhJG6PfDRp4L2009KDVxsd+2VYH8ro6o/7/jwYZ8Uu5j+VaW+mOmc8EHerHzGcdbGNQSAUPgg=="
+    "@trpc/client@11.0.0-rc.608_@trpc+server@11.0.0-rc.608": {
+      "integrity": "sha512-ZvhYhewiXXo3Kfy7JazVShsJUJTyqgkEV1rjhioJ6r3aIGw0ZS6zyyjcq1w99DTIzRP//FgB239NG5c66Ki9sw==",
+      "dependencies": [
+        "@trpc/server"
+      ]
+    },
+    "@trpc/server@11.0.0-rc.608": {
+      "integrity": "sha512-+qxeyWlS+1zlTbekG7C+khDGZn788kLJG+ufO8mH/kgbRC+/a0OZSk7tyQI2Pf+UWeKc6KzrTi7TRBOOEBBE1A=="
     },
     "@types/connect@3.4.36": {
       "integrity": "sha512-P63Zd/JUGq+PdrM1lv0Wv5SBYeA2+CORvbrXbngriYY0jzLUWfQMQQxOhjONEz/wlHOAxOdY7CY65rgQdTjq2w==",
@@ -1018,7 +1025,8 @@
     "dependencies": [
       "jsr:@std/assert@1",
       "npm:@sentry/node@^8.36.0",
-      "npm:@trpc/server@^10.45.2",
+      "npm:@trpc/client@^11.0.0-rc.608",
+      "npm:@trpc/server@^11.0.0-rc.608",
       "npm:bcryptjs@^2.4.3",
       "npm:date-fns@^4.1.0",
       "npm:dotenv@^16.4.5",

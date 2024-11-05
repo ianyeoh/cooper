@@ -2,10 +2,12 @@
     "tasks": {
         "dev": "deno run --watch --allow-all src/server.ts"
     },
+    "nodeModulesDir": "auto",
     "imports": {
         "@sentry/node": "npm:@sentry/node@^8.36.0",
         "@std/assert": "jsr:@std/assert@1",
-        "@trpc/server": "npm:@trpc/server@^10.45.2",
+        "@trpc/client": "npm:@trpc/client@^11.0.0-rc.608",
+        "@trpc/server": "npm:@trpc/server@^11.0.0-rc.608",
         "bcryptjs": "npm:bcryptjs@^2.4.3",
         "date-fns": "npm:date-fns@^4.1.0",
         "dotenv": "npm:dotenv@^16.4.5",

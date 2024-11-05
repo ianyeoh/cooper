@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import axios from "@/lib/axios";
 import { toast } from "sonner";
 import { LoginForm } from "@/components/forms/loginForm";
-import { LoginType } from "@/lib/schemas/post/auth";
 import { AxiosError } from "axios";
 import { WalletMinimal } from "lucide-react";
 import ThemeBtn from "@/components/themeBtn";
