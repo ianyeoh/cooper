@@ -92,10 +92,6 @@ mongoose
             console.log(
                 `[server]: Server is running at http://localhost:${port}`
             );
-
-            if (env === "development") {
-                console.log(`[server]: API documentation is hosted at /docs/`);
-            }
         });
     })
     .catch((err: Error) => {
