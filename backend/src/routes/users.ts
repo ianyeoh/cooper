@@ -1,29 +1,30 @@
-import { z } from "zod";
-import { authedProcedure, t } from "../trpc.ts";
+import { AppRouteImplementation } from "@ts-rest/express";
 import Session from "../db/sessions.ts";
-import { TRPCError } from "@trpc/server";
+import { contract } from "../../../ts-rest/contract.ts";
+import { authed } from "../middleware/authed.ts";
 
-export const usersRouter = t.router({
-    session: authedProcedure
-        .output(
-            z.object({
-                username: z.string().min(1),
-            })
-        )
-        .query(async ({ ctx }) => {
-            const session = await Session.findOne({ _id: ctx.sessionId });
+const getUserProfileHandler: AppRouteImplementation<
+    typeof contract.users.getUserProfile
+> = async function ({ req }) {
+    const session = await Session.findOne({ _id: req.sessionId });
 
-            if (!session) {
-                throw new TRPCError({
-                    code: "BAD_REQUEST",
-                    message: "Session not found.",
-                });
-            }
+    if (!session) {
+        return {
+            status: 401,
+            body: {
+                error: "Unauthorised",
+            },
+        };
+    }
 
-            return { username: session.username };
-        }),
-});
-
-// export type definition of API
-export type UsersRouter = typeof usersRouter;
-export default usersRouter;
+    return {
+        status: 200,
+        body: {
+            username: session.username,
+        },
+    };
+};
+export const getUserProfile = {
+    middleware: [authed],
+    handler: getUserProfileHandler,
+};

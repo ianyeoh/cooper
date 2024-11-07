@@ -3,51 +3,62 @@ import { z } from "zod";
 
 const c = initContract();
 
-const authContract = c.router({
-    login: {
-        method: "POST",
-        path: "/auth/login",
-        body: z.object({
-            username: z.string().min(2),
-            password: z.string().min(2),
-        }),
-        responses: {
-            200: z.object({
-                message: z.literal("Logged in successfully"),
+const authContract = c.router(
+    {
+        login: {
+            method: "POST",
+            path: "/login",
+            body: z.object({
+                username: z.string().min(2),
+                password: z.string().min(2),
             }),
-            401: z.object({
-                error: z.literal("Login unauthorised"),
-            }),
+            responses: {
+                200: z.object({
+                    message: z.literal("Logged in successfully"),
+                }),
+                400: z.object({
+                    error: z.literal("Already logged in"),
+                }),
+                401: z.object({
+                    error: z.literal("Login unauthorised"),
+                }),
+            },
+            summary: "Log in with username and password",
         },
-        summary: "Log in with username and password",
-    },
-    logout: {
-        method: "GET",
-        path: "/auth/logout",
-        responses: {
-            200: z.object({
-                message: z.literal("Logged out successfully"),
-            }),
+        logout: {
+            method: "GET",
+            path: "/logout",
+            responses: {
+                200: z.object({
+                    message: z.literal("Logged out successfully"),
+                }),
+                401: z.object({
+                    error: z.literal("Unauthorised"),
+                }),
+            },
+            summary: "Log out of session",
         },
-        summary: "Log out of session",
-    },
-    signup: {
-        method: "POST",
-        path: "/auth/signup",
-        body: z.object({
-            username: z.string().min(2),
-            password: z.string().min(2),
-        }),
-        responses: {
-            200: z.object({
-                message: z.literal("Signed up successfully"),
+        signup: {
+            method: "POST",
+            path: "/signup",
+            body: z.object({
+                username: z.string().min(2),
+                password: z.string().min(2),
             }),
-            400: z.object({
-                error: z.literal("User already exists"),
-            }),
+            responses: {
+                200: z.object({
+                    message: z.literal("Signed up successfully"),
+                }),
+                400: z.object({
+                    error: z.literal("User already exists"),
+                }),
+            },
+            summary: "Sign up as new user",
         },
-        summary: "Sign up as new user",
     },
-});
+    {
+        pathPrefix: "/auth",
+    }
+);
 
 export default authContract;

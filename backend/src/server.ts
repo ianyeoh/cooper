@@ -4,14 +4,18 @@ import * as Sentry from "@sentry/node";
 
 // All other imports
 import express, { Request, Response, NextFunction } from "express";
-import { createExpressEndpoints, initServer } from "@ts-rest/express";
 import { config } from "dotenv";
 import mongoose from "mongoose";
 import process from "node:process";
+import { createExpressEndpoints, initServer } from "@ts-rest/express";
+import { generateOpenApi } from "@ts-rest/open-api";
 import { contract } from "../../ts-rest/contract.ts";
-import authRouter from "./routes/auth.ts";
-import usersRouter from "./routes/users.ts";
-import transactionsRouter from "./routes/transactions.ts";
+import { serve, setup } from "swagger-ui-express";
+import cookieParser from "cookie-parser";
+import { login, logout, signup } from "./routes/auth.ts";
+import { getUserProfile } from "./routes/users.ts";
+import { getTransactions } from "./routes/transactions.ts";
+import { status } from "./routes/status.ts";
 
 // Get configuration variables from environment
 config(); // Load variables from .env file into process.env
@@ -26,14 +30,38 @@ const mongoDB = process.env.MONGO_DB;
 const app = express();
 
 // Express middleware and route handlers
+app.use(cookieParser());
 app.use(express.json());
 
 // Initialise and mount ts-rest router
 const s = initServer();
-const router = s.router(contract, {});
+const router = s.router(contract, {
+    status,
+    auth: {
+        login,
+        logout,
+        signup,
+    },
+    transactions: {
+        getTransactions,
+    },
+    users: {
+        getUserProfile,
+    },
+});
 createExpressEndpoints(contract, router, app, {
     responseValidation: true,
 });
+
+// Auto-generated Swagger API docs
+const openapi = generateOpenApi(contract, {
+    info: { title: "Play API", version: "0.1" },
+});
+
+const apiDocs = express.Router();
+apiDocs.use(serve);
+apiDocs.get("/", setup(openapi));
+app.use("/docs", apiDocs);
 
 // The Sentry error handler must be registered before any other error middleware but after all routers
 Sentry.setupExpressErrorHandler(app);
