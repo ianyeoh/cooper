@@ -4,8 +4,7 @@
     "jsr:@std/assert@1": "1.0.7",
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "npm:@sentry/node@^8.36.0": "8.36.0_@opentelemetry+api@1.9.0_@opentelemetry+core@1.27.0__@opentelemetry+api@1.9.0_@opentelemetry+instrumentation@0.53.0__@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.27.0__@opentelemetry+api@1.9.0_@opentelemetry+semantic-conventions@1.27.0",
-    "npm:@trpc/client@^11.0.0-rc.608": "11.0.0-rc.608_@trpc+server@11.0.0-rc.608",
-    "npm:@trpc/server@^11.0.0-rc.608": "11.0.0-rc.608",
+    "npm:@ts-rest/express@^3.51.0": "3.51.0_@ts-rest+core@3.51.0__@types+node@22.5.4__zod@3.23.8_express@4.21.1_zod@3.23.8_@types+node@22.5.4",
     "npm:@types/node@*": "22.5.4",
     "npm:bcryptjs@^2.4.3": "2.4.3",
     "npm:date-fns@^4.1.0": "4.1.0",
@@ -415,14 +414,20 @@
         "@sentry/types"
       ]
     },
-    "@trpc/client@11.0.0-rc.608_@trpc+server@11.0.0-rc.608": {
-      "integrity": "sha512-ZvhYhewiXXo3Kfy7JazVShsJUJTyqgkEV1rjhioJ6r3aIGw0ZS6zyyjcq1w99DTIzRP//FgB239NG5c66Ki9sw==",
+    "@ts-rest/core@3.51.0_@types+node@22.5.4_zod@3.23.8": {
+      "integrity": "sha512-v6lnWEcpZj1UgN9wb84XQ+EORP1QEtncFumoXMJjno5ZUV6vdjKze3MYcQN0C6vjBpIJPQEaI/gab2jr4/0KzQ==",
       "dependencies": [
-        "@trpc/server"
+        "@types/node",
+        "zod"
       ]
     },
-    "@trpc/server@11.0.0-rc.608": {
-      "integrity": "sha512-+qxeyWlS+1zlTbekG7C+khDGZn788kLJG+ufO8mH/kgbRC+/a0OZSk7tyQI2Pf+UWeKc6KzrTi7TRBOOEBBE1A=="
+    "@ts-rest/express@3.51.0_@ts-rest+core@3.51.0__@types+node@22.5.4__zod@3.23.8_express@4.21.1_zod@3.23.8_@types+node@22.5.4": {
+      "integrity": "sha512-osOo040EHoCMNMFBbEwZ6XheeEhG/zJGF4k3FOYUtaYSdxxYp5XkP8jQoV6I+Lu+O5jopnOQWoCpmNrrraIO8g==",
+      "dependencies": [
+        "@ts-rest/core",
+        "express",
+        "zod"
+      ]
     },
     "@types/connect@3.4.36": {
       "integrity": "sha512-P63Zd/JUGq+PdrM1lv0Wv5SBYeA2+CORvbrXbngriYY0jzLUWfQMQQxOhjONEz/wlHOAxOdY7CY65rgQdTjq2w==",
@@ -1025,8 +1030,7 @@
     "dependencies": [
       "jsr:@std/assert@1",
       "npm:@sentry/node@^8.36.0",
-      "npm:@trpc/client@^11.0.0-rc.608",
-      "npm:@trpc/server@^11.0.0-rc.608",
+      "npm:@ts-rest/express@^3.51.0",
       "npm:bcryptjs@^2.4.3",
       "npm:date-fns@^4.1.0",
       "npm:dotenv@^16.4.5",

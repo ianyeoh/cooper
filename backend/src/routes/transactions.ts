@@ -19,14 +19,10 @@ export const transactionsRouter = t.router({
             })
         )
         .query(async () => {
-            const totalRecords = await BudgetTransaction.countDocuments(
-                {}
-            ).exec();
             const records = await BudgetTransaction.find().exec();
 
             return {
                 records,
-                totalRecords,
             };
         }),
 });

@@ -3,15 +3,15 @@ import "./instrument.ts";
 import * as Sentry from "@sentry/node";
 
 // All other imports
-import * as trpcExpress from "@trpc/server/adapters/express";
 import express, { Request, Response, NextFunction } from "express";
+import { createExpressEndpoints, initServer } from "@ts-rest/express";
 import { config } from "dotenv";
 import mongoose from "mongoose";
 import process from "node:process";
-import { createContext, t } from "./trpc.ts";
+import { contract } from "../../ts-rest/contract.ts";
 import authRouter from "./routes/auth.ts";
-import utilsRouter from "./routes/utils.ts";
 import usersRouter from "./routes/users.ts";
+import transactionsRouter from "./routes/transactions.ts";
 
 // Get configuration variables from environment
 config(); // Load variables from .env file into process.env
@@ -24,21 +24,16 @@ const mongoDB = process.env.MONGO_DB;
  * Express initialisation
  */
 const app = express();
-const appRouter = t.router({
-    auth: authRouter,
-    utils: utilsRouter,
-    user: usersRouter,
-});
 
 // Express middleware and route handlers
 app.use(express.json());
-app.use(
-    "/api",
-    trpcExpress.createExpressMiddleware({
-        router: appRouter,
-        createContext,
-    })
-); // tRPC route handler
+
+// Initialise and mount ts-rest router
+const s = initServer();
+const router = s.router(contract, {});
+createExpressEndpoints(contract, router, app, {
+    responseValidation: true,
+});
 
 // The Sentry error handler must be registered before any other error middleware but after all routers
 Sentry.setupExpressErrorHandler(app);
@@ -97,7 +92,3 @@ mongoose
     .catch((err: Error) => {
         console.log(`[server]: Failed to connect to MongoDB: ${err}`);
     });
-
-
-// Export only the type of our app router for tRPC on the client
-export type AppRouter = typeof appRouter;
