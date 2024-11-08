@@ -1,0 +1,20 @@
+{
+    "name": "cooper",
+    "version": "1.0.0",
+    "description": "A home management system written in TypeScript",
+    "private": true,
+    "scripts": {
+        "build": "tsc --build --verbose"
+    },
+    "workspaces": [
+        "packages/*"
+    ],
+    "dependencies": {
+        "@cooper/ts-rest": "^1.0.0",
+        "typescript": "^5.6.3"
+    },
+    "devDependencies": {
+        "@types/node": "^22.9.0",
+        "ts-node": "^10.9.2"
+    }
+}
