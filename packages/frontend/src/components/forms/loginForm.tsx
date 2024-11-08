@@ -13,8 +13,14 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { loginSchema, LoginType } from "@/lib/schemas/post/auth";
 import { Spinner } from "@/components/ui/spinner";
+import { z } from "zod";
+
+const loginSchema = z.object({
+    username: z.string().min(2),
+    password: z.string().min(2),
+});
+type LoginType = z.infer<typeof loginSchema>;
 
 export function LoginForm({
     onSubmit,

@@ -1,10 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import axios from "@/lib/axios";
 import { toast } from "sonner";
 import { LoginForm } from "@/components/forms/loginForm";
-import { AxiosError } from "axios";
 import { WalletMinimal } from "lucide-react";
 import ThemeBtn from "@/components/themeBtn";
 import { GeistSans } from "geist/font/sans";
@@ -13,34 +11,25 @@ import { tsr } from "@/lib/tsr.ts";
 
 export default function LoginPage() {
     const router = useRouter();
+    const { mutate } = tsr.auth.login.useMutation();
 
-    
-    // async function handleLogin({
-    //     username,
-    //     password,
-    // }: LoginType) {
-    //     try {
-    //         const response = await axios.post("/api/auth/login", {
-    //             username,
-    //             password,
-    //         });
-
-    //         if (response.status === 200) {
-    //             router.push("/dashboard");
-    //         } else {
-    //             throw new Error("Invalid username or password.");
-    //         }
-    //     } catch (error) {
-    //         let errMsg;
-    //         if (error instanceof AxiosError) {
-    //             errMsg = error.response?.data.error;
-    //         }
-
-    //         toast.error(
-    //             `Failed to log in: ${errMsg ?? "Please try again later."}`
-    //         );
-    //     }
-    // };
+    async function handleLogin(body: { username: string; password: string }) {
+        return new Promise<void>((resolve, reject) => {
+            mutate(
+                { body },
+                {
+                    onSuccess: async () => {
+                        router.push("/dashboard");
+                        resolve();
+                    },
+                    onError: async (error) => {
+                        toast.error(`Failed to log you in: ${error}`);
+                        reject(error);
+                    },
+                }
+            );
+        });
+    }
 
     return (
         <div className={cn("flex h-[100vh] w-[100vw]", GeistSans.className)}>
@@ -75,7 +64,7 @@ export default function LoginPage() {
                             Enter your username and password
                         </p>
                     </div>
-                    {/* <LoginForm onSubmit={handleLogin} /> */}
+                    <LoginForm onSubmit={handleLogin} />
                 </div>
             </div>
         </div>

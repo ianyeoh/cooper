@@ -108,3 +108,17 @@ export const signup: AppRouteImplementation<typeof contract.auth.signup> =
             },
         };
     };
+
+const sessionHandler: AppRouteImplementation<typeof contract.auth.session> =
+    async function () {
+        return {
+            status: 200,
+            body: {
+                message: "Valid session",
+            },
+        };
+    };
+export const session = {
+    middleware: [authed],
+    handler: sessionHandler,
+};

@@ -1,30 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
-import axios from "@/lib/axios";
-import { SessionType } from "@/lib/schemas/post/auth";
+import { fetch } from "./lib/tsr";
 
-async function authenticated(request: NextRequest) {
-    const cookies = request.cookies;
-    const sessionId = cookies.get("id");
-    if (!sessionId) {
-        return false;
-    }
-
-    try {
-        const result = await axios.post(
-            `${request.nextUrl.origin}/api/auth/session`,
-            {
-                sessionId: sessionId.value,
-            } as SessionType
-        );
-
-        if (result.status !== 200) {
-            throw new Error("Session not found.");
-        }
-    } catch {
-        return false;
-    }
-
-    return true;
+async function authenticated() {
+    const response = await fetch.auth.session();
+    return response.status === 200;
 }
 
 // Protect authenticated routes, and automatically
@@ -34,7 +13,7 @@ export async function middleware(request: NextRequest) {
     const isRootUrl = url === "/";
     const protectedPrefixes = ["/dashboard"]; // paths that require user to be logged in
     const unauthenticatedPrefixes = ["/login", "/signup"]; // paths that require user to be logged out
-    const isAuthenticated = await authenticated(request);
+    const isAuthenticated = await authenticated();
 
     if (isAuthenticated) {
         if (

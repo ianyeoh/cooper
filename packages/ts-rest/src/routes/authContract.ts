@@ -55,6 +55,18 @@ const authContract = c.router(
             },
             summary: "Sign up as new user",
         },
+        session: {
+            method: "GET",
+            path: "/session",
+            responses: {
+                200: z.object({
+                    message: z.literal("Valid session"),
+                }),
+                401: z.object({
+                    error: z.literal("Unauthorised"),
+                }),
+            },
+        },
     },
     {
         pathPrefix: "/auth",

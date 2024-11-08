@@ -12,7 +12,7 @@ import { generateOpenApi } from "@ts-rest/open-api";
 import { contract } from "@cooper/ts-rest/src/contract";
 import { serve, setup } from "swagger-ui-express";
 import cookieParser from "cookie-parser";
-import { login, logout, signup } from "./routes/auth";
+import { login, logout, signup, session } from "./routes/auth";
 import { getUserProfile } from "./routes/users";
 import { getTransactions } from "./routes/transactions";
 import { status } from "./routes/status";
@@ -41,6 +41,7 @@ const router = s.router(contract, {
         login,
         logout,
         signup,
+        session,
     },
     transactions: {
         getTransactions,
