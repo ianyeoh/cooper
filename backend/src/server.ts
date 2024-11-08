@@ -55,13 +55,18 @@ createExpressEndpoints(contract, router, app, {
 
 // Auto-generated Swagger API docs
 const openapi = generateOpenApi(contract, {
-    info: { title: "Play API", version: "0.1" },
+    info: { title: "API Documentation", version: "1.0.0" },
 });
 
 const apiDocs = express.Router();
 apiDocs.use(serve);
-apiDocs.get("/", setup(openapi));
+apiDocs.get("/", setup(openapi, {
+  customCssUrl: '/static/theme-flattop.css'
+}));
 app.use("/docs", apiDocs);
+
+// Serve static files from /public directory
+app.use(express.static('public'))
 
 // The Sentry error handler must be registered before any other error middleware but after all routers
 Sentry.setupExpressErrorHandler(app);

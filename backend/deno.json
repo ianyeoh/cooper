@@ -16,5 +16,8 @@
         "mongoose": "npm:mongoose@^8.8.0",
         "swagger-ui-express": "npm:swagger-ui-express@^5.0.1",
         "zod": "npm:zod@^3.23.8"
+    },
+    "compilerOptions": {
+        "strict": true
     }
 }
