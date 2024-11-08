@@ -24,6 +24,7 @@ export default function LoginPage() {
                     },
                     onError: async (error) => {
                         toast.error(`Failed to log you in: ${error}`);
+                        console.log(error);
                         reject(error);
                     },
                 }

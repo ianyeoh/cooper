@@ -11,7 +11,8 @@
         "forceConsistentCasingInFileNames": true,
         "rootDir": "./src",
         "outDir": "./build",
-        "composite": true
+        "composite": true,
+        "resolveJsonModule": true
     },
     "files": ["src/custom.d.ts"],
     "include": ["src/**/*"]

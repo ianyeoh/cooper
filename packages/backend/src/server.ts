@@ -4,6 +4,8 @@ import * as Sentry from "@sentry/node";
 
 // All other imports
 import express from "express";
+import cors from "cors";
+import morgan from "morgan";
 import { config } from "dotenv";
 import mongoose from "mongoose";
 import process from "node:process";
@@ -16,11 +18,12 @@ import { login, logout, signup, session } from "./routes/auth";
 import { getUserProfile } from "./routes/users";
 import { getTransactions } from "./routes/transactions";
 import { status } from "./routes/status";
+import serverConfig from "../serverConfig.json";
 
 // Get configuration variables from environment
 config(); // Load variables from .env file into process.env
-const env = process.env.ENV === "development" ? process.env.ENV : "production";
-const port = process.env.PORT || 3000;
+const hostname = serverConfig.hostname;
+const port = serverConfig.port;
 const mongoURL = process.env.MONGO_URL;
 const mongoDB = process.env.MONGO_DB;
 
@@ -30,6 +33,13 @@ const mongoDB = process.env.MONGO_DB;
 const app = express();
 
 // Express middleware and route handlers
+app.use(
+    cors({
+        origin: true,
+        credentials: true,
+    })
+);
+app.use(morgan("tiny"));
 app.use(cookieParser());
 app.use(express.json());
 
@@ -78,7 +88,6 @@ Sentry.setupExpressErrorHandler(app);
 /**
  * Server startup sequence
  */
-console.log(`[server]: Running in ${env} mode`);
 
 // Check if MongoDB connection string is set
 if (mongoURL == null) {
@@ -107,10 +116,8 @@ mongoose
         );
 
         // Start server
-        app.listen(port, () => {
-            console.log(
-                `[server]: Server is running at http://localhost:${port}`
-            );
+        app.listen(port, hostname, () => {
+            console.log(`[server]: Server is running at ${hostname}:${port}`);
         });
     })
     .catch((err: Error) => {

@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { fetch } from "./lib/tsr";
 
-async function authenticated() {
+async function authenticated(request: NextRequest) {
     const response = await fetch.auth.session();
     return response.status === 200;
 }
@@ -13,7 +13,7 @@ export async function middleware(request: NextRequest) {
     const isRootUrl = url === "/";
     const protectedPrefixes = ["/dashboard"]; // paths that require user to be logged in
     const unauthenticatedPrefixes = ["/login", "/signup"]; // paths that require user to be logged out
-    const isAuthenticated = await authenticated();
+    const isAuthenticated = await authenticated(request);
 
     if (isAuthenticated) {
         if (

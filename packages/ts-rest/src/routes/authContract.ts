@@ -56,8 +56,11 @@ const authContract = c.router(
             summary: "Sign up as new user",
         },
         session: {
-            method: "GET",
+            method: "POST",
             path: "/session",
+            body: z.object({
+                sessionId: z.string().min(1),
+            }),
             responses: {
                 200: z.object({
                     message: z.literal("Valid session"),
@@ -66,6 +69,7 @@ const authContract = c.router(
                     error: z.literal("Unauthorised"),
                 }),
             },
+            summary: "Check if valid session",
         },
     },
     {
