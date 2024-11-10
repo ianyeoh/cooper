@@ -1,5 +1,5 @@
 import { withSentryConfig } from "@sentry/nextjs";
-import config from "../backend/serverConfig.json";
+import config from "../backend/serverConfig.json" assert { type: "json" };
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -7,7 +7,7 @@ const nextConfig = {
         return [
             {
                 source: "/api/:path*",
-                destination: `${config.hostname}:${config.port}`,
+                destination: `http://${config.hostname}:${config.port}/api/:path*`,
             },
         ];
     },

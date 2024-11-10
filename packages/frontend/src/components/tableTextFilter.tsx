@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Table } from "@tanstack/react-table";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { cn } from "@/lib/utils";
 
 interface DataTableTextFilterProps<TData> {
     table: Table<TData>;
@@ -25,7 +26,7 @@ export default function DataTableTextFilter<TData>({
                     .getColumn(filteredColumn)
                     ?.setFilterValue(event.target.value)
             }
-            className="w-[100px] flex-0 sm:flex-1"
+            className={cn(isDesktop ? "w-[300px]" : "w-[80px]")}
         />
     );
 }

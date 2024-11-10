@@ -3,6 +3,7 @@ import { z } from "zod";
 import authContract from "./routes/authContract";
 import transactionsContract from "./routes/transactionsContract";
 import usersContract from "./routes/usersContract";
+import accountsContract from "./routes/accountsContract";
 
 const c = initContract();
 
@@ -24,6 +25,7 @@ export const contract = c.router(
         },
         auth: authContract,
         transactions: transactionsContract,
+        accounts: accountsContract,
         users: usersContract,
     },
     {

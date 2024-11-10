@@ -1,15 +1,7 @@
 import { Dispatch, useState } from "react";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+
 import { CreditCard } from "lucide-react";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +17,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 export default function DataTableAccountsFilter({
     accounts,
@@ -35,6 +28,7 @@ export default function DataTableAccountsFilter({
     selectedAccount: string | undefined;
     onAccountChange: Dispatch<string | undefined>;
 }) {
+    const isDesktop = useMediaQuery("(min-width: 768px)");
     const [open, setOpen] = useState<boolean>(false);
 
     return (
@@ -45,18 +39,19 @@ export default function DataTableAccountsFilter({
                     role="combobox"
                     aria-expanded={open}
                     className={cn(
-                        "justify-between gap-2",
+                        "justify-between gap-2 px-3",
                         !selectedAccount && "text-muted-foreground"
                     )}
                 >
                     <CreditCard size={15} />
 
-                    {selectedAccount
-                        ? accounts.find((item) => item === selectedAccount)
-                        : "Account"}
+                    {isDesktop &&
+                        (selectedAccount
+                            ? accounts.find((item) => item === selectedAccount)
+                            : "Account")}
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
+            <PopoverContent className="w-[180px] p-0">
                 <Command>
                     <CommandInput placeholder="Search account..." />
                     <CommandList>

@@ -1,37 +1,14 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { LoginForm } from "@/components/forms/loginForm";
+import { ReactNode } from "react";
 import { WalletMinimal } from "lucide-react";
 import ThemeBtn from "@/components/themeBtn";
 import { GeistSans } from "geist/font/sans";
 import { cn } from "@/lib/utils.ts";
-import { tsr } from "@/lib/tsr.ts";
 
-export default function LoginPage() {
-    const router = useRouter();
-    const { mutate } = tsr.auth.login.useMutation();
-
-    async function handleLogin(body: { username: string; password: string }) {
-        return new Promise<void>((resolve, reject) => {
-            mutate(
-                { body },
-                {
-                    onSuccess: async () => {
-                        router.push("/dashboard");
-                        resolve();
-                    },
-                    onError: async (error) => {
-                        toast.error(`Failed to log you in: ${error}`);
-                        console.log(error);
-                        reject(error);
-                    },
-                }
-            );
-        });
-    }
-
+export default function AuthenticationLayout({
+    children,
+}: {
+    children: ReactNode;
+}) {
     return (
         <div className={cn("flex h-[100vh] w-[100vw]", GeistSans.className)}>
             <div className="bg-zinc-900 h-[100%] w-[50%] flex-col p-8 text-white dark:border-r space-y-2 hidden sm:flex">
@@ -65,7 +42,7 @@ export default function LoginPage() {
                             Enter your username and password
                         </p>
                     </div>
-                    <LoginForm onSubmit={handleLogin} />
+                    {children}
                 </div>
             </div>
         </div>

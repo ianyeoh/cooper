@@ -13,22 +13,26 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { z } from "zod";
 import { contract } from "@cooper/ts-rest/src/contract";
+import { z } from "zod";
 
-const loginSchema = contract.auth.login.body;
-type LoginType = z.infer<typeof loginSchema>;
+const transactionSchema = contract.transactions.newTransaction.body;
+type TransactionType = z.infer<typeof transactionSchema>;
 
-export function LoginForm({
+export default function TransactionForm({
     onSubmit,
 }: {
-    onSubmit: (values: LoginType) => void;
+    onSubmit: (values: TransactionType) => void;
 }) {
-    const form = useForm<LoginType>({
-        resolver: zodResolver(loginSchema),
+    const form = useForm<TransactionType>({
+        resolver: zodResolver(transactionSchema),
         defaultValues: {
-            username: "",
-            password: "",
+            description: "",
+            date: new Date(),
+            amount: 0,
+            accountId: "",
+            categoryId: "",
+            comments: "",
         },
     });
 
@@ -38,7 +42,7 @@ export function LoginForm({
                 <div className="space-y-3 w-[100%]">
                     <FormField
                         control={form.control}
-                        name="username"
+                        name="description"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Username</FormLabel>
@@ -52,7 +56,7 @@ export function LoginForm({
 
                     <FormField
                         control={form.control}
-                        name="password"
+                        name="comments"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Password</FormLabel>

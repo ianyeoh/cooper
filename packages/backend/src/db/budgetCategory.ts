@@ -1,16 +1,16 @@
-import mongoose from "mongoose";
-const { Schema } = mongoose;
+import mongoose, { Schema, InferSchemaType } from "mongoose";
 
-interface IBudgetCategory {
-    name: string;
-}
-
-const budgetCategorySchema = new Schema<IBudgetCategory>({
-    name: String,
+const budgetCategorySchema = new Schema({
+    name: {
+        type: String,
+        required: true,
+        unique: true,
+    },
 });
 
+export type BudgetCategoryType = InferSchemaType<typeof budgetCategorySchema>;
 const BudgetCategory =
-    (mongoose.models.BudgetCategory as mongoose.Model<IBudgetCategory>) ||
-    mongoose.model<IBudgetCategory>("BudgetCategory", budgetCategorySchema);
+    (mongoose.models.BudgetCategory as mongoose.Model<BudgetCategoryType>) ||
+    mongoose.model<BudgetCategoryType>("BudgetCategory", budgetCategorySchema);
 
 export default BudgetCategory;

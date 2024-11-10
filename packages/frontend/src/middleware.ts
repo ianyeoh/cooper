@@ -1,13 +1,27 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { fetch } from "./lib/tsr";
+import { fetch } from "./lib/ts-rest-server";
 
+/**
+ * Returns true the session is authenticated - sessions are tracked
+ * based on a http cookie with key "id" which are set/deleted by the
+ * backend server.
+ */
 async function authenticated(request: NextRequest) {
-    const response = await fetch.auth.session();
+    const sessionId = request.cookies.get("id");
+
+    if (!sessionId) return false;
+
+    const response = await fetch.auth.session({});
+
     return response.status === 200;
 }
 
-// Protect authenticated routes, and automatically
-// redirect to the dashboard if already logged in
+/**
+ * Middleware for every request to the Next.js server (excluding requests to /api/*)
+ *
+ * Ensures that protected routes (/dashboard/*) cannot be accessed unless authenticated,
+ * by automatically redirecting to the /login page.
+ */
 export async function middleware(request: NextRequest) {
     const url = request.nextUrl.pathname;
     const isRootUrl = url === "/";
@@ -42,14 +56,13 @@ export const config = {
     matcher: [
         /*
          * Match all request paths except for the ones starting with:
-         * - api/auth
-         * - api/ping
+         * - api/
          * - _next/static (static files)
          * - _next/image (image optimization files)
          * - favicon.ico, sitemap.xml, robots.txt (metadata files)
          */
         {
-            source: "/((?!api/auth|api/ping|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+            source: "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
             missing: [
                 { type: "header", key: "next-router-prefetch" },
                 { type: "header", key: "purpose", value: "prefetch" },
@@ -57,7 +70,7 @@ export const config = {
         },
 
         {
-            source: "/((?!api/auth|api/ping|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+            source: "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
             has: [
                 { type: "header", key: "next-router-prefetch" },
                 { type: "header", key: "purpose", value: "prefetch" },
@@ -65,7 +78,7 @@ export const config = {
         },
 
         {
-            source: "/((?!api/auth|api/ping|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+            source: "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
             has: [{ type: "header", key: "x-present" }],
             missing: [{ type: "header", key: "x-missing", value: "prefetch" }],
         },

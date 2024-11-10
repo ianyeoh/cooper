@@ -2,10 +2,20 @@ import { useState } from "react";
 import { ResponsiveDialog } from "@/components/responsiveDialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import NewTransactionForm from "@/components/forms/newTransactionForm";
+import TransactionForm from "@/components/forms/transactionForm";
+import { contract } from "@cooper/ts-rest/src/contract";
+import { ClientInferRequest } from "@ts-rest/core";
 
 export default function NewTransactionButton() {
     const [open, setOpen] = useState<boolean>(false);
+
+    function handleNewTransaction(
+        body: ClientInferRequest<
+            typeof contract.transactions.newTransaction
+        >["body"]
+    ) {
+        console.log(body);
+    }
 
     return (
         <>
@@ -25,7 +35,7 @@ export default function NewTransactionButton() {
                 title="Create new transaction"
                 description="Manually enter a new transaction"
             >
-                <NewTransactionForm />
+                <TransactionForm onSubmit={handleNewTransaction} />
             </ResponsiveDialog>
         </>
     );

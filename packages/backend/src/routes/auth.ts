@@ -1,14 +1,15 @@
 import { AppRouteImplementation } from "@ts-rest/express";
 import { compareSaltedHash, saltedHash } from "../lib/hashing";
 import { addMinutes } from "date-fns";
-import User from "../db/users";
-import Session from "../db/sessions";
+import Session from "../db/session";
 import { contract } from "@cooper/ts-rest/src/contract";
 import { authed } from "../middleware/authed";
+import Authentication from "../db/authentication";
+import User from "../db/user";
 
 export const login: AppRouteImplementation<typeof contract.auth.login> =
     async function ({ body, req, res }) {
-        const existingUser = await User.findOne({
+        const existingUser = await Authentication.findOne({
             username: body.username,
         }).exec();
 
@@ -16,7 +17,7 @@ export const login: AppRouteImplementation<typeof contract.auth.login> =
             return {
                 status: 401,
                 body: {
-                    error: "Login unauthorised",
+                    error: "Invalid username or password",
                 },
             };
         }
@@ -30,7 +31,7 @@ export const login: AppRouteImplementation<typeof contract.auth.login> =
             return {
                 status: 401,
                 body: {
-                    error: "Login unauthorised",
+                    error: "Invalid username or password",
                 },
             };
         }
@@ -39,13 +40,12 @@ export const login: AppRouteImplementation<typeof contract.auth.login> =
         const userAgent = req.get("user-agent");
 
         const session = new Session({
-            username: body.username,
+            user: existingUser.user,
             ip,
             userAgent,
             started: new Date(),
             expires: addMinutes(new Date(), 30),
         });
-
         await session.save();
 
         res.cookie("id", session.id, {
@@ -83,7 +83,7 @@ export const logout = {
 
 export const signup: AppRouteImplementation<typeof contract.auth.signup> =
     async function ({ body }) {
-        const existingUser = await User.findOne({
+        const existingUser = await Authentication.findOne({
             username: body.username,
         }).exec();
 
@@ -96,8 +96,16 @@ export const signup: AppRouteImplementation<typeof contract.auth.signup> =
             };
         }
 
-        await User.create({
+        const newUser = await User.create({
             username: body.username,
+            firstName: body.firstName,
+            lastName: body.lastName,
+            roles: [], // assign default roles here
+        });
+
+        await Authentication.create({
+            username: body.username,
+            user: newUser._id,
             password: saltedHash(body.password),
         });
 

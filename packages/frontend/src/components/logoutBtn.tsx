@@ -2,46 +2,47 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import axios from "@/lib/axios";
-import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
 import { DropdownMenuItem } from "@/components/ui/dropdownMenu";
+import { tsr } from "@/lib/ts-rest-client";
 
 export default function LogoutButton(props: {
     as: "button" | "dropdownMenuItem";
     className?: string;
 }) {
     const router = useRouter();
-    const [loading, setLoading] = useState(false);
+    const { mutate, isPending } = tsr.auth.logout.useMutation({
+        onSuccess: () => {
+            router.push("/login");
+        },
+        onError: (error) => {
+            console.log(error);
+            toast.error("Failed to log you out. Please try again later.");
+        },
+    });
+
     const { as, ...rest } = props;
 
     async function handleLogout() {
-        try {
-            setLoading(true);
-            await axios.get("/api/auth/logout");
-            router.push("/login");
-        } catch {
-            toast.error("Failed to log you out. Please try again later.");
-            setLoading(false);
-        }
+        mutate({ body: null });
     }
 
     switch (as) {
         case "button":
             return (
-                <Button onClick={handleLogout} disabled={loading} {...rest}>
-                    {loading ? <Spinner size="small" /> : "Log out"}
+                <Button onClick={handleLogout} disabled={isPending} {...rest}>
+                    {isPending ? <Spinner size="small" /> : "Log out"}
                 </Button>
             );
         case "dropdownMenuItem":
             return (
                 <DropdownMenuItem
                     onClick={handleLogout}
-                    disabled={loading}
+                    disabled={isPending}
                     {...rest}
                 >
-                    {loading ? <Spinner size="small" /> : "Log out"}
+                    {isPending ? <Spinner size="small" /> : "Log out"}
                 </DropdownMenuItem>
             );
     }

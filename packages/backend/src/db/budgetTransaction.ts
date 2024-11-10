@@ -1,32 +1,52 @@
-import mongoose from "mongoose";
-const { Schema } = mongoose;
+import mongoose, { Schema, InferSchemaType } from "mongoose";
 
-export interface IBudgetTransaction {
-    account: string;
-    date: Date;
-    description: string;
-    category: string;
-    amount: number; // in cents!
-    comments?: string;
-}
-
-const budgetTransactionSchema = new Schema<IBudgetTransaction>(
+const budgetTransactionSchema = new Schema(
     {
-        account: String,
-        date: Date,
-        description: String,
-        category: String,
-        amount: Number,
-        comments: String,
+        account: {
+            type: Schema.Types.ObjectId,
+            ref: "BudgetAccount",
+            required: true,
+        },
+        date: {
+            type: Date,
+            required: true,
+        },
+        description: {
+            type: String,
+            required: true,
+        },
+        category: {
+            type: Schema.Types.ObjectId,
+            ref: "BudgetCategory",
+            required: true,
+        },
+        amount: {
+            // Stored as cents
+            type: Number,
+            required: true,
+        },
+        comments: {
+            // User added comments, not required
+            type: String,
+            required: false,
+        },
+        createdBy: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            required: false, // if missing = system-generated
+        },
     },
     { timestamps: true }
 );
 
+export type BudgetTransactionType = InferSchemaType<
+    typeof budgetTransactionSchema
+>;
 const BudgetTransaction =
-    (mongoose.models.BudgetTransaction as mongoose.Model<IBudgetTransaction>) ||
-    mongoose.model<IBudgetTransaction>(
+    (mongoose.models
+        .BudgetTransaction as mongoose.Model<BudgetTransactionType>) ||
+    mongoose.model<BudgetTransactionType>(
         "BudgetTransaction",
         budgetTransactionSchema
     );
-
 export default BudgetTransaction;

@@ -17,6 +17,8 @@ import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 type SelectionType = "1D" | "7D" | "14D" | "30D" | "90D" | "custom" | undefined;
 
@@ -58,13 +60,15 @@ export default function TableDateRangeFilter({
     onDateRangeChange: Dispatch<DateRange | undefined>;
     prompt?: string;
 } & HTMLAttributes<HTMLDivElement>) {
+    const isDesktop = useMediaQuery("(min-width: 768px)");
+
     const [open, setOpen] = useState<boolean>(false);
     const [openCustomRange, setOpenCustomRange] = useState<boolean>(false);
     const [customRange, setCustomRange] = useState<DateRange | undefined>();
     const [selectionType, setSelectionType] = useState<SelectionType>();
 
     function toggleSelected(selection: SelectionType) {
-        setOpen(false);
+        closeFilter();
 
         if (selection === selectionType) {
             setSelectionType(undefined);
@@ -98,13 +102,23 @@ export default function TableDateRangeFilter({
         });
     }
 
+    function closeFilter() {
+        setOpen(false);
+        setTimeout(() => {
+            setOpenCustomRange(false);
+        }, 100);
+    }
+
     return (
         <div className={cn("grid gap-2", className)}>
             <Popover
                 open={open}
-                onOpenChange={(change) => {
-                    setOpenCustomRange(false);
-                    setOpen(change);
+                onOpenChange={(isOpen) => {
+                    if (isOpen) {
+                        setOpen(true);
+                    } else {
+                        closeFilter();
+                    }
                 }}
             >
                 <PopoverTrigger asChild>
@@ -136,7 +150,13 @@ export default function TableDateRangeFilter({
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
-                    {!openCustomRange && (
+                    <div
+                        className={cn(
+                            !openCustomRange
+                                ? "block animate-in fade-out-0 zoom-out-95"
+                                : "hidden"
+                        )}
+                    >
                         <div className="flex flex-col gap-1 p-2 w-[200px]">
                             <span className="text-sm font-semibold">
                                 Filter time range
@@ -186,53 +206,57 @@ export default function TableDateRangeFilter({
                                 <MoveRight size={13} className="ml-auto" />
                             </Button>
                         </div>
-                    )}
+                    </div>
 
-                    {openCustomRange && (
-                        <div>
-                            <Calendar
-                                initialFocus
-                                mode="range"
-                                defaultMonth={dateRange?.from}
-                                selected={customRange}
-                                onSelect={setCustomRange}
-                                numberOfMonths={2}
-                            />
-                            <div className="flex gap-2 p-2">
-                                <Button
-                                    variant="ghost"
-                                    className="ml-auto text-sm gap-2"
-                                    onClick={() => {
-                                        setOpenCustomRange(false);
-                                    }}
-                                >
-                                    <MoveLeft size={10} />
-                                    Back
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    className="text-sm"
-                                    onClick={() => {
-                                        if (customRange == null) {
-                                            setSelectionType(undefined);
-                                            onDateRangeChange(undefined);
-                                        } else {
-                                            if (customRange.to == null) {
-                                                customRange.to =
-                                                    customRange.from;
-                                            }
-                                            setSelectionType("custom");
-                                            onDateRangeChange(customRange);
+                    <ScrollArea
+                        className={cn(
+                            openCustomRange
+                                ? "block animate-in fade-in-0 zoom-in-95"
+                                : "hidden",
+                            "h-[300px]"
+                        )}
+                    >
+                        <Calendar
+                            initialFocus
+                            mode="range"
+                            defaultMonth={dateRange?.from}
+                            selected={customRange}
+                            onSelect={setCustomRange}
+                            numberOfMonths={2}
+                        />
+                        <div className="flex gap-2 p-2">
+                            <Button
+                                variant="ghost"
+                                className="ml-auto text-sm gap-2"
+                                onClick={() => {
+                                    setOpenCustomRange(false);
+                                }}
+                            >
+                                <MoveLeft size={10} />
+                                Back
+                            </Button>
+                            <Button
+                                variant="outline"
+                                className="text-sm"
+                                onClick={() => {
+                                    if (customRange == null) {
+                                        setSelectionType(undefined);
+                                        onDateRangeChange(undefined);
+                                    } else {
+                                        if (customRange.to == null) {
+                                            customRange.to = customRange.from;
                                         }
-                                        setOpenCustomRange(false);
-                                        setOpen(false);
-                                    }}
-                                >
-                                    Apply
-                                </Button>
-                            </div>
+                                        setSelectionType("custom");
+                                        onDateRangeChange(customRange);
+                                    }
+
+                                    closeFilter();
+                                }}
+                            >
+                                Apply
+                            </Button>
                         </div>
-                    )}
+                    </ScrollArea>
                 </PopoverContent>
             </Popover>
         </div>

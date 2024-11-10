@@ -1,7 +1,5 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -14,30 +12,25 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ChartColumn } from "lucide-react";
 import LogoutButton from "@/components/logoutBtn";
 import ThemeBtn from "@/components/themeBtn";
-import { UserProfileType } from "@/lib/schemas/get/user";
-import Session from "../../../../schemas/db/sessions";
 import SearchBar from "@/components/searchBar";
 import MobileNavBar from "@/components/mobileNavBar";
+import { fetch } from "@/lib/ts-rest-server";
+import { redirect } from "next/navigation";
+import { initials } from "@/lib/utils";
 
 export const metadata: Metadata = {
     title: "budgeting - Dashboard",
     description: "Custom expense tracking solution",
 };
 
-async function getUserProfile(): Promise<UserProfileType> {
-    const cookieStore = cookies();
+async function getUserProfile() {
+    const response = await fetch.users.getUserProfile();
 
-    const sessionId = cookieStore.get("id");
-    if (!sessionId) {
+    if (response.status === 200) {
+        return response.body;
+    } else {
         redirect("/login");
     }
-
-    const session = await Session.findOne({ _id: sessionId.value });
-    if (!session) {
-        redirect("/login");
-    }
-
-    return session;
 }
 
 export default async function DashboardLayout({
@@ -80,15 +73,16 @@ export default async function DashboardLayout({
 
                     <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
                         <SearchBar />
-                        <nav className="flex items-center">
+                        <nav className="flex items-center gap-2">
                             <ThemeBtn variant="ghost" />
                             <DropdownMenu>
                                 <DropdownMenuTrigger className="rounded-full">
                                     <Avatar>
                                         {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
                                         <AvatarFallback>
-                                            {userProfile.username}
-                                            {/* {initials(userProfile.username)} */}
+                                            {initials(
+                                                `${userProfile.firstName} ${userProfile.lastName}`
+                                            )}
                                         </AvatarFallback>
                                     </Avatar>
                                 </DropdownMenuTrigger>

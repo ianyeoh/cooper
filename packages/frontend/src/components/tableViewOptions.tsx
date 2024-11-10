@@ -11,6 +11,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
 } from "@/components/ui/dropdownMenu";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 interface DataTableViewOptionsProps<TData> {
     table: Table<TData>;
@@ -19,12 +20,14 @@ interface DataTableViewOptionsProps<TData> {
 export function DataTableViewOptions<TData>({
     table,
 }: DataTableViewOptionsProps<TData>) {
+    const isDesktop = useMediaQuery("(min-width: 768px)");
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                    <MixerHorizontalIcon className="mr-2 h-4 w-4" />
-                    View
+                <Button variant="outline" className="px-3 gap-2">
+                    <MixerHorizontalIcon className="h-4" />
+                    {isDesktop && "View"}
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[150px]">

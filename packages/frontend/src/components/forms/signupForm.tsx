@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -13,9 +12,18 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import AlignChildren from "@/components/alignChildren";
-import { signupSchema, SignupType } from "@/lib/schemas/post/auth";
 import { Spinner } from "@/components/ui/spinner";
+import { contract } from "@cooper/ts-rest/src/contract";
+import { z } from "zod";
+
+const signupSchema = contract.auth.signup.body
+    .extend({
+        confirmPassword: z.string().min(2),
+    })
+    .refine((value) => value.password === value.confirmPassword, {
+        message: "Confirm passwords must be matching",
+    });
+type SignupType = z.infer<typeof signupSchema>;
 
 export function SignupForm({
     onSubmit,
@@ -26,6 +34,8 @@ export function SignupForm({
         resolver: zodResolver(signupSchema),
         defaultValues: {
             username: "",
+            firstName: "",
+            lastName: "",
             password: "",
             confirmPassword: "",
         },
@@ -43,6 +53,37 @@ export function SignupForm({
                                 <FormLabel>Username</FormLabel>
                                 <FormControl>
                                     <Input placeholder="Username" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="firstName"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>First name</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="First name"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="lastName"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Last name</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Last name" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -85,21 +126,17 @@ export function SignupForm({
                         )}
                     />
 
-                    <AlignChildren alignment="right">
-                        <Button
-                            type="submit"
-                            disabled={form.formState.isSubmitting}
-                        >
-                            {form.formState.isSubmitting ? (
-                                <Spinner
-                                    size="small"
-                                    className="text-background"
-                                />
-                            ) : (
-                                "Submit"
-                            )}
-                        </Button>
-                    </AlignChildren>
+                    <Button
+                        type="submit"
+                        className="w-full"
+                        disabled={form.formState.isSubmitting}
+                    >
+                        {form.formState.isSubmitting ? (
+                            <Spinner size="small" />
+                        ) : (
+                            "Sign in"
+                        )}
+                    </Button>
                 </div>
             </form>
         </Form>

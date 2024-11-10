@@ -1,7 +1,7 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { tsr } from "@/lib/tsr";
+import { tsr } from "@/lib/ts-rest-client";
 import { ReactNode } from "react";
 
 export function TSRClientProvider({ children }: { children: ReactNode }) {

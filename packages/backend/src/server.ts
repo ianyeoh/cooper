@@ -15,15 +15,17 @@ import { contract } from "@cooper/ts-rest/src/contract";
 import { serve, setup } from "swagger-ui-express";
 import cookieParser from "cookie-parser";
 import { login, logout, signup, session } from "./routes/auth";
+import { getAccounts, newAccount } from "./routes/accounts";
 import { getUserProfile } from "./routes/users";
-import { getTransactions } from "./routes/transactions";
+import { getTransactions, newTransaction } from "./routes/transactions";
 import { status } from "./routes/status";
 import serverConfig from "../serverConfig.json";
 
 // Get configuration variables from environment
-config(); // Load variables from .env file into process.env
 const hostname = serverConfig.hostname;
 const port = serverConfig.port;
+
+config(); // Load variables from .env file into process.env
 const mongoURL = process.env.MONGO_URL;
 const mongoDB = process.env.MONGO_DB;
 
@@ -55,6 +57,11 @@ const router = s.router(contract, {
     },
     transactions: {
         getTransactions,
+        newTransaction,
+    },
+    accounts: {
+        getAccounts,
+        newAccount,
     },
     users: {
         getUserProfile,
@@ -112,12 +119,17 @@ mongoose
     })
     .then(() => {
         console.log(
-            `[server]: Connected to MongoDB successfully, starting server...`
+            `[server]: Connected to MongoDB successfully, starting server`
         );
 
         // Start server
         app.listen(port, hostname, () => {
-            console.log(`[server]: Server is running at ${hostname}:${port}`);
+            console.log(
+                `[server]: Server is running at http://${hostname}:${port}`
+            );
+            console.log(
+                `[server]: API documentation is available at http://${hostname}:${port}/docs`
+            );
         });
     })
     .catch((err: Error) => {

@@ -29,7 +29,6 @@
         "@ts-rest/core": "^3.51.0",
         "@ts-rest/react-query": "^3.51.0",
         "@vercel/functions": "^1.4.1",
-        "axios": "^1.7.7",
         "bcryptjs": "^2.4.3",
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.1",

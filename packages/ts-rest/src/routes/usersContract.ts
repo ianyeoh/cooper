@@ -11,6 +11,9 @@ const usersContract = c.router(
             responses: {
                 200: z.object({
                     username: z.string().min(1),
+                    firstName: z.string().min(1),
+                    lastName: z.string().min(1),
+                    roles: z.array(z.string().min(1)),
                 }),
                 401: z.object({
                     error: z.literal("Unauthorised"),

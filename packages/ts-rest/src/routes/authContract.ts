@@ -20,14 +20,15 @@ const authContract = c.router(
                     error: z.literal("Already logged in"),
                 }),
                 401: z.object({
-                    error: z.literal("Login unauthorised"),
+                    error: z.literal("Invalid username or password"),
                 }),
             },
             summary: "Log in with username and password",
         },
         logout: {
-            method: "GET",
+            method: "POST",
             path: "/logout",
+            body: z.null(),
             responses: {
                 200: z.object({
                     message: z.literal("Logged out successfully"),
@@ -42,6 +43,8 @@ const authContract = c.router(
             method: "POST",
             path: "/signup",
             body: z.object({
+                firstName: z.string().min(2),
+                lastName: z.string().min(2),
                 username: z.string().min(2),
                 password: z.string().min(2),
             }),
@@ -56,11 +59,8 @@ const authContract = c.router(
             summary: "Sign up as new user",
         },
         session: {
-            method: "POST",
+            method: "GET",
             path: "/session",
-            body: z.object({
-                sessionId: z.string().min(1),
-            }),
             responses: {
                 200: z.object({
                     message: z.literal("Valid session"),

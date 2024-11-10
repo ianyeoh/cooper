@@ -1,6 +1,12 @@
 import * as React from "react";
 
-export function useMediaQuery(query: string) {
+/**
+ * React hook as an escape hatch to execute media queries
+ *
+ * @param query Media query to evaluate (e.g. "(max-width: 1250px)")
+ * @returns {boolean}
+ */
+export function useMediaQuery(query: string): boolean {
     const [value, setValue] = React.useState(false);
 
     React.useEffect(() => {

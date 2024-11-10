@@ -18,7 +18,6 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdownMenu";
 import { Checkbox } from "@/components/ui/checkbox";
-import { IBudgetTransaction } from "../../../schemas/db/budgetTransaction";
 import { DataTablePagination } from "@/components/tablePagination";
 import { DataTableViewOptions } from "@/components/tableViewOptions";
 import NewTransactionButton from "@/components/newTransactionBtn";
@@ -29,17 +28,24 @@ import TableDateRangeFilter from "@/components/tableDateRangeFilter";
 import { MoreHorizontal } from "lucide-react";
 import { format } from "date-fns";
 import { DateRange } from "react-day-picker";
+import { ClientInferResponseBody } from "@ts-rest/core";
+import { contract } from "@cooper/ts-rest/src/contract";
 
 // import { DataTableColumnHeader } from "@/components/tableColumnHeader";
 
-// Use currencyAUD.format(number) to generate language-sensitive
+type TransactionType = ClientInferResponseBody<
+    typeof contract.transactions.getTransactions,
+    200
+>["records"][0];
+
+// Use currencyAUD.format(number) to format integers as AUD currency
 const currencyAUD = new Intl.NumberFormat("en-AU", {
     style: "currency",
     currency: "AUD",
     trailingZeroDisplay: "stripIfInteger",
 });
 
-const columns: ColumnDef<IBudgetTransaction>[] = [
+const columns: ColumnDef<TransactionType>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -101,11 +107,7 @@ const columns: ColumnDef<IBudgetTransaction>[] = [
     },
 ];
 
-function TransactionActions({
-    transaction,
-}: {
-    transaction: IBudgetTransaction;
-}) {
+function TransactionActions({ transaction }: { transaction: TransactionType }) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -132,28 +134,29 @@ function TransactionActions({
 }
 
 export default function TransactionsTable({
-    initialData,
-    initialDateRange,
-    initialAccount,
-    serverHostname,
+    initialTransactions,
+    initialDateFilter,
+    initialAccountFilter,
 }: {
-    initialData: IBudgetTransaction[];
-    initialDateRange: DateRange | undefined;
-    initialAccount: string | undefined;
-    serverHostname: string;
+    initialTransactions: TransactionType[];
+    initialDateFilter: DateRange | undefined;
+    initialAccountFilter: string | undefined;
 }) {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const [data, setData] = useState<IBudgetTransaction[]>(initialData);
+    const [transactions, setTransactions] =
+        useState<TransactionType[]>(initialTransactions);
 
     /* Table data filters */
     const [dateRange, setDateRange] = useState<DateRange | undefined>(
-        initialDateRange
+        initialDateFilter
     );
-    const [account, setAccount] = useState<string | undefined>(initialAccount);
+    const [account, setAccount] = useState<string | undefined>(
+        initialAccountFilter
+    );
 
     const table = useReactTable({
-        data,
+        data: transactions,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
@@ -195,16 +198,17 @@ export default function TransactionsTable({
                     table={table}
                     filteredColumn="description"
                 />
-                <TableDateRangeFilter
-                    date={dateRange}
-                    onDateRangeChange={setDateRange}
-                />
+                <DataTableViewOptions table={table} />
+
                 <DataTableAccountsFilter
                     accounts={["CBA", "NZ"]}
                     selectedAccount={account}
                     onAccountChange={setAccount}
                 />
-                <DataTableViewOptions table={table} />
+                <TableDateRangeFilter
+                    date={dateRange}
+                    onDateRangeChange={setDateRange}
+                />
                 <div className="ml-auto">
                     <NewTransactionButton />
                 </div>
