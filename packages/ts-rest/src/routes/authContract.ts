@@ -28,7 +28,7 @@ const authContract = c.router(
         logout: {
             method: "POST",
             path: "/logout",
-            body: z.null(),
+            body: z.object({}),
             responses: {
                 200: z.object({
                     message: z.literal("Logged out successfully"),

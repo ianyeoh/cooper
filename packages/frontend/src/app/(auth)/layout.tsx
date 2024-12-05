@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
-import { WalletMinimal } from "lucide-react";
 import ThemeBtn from "@/components/themeBtn";
 import { GeistSans } from "geist/font/sans";
 import { cn } from "@/lib/utils.ts";
+import Image from "next/image";
 
 export default function AuthenticationLayout({
     children,
@@ -12,9 +12,15 @@ export default function AuthenticationLayout({
     return (
         <div className={cn("flex h-[100vh] w-[100vw]", GeistSans.className)}>
             <div className="bg-zinc-900 h-[100%] w-[50%] flex-col p-8 text-white dark:border-r space-y-2 hidden sm:flex">
-                <div className="flex space-x-3 items-center">
-                    <WalletMinimal />
-                    <h1 className="text-lg font-medium">Budgeting</h1>
+                <div className="flex space-x-2 items-center">
+                    <Image
+                        src="/img/cooper-head.svg"
+                        alt="Cooper"
+                        width="50"
+                        height="50"
+                        className="invert"
+                    />
+                    <h1 className="text-lg font-medium">Cooper</h1>
                 </div>
                 <div className="flex-grow"></div>
                 <p className="text-lg">
@@ -24,9 +30,15 @@ export default function AuthenticationLayout({
             </div>
             <div className="relative bg-background h-[100%] sm:w-[50%] w-full flex flex-col items-center justify-center p-8">
                 <div className="absolute flex sm:hidden top-7 justify-center px-9 w-screen">
-                    <div className="flex space-x-3 items-center">
-                        <WalletMinimal />
-                        <h1 className="text-lg font-medium">Budgeting</h1>
+                    <div className="flex space-x-2 items-center">
+                        <Image
+                            src="/img/cooper-head.svg"
+                            alt="Cooper"
+                            width="100"
+                            height="100"
+                        />
+
+                        <h1 className="text-lg font-medium">Cooper</h1>
                     </div>
                     <ThemeBtn className="ml-auto" />
                 </div>

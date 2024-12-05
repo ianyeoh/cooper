@@ -1,5 +1,5 @@
 import { withSentryConfig } from "@sentry/nextjs";
-import config from "../backend/serverConfig.json" assert { type: "json" };
+import config from "../backend/serverConfig.json" with { type: "json" };
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

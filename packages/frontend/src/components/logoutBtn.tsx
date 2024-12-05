@@ -25,7 +25,7 @@ export default function LogoutButton(props: {
     const { as, ...rest } = props;
 
     async function handleLogout() {
-        mutate({ body: null });
+        mutate({ body: {} });
     }
 
     switch (as) {

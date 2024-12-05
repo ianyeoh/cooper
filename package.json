@@ -4,6 +4,9 @@
     "description": "A home management system written in TypeScript",
     "private": true,
     "scripts": {
+        "backend": "npm run dev --prefix packages/backend",
+        "frontend": "npm run dev --prefix packages/frontend",
+        "dev": "concurrently \"npm run frontend\" \"npm run backend\"",
         "build": "tsc --build --verbose"
     },
     "workspaces": [
@@ -15,6 +18,7 @@
     },
     "devDependencies": {
         "@types/node": "^22.9.0",
+        "concurrently": "^9.1.0",
         "ts-node": "^10.9.2"
     }
 }
