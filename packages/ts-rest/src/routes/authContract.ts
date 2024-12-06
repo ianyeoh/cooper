@@ -9,8 +9,12 @@ const authContract = c.router(
             method: "POST",
             path: "/login",
             body: z.object({
-                username: z.string().min(2),
-                password: z.string().min(2),
+                username: z.string().min(2, {
+                    message: "Username must be longer than 2 characters",
+                }),
+                password: z.string().min(2, {
+                    message: "Password must be longer than 2 characters",
+                }),
             }),
             responses: {
                 200: z.object({
@@ -28,7 +32,7 @@ const authContract = c.router(
         logout: {
             method: "POST",
             path: "/logout",
-            body: z.object({}),
+            body: z.object({}).optional().nullable(),
             responses: {
                 200: z.object({
                     message: z.literal("Logged out successfully"),
@@ -43,10 +47,18 @@ const authContract = c.router(
             method: "POST",
             path: "/signup",
             body: z.object({
-                firstName: z.string().min(2),
-                lastName: z.string().min(2),
-                username: z.string().min(2),
-                password: z.string().min(2),
+                firstName: z.string().min(2, {
+                    message: "First name must be longer than 2 characters",
+                }),
+                lastName: z.string().min(2, {
+                    message: "Last name must be longer than 2 characters",
+                }),
+                username: z.string().min(2, {
+                    message: "Username must be longer than 2 characters",
+                }),
+                password: z.string().min(2, {
+                    message: "Password must be longer than 2 characters",
+                }),
             }),
             responses: {
                 200: z.object({

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scrollArea";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
-import { NavBarProps, NavBarGroup } from "@/components/navbars/navBar";
+import { NavBarProps } from "@/components/navbars/navBar";
 
 export default function MobileNavBar({ header, logo, links }: NavBarProps) {
     const [open, setOpen] = useState(false);
@@ -39,7 +39,7 @@ export default function MobileNavBar({ header, logo, links }: NavBarProps) {
                         <X strokeWidth={1.5} size={17} />
                     </Button>
                     <div className="flex flex-col space-y-5 h-screen p-7">
-                        <div className="flex h-15 space-x-3 items-center">
+                        <div className="flex h-15 space-x-3 items-center ml-7">
                             <Link
                                 href={header.url}
                                 className="mr-4 flex items-center space-x-2 lg:mr-6"
@@ -50,29 +50,36 @@ export default function MobileNavBar({ header, logo, links }: NavBarProps) {
                         </div>
                         <ScrollArea className="flex-1 ml-7">
                             <div className="flex flex-col space-y-3">
-                                {links.map((link) => {
-                                    let elem = <></>;
-
-                                    if (typeof link === "NavBarGroup") {
-                                        elem = (
-                                            <>
-                                                {link.links.map(() => {
-                                                    return (
-                                                        <Link
-                                                            href={link.url}
-                                                            key={link.url}
-                                                        >
-                                                            {link.display}
-                                                        </Link>
-                                                    );
-                                                })}
-                                            </>
-                                        );
-                                    } else {
-                                      elem = 
+                                {links.map((item) => {
+                                    switch (item.kind) {
+                                        case "group":
+                                            return (
+                                                <div className="mb-4 flex flex-col gap-2">
+                                                    <h4 className="rounded-md text-md font-semibold">
+                                                        {item.title}
+                                                    </h4>
+                                                    {item.links.map((link) => {
+                                                        return (
+                                                            <Link
+                                                                href={link.url}
+                                                                key={link.url}
+                                                            >
+                                                                {link.display}
+                                                            </Link>
+                                                        );
+                                                    })}
+                                                </div>
+                                            );
+                                        case "link":
+                                            return (
+                                                <Link
+                                                    href={item.url}
+                                                    key={item.url}
+                                                >
+                                                    {item.display}
+                                                </Link>
+                                            );
                                     }
-
-                                    return elem;
                                 })}
                             </div>
                         </ScrollArea>

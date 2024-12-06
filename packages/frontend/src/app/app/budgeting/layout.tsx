@@ -16,6 +16,7 @@ import MobileNavBar from "@/components/navbars/mobileNavBar";
 import { fetch } from "@/lib/ts-rest-server";
 import { redirect } from "next/navigation";
 import { initials } from "@/lib/utils";
+import NavBar, { NavBarItem } from "@/components/navbars/navBar";
 
 export const metadata: Metadata = {
     title: "budgeting - Dashboard",
@@ -40,15 +41,43 @@ export default async function DashboardLayout({
     const userProfile = await getUserProfile();
 
     const header = {
+        kind: "link",
         display: "cooper/budgeting",
         url: "/app/budgeting/dashboard",
     };
-    const links = [
+    const links: NavBarItem[] = [
         {
+            kind: "group",
             title: "Core",
             links: [
                 {
                     display: "Transactions",
+                    url: "/app/budgeting/transactions",
+                },
+                {
+                    display: "Accounts",
+                    url: "/app/budgeting/transactions",
+                },
+                {
+                    display: "Expenses",
+                    url: "/app/budgeting/transactions",
+                },
+            ],
+        },
+        {
+            kind: "group",
+            title: "Settings",
+            links: [
+                {
+                    display: "Account",
+                    url: "/app/budgeting/transactions",
+                },
+                {
+                    display: "Roles",
+                    url: "/app/budgeting/transactions",
+                },
+                {
+                    display: "Features",
                     url: "/app/budgeting/transactions",
                 },
             ],
@@ -60,13 +89,10 @@ export default async function DashboardLayout({
             <header className="sticky flex justify-center top-0 z-50 w-full border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                 <div className="container flex h-14 max-w-screen-2xl items-center">
                     {/* Shows only on wide screens (desktop) */}
+                    <NavBar header={header} links={links} />
 
                     {/* Shows only on smaller screens (mobile) */}
-                    <MobileNavBar
-                        header={header}
-                        logo={<Wallet size={25} />}
-                        links={links}
-                    />
+                    <MobileNavBar header={header} links={links} />
 
                     <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
                         <SearchBar />

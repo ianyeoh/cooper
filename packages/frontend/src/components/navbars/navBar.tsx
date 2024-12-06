@@ -1,5 +1,16 @@
 import Link from "next/link";
 import { ReactNode } from "react";
+import {
+    NavigationMenu,
+    NavigationMenuContent,
+    NavigationMenuIndicator,
+    NavigationMenuItem,
+    NavigationMenuLink,
+    NavigationMenuList,
+    NavigationMenuTrigger,
+    NavigationMenuViewport,
+    navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
 
 export type NavBarLink = {
     display: string;
@@ -7,14 +18,18 @@ export type NavBarLink = {
 };
 
 export type NavBarGroup = {
-    title?: string;
+    title: string;
     links: NavBarLink[];
 };
+
+export type NavBarItem =
+    | (NavBarLink & { kind: "link" })
+    | (NavBarGroup & { kind: "group" });
 
 export type NavBarProps = {
     header: NavBarLink;
     logo?: ReactNode;
-    links: (NavBarGroup | NavBarLink)[];
+    links: NavBarItem[];
 };
 
 export default function NavBar({ header, logo, links }: NavBarProps) {
@@ -22,24 +37,35 @@ export default function NavBar({ header, logo, links }: NavBarProps) {
         <div className="mr-8 hidden md:flex">
             <div className="flex space-x-3 items-center">
                 <Link
-                    href="/dashboard"
+                    href={header.url}
                     className="mr-4 flex items-center space-x-3 lg:mr-6"
                 >
                     {logo}
                     <h1 className="hidden font-bold lg:inline-block">
-                        {header}
+                        {header.display}
                     </h1>
                 </Link>
             </div>
 
-            <nav className="flex items-center gap-4 text-sm lg:gap-6">
+            <NavigationMenu>
+                <NavigationMenuList>
+                    <NavigationMenuItem>
+                        <NavigationMenuTrigger>Item One</NavigationMenuTrigger>
+                        <NavigationMenuContent>
+                            <NavigationMenuLink>Link</NavigationMenuLink>
+                        </NavigationMenuContent>
+                    </NavigationMenuItem>
+                </NavigationMenuList>
+            </NavigationMenu>
+
+            {/* <nav className="flex items-center gap-4 text-sm lg:gap-6">
                 <Link
-                    href="/dashboard/transactions"
+                    href="/app/budgeting/transactions"
                     className="transition-colors hover:text-foreground/80 text-foreground/60"
                 >
                     Transactions
                 </Link>
-            </nav>
+            </nav> */}
         </div>
     );
 }
