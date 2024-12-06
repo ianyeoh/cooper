@@ -1,5 +1,5 @@
 // import { headers } from "next/headers";
-import TransactionsTable from "@/components/transactionsTable";
+import TransactionsTable from "@/components/tables/transactionsTable";
 import { fetch } from "@/lib/ts-rest-server";
 import { redirect } from "next/navigation";
 import { contract } from "@cooper/ts-rest/src/contract";

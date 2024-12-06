@@ -20,7 +20,7 @@ export default function LoginPage() {
                 { body },
                 {
                     onSuccess: async () => {
-                        router.push("/dashboard");
+                        router.push("/app");
                         resolve();
                     },
                     onError: async (e) => {

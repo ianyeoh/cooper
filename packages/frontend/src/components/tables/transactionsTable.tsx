@@ -18,13 +18,13 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdownMenu";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DataTablePagination } from "@/components/tablePagination";
-import { DataTableViewOptions } from "@/components/tableViewOptions";
-import NewTransactionButton from "@/components/newTransactionBtn";
-import DataTableTextFilter from "@/components/tableTextFilter";
-import DataTable from "@/components/dataTable";
-import DataTableAccountsFilter from "@/components/tableAccountsFilter";
-import TableDateRangeFilter from "@/components/tableDateRangeFilter";
+import { DataTablePagination } from "@/components/tables/tablePagination";
+import { DataTableViewOptions } from "@/components/tables/tableViewOptions";
+import NewTransactionButton from "@/components/buttons/newTransactionBtn";
+import DataTableTextFilter from "@/components/tables/tableTextFilter";
+import DataTable from "@/components/tables/dataTable";
+import DataTableAccountsFilter from "@/components/tables/tableAccountsFilter";
+import TableDateRangeFilter from "@/components/tables/tableDateRangeFilter";
 import { MoreHorizontal } from "lucide-react";
 import { format } from "date-fns";
 import { DateRange } from "react-day-picker";

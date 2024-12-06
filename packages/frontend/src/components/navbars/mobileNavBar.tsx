@@ -4,10 +4,11 @@ import React, { useState } from "react";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scrollArea";
-import { ChartColumn, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
+import { NavBarProps, NavBarGroup } from "@/components/navbars/navBar";
 
-export default function MobileNavBar() {
+export default function MobileNavBar({ header, logo, links }: NavBarProps) {
     const [open, setOpen] = useState(false);
 
     return (
@@ -40,18 +41,39 @@ export default function MobileNavBar() {
                     <div className="flex flex-col space-y-5 h-screen p-7">
                         <div className="flex h-15 space-x-3 items-center">
                             <Link
-                                href="/dashboard"
+                                href={header.url}
                                 className="mr-4 flex items-center space-x-2 lg:mr-6"
                             >
-                                <ChartColumn strokeWidth={1.5} size={19} />
-                                <h1 className="font-bold">budgeting</h1>
+                                {logo}
+                                <h1 className="font-bold">{header.display}</h1>
                             </Link>
                         </div>
                         <ScrollArea className="flex-1 ml-7">
                             <div className="flex flex-col space-y-3">
-                                <Link href="/dashboard/transactions">
-                                    Transactions
-                                </Link>
+                                {links.map((link) => {
+                                    let elem = <></>;
+
+                                    if (typeof link === "NavBarGroup") {
+                                        elem = (
+                                            <>
+                                                {link.links.map(() => {
+                                                    return (
+                                                        <Link
+                                                            href={link.url}
+                                                            key={link.url}
+                                                        >
+                                                            {link.display}
+                                                        </Link>
+                                                    );
+                                                })}
+                                            </>
+                                        );
+                                    } else {
+                                      elem = 
+                                    }
+
+                                    return elem;
+                                })}
                             </div>
                         </ScrollArea>
                     </div>

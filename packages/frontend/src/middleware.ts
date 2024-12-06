@@ -25,7 +25,7 @@ async function authenticated(request: NextRequest) {
 export async function middleware(request: NextRequest) {
     const url = request.nextUrl.pathname;
     const isRootUrl = url === "/";
-    const protectedPrefixes = ["/dashboard"]; // paths that require user to be logged in
+    const protectedPrefixes = ["/app"]; // paths that require user to be logged in
     const unauthenticatedPrefixes = ["/login", "/signup"]; // paths that require user to be logged out
     const isAuthenticated = await authenticated(request);
 
@@ -35,7 +35,7 @@ export async function middleware(request: NextRequest) {
             unauthenticatedPrefixes.some((prefix) => url.startsWith(prefix))
         ) {
             return NextResponse.redirect(
-                new URL("/dashboard", request.nextUrl.origin)
+                new URL("/app", request.nextUrl.origin)
             );
         }
     } else {

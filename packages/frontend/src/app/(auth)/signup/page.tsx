@@ -20,6 +20,7 @@ export default function SignupPage() {
                 { body },
                 {
                     onSuccess: async () => {
+                        toast.success("You were signed up successfully. Please log in.")
                         router.push("/login");
                         resolve();
                     },

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/sonner";
-import { ThemeProvider } from "@/components/themeProvider";
+import { ThemeProvider } from "@/components/theming/themeProvider";
 import "./globals.css";
 import { TSRClientProvider } from "@/components/tsrClientProvider";
 

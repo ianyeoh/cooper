@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import Link from "next/link";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -9,11 +8,11 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdownMenu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ChartColumn } from "lucide-react";
-import LogoutButton from "@/components/logoutBtn";
-import ThemeBtn from "@/components/themeBtn";
+import { Wallet } from "lucide-react";
+import LogoutButton from "@/components/buttons/logoutBtn";
+import ThemeBtn from "@/components/theming/themeBtn";
 import SearchBar from "@/components/searchBar";
-import MobileNavBar from "@/components/mobileNavBar";
+import MobileNavBar from "@/components/navbars/mobileNavBar";
 import { fetch } from "@/lib/ts-rest-server";
 import { redirect } from "next/navigation";
 import { initials } from "@/lib/utils";
@@ -40,36 +39,34 @@ export default async function DashboardLayout({
 }>) {
     const userProfile = await getUserProfile();
 
+    const header = {
+        display: "cooper/budgeting",
+        url: "/app/budgeting/dashboard",
+    };
+    const links = [
+        {
+            title: "Core",
+            links: [
+                {
+                    display: "Transactions",
+                    url: "/app/budgeting/transactions",
+                },
+            ],
+        },
+    ];
+
     return (
         <div className="relative flex min-h-screen w-full flex-col bg-background">
             <header className="sticky flex justify-center top-0 z-50 w-full border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                 <div className="container flex h-14 max-w-screen-2xl items-center">
                     {/* Shows only on wide screens (desktop) */}
-                    <div className="mr-8 hidden md:flex">
-                        <div className="flex space-x-3 items-center">
-                            <Link
-                                href="/dashboard"
-                                className="mr-4 flex items-center space-x-3 lg:mr-6"
-                            >
-                                <ChartColumn strokeWidth={1.5} size={18} />
-                                <h1 className="hidden font-bold lg:inline-block">
-                                    budgeting
-                                </h1>
-                            </Link>
-                        </div>
-
-                        <nav className="flex items-center gap-4 text-sm lg:gap-6">
-                            <Link
-                                href="/dashboard/transactions"
-                                className="transition-colors hover:text-foreground/80 text-foreground/60"
-                            >
-                                Transactions
-                            </Link>
-                        </nav>
-                    </div>
 
                     {/* Shows only on smaller screens (mobile) */}
-                    <MobileNavBar />
+                    <MobileNavBar
+                        header={header}
+                        logo={<Wallet size={25} />}
+                        links={links}
+                    />
 
                     <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
                         <SearchBar />
