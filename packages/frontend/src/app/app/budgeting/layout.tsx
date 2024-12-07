@@ -8,7 +8,6 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdownMenu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Wallet } from "lucide-react";
 import LogoutButton from "@/components/buttons/logoutBtn";
 import ThemeBtn from "@/components/theming/themeBtn";
 import SearchBar from "@/components/searchBar";
@@ -45,7 +44,13 @@ export default async function DashboardLayout({
         display: "cooper/budgeting",
         url: "/app/budgeting/dashboard",
     };
+
     const links: NavBarItem[] = [
+        {
+            kind: "link",
+            display: "Home",
+            url: "/app/",
+        },
         {
             kind: "group",
             title: "Core",

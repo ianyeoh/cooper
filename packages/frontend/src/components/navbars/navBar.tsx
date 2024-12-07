@@ -49,12 +49,31 @@ export default function NavBar({ header, logo, links }: NavBarProps) {
 
             <NavigationMenu>
                 <NavigationMenuList>
-                    <NavigationMenuItem>
-                        <NavigationMenuTrigger>Item One</NavigationMenuTrigger>
-                        <NavigationMenuContent>
-                            <NavigationMenuLink>Link</NavigationMenuLink>
-                        </NavigationMenuContent>
-                    </NavigationMenuItem>
+                    {links.map((item) => {
+                        switch (item.kind) {
+                            case "group":
+                                return (
+                                    <NavigationMenuItem>
+                                        <NavigationMenuTrigger className="text-sm">
+                                            Item One
+                                        </NavigationMenuTrigger>
+                                        <NavigationMenuContent>
+                                            <NavigationMenuLink>
+                                                Link
+                                            </NavigationMenuLink>
+                                        </NavigationMenuContent>
+                                    </NavigationMenuItem>
+                                );
+                            case "link":
+                                return (
+                                    <NavigationMenuItem>
+                                        <NavigationMenuTrigger className="text-sm">
+                                            Item One
+                                        </NavigationMenuTrigger>
+                                    </NavigationMenuItem>
+                                );
+                        }
+                    })}
                 </NavigationMenuList>
             </NavigationMenu>
 
