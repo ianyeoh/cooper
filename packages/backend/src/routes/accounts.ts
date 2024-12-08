@@ -6,7 +6,7 @@ import BudgetAccount from "../db/budgetAccount";
 import User, { UserType } from "../db/user";
 
 const getAccountsHandler: AppRouteImplementation<
-    typeof contract.accounts.getAccounts
+    typeof contract.budgeting.accounts.getAccounts
 > = async function () {
     const accounts = await BudgetAccount.find().populate<{ owner: UserType }>({
         path: "owner",
@@ -24,7 +24,7 @@ export const getAccounts = {
 };
 
 const newAccountHandler: AppRouteImplementation<
-    typeof contract.accounts.newAccount
+    typeof contract.budgeting.accounts.newAccount
 > = async function ({ body }) {
     const owner = await User.findById(body.ownerId);
 

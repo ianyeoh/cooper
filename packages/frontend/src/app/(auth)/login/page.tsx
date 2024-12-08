@@ -7,13 +7,16 @@ import { tsr } from "@/lib/ts-rest-client";
 import { parseError } from "@cooper/ts-rest/src/utils.ts";
 import { ClientInferRequest } from "@ts-rest/core";
 import { contract } from "@cooper/ts-rest/src/contract";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function LoginPage() {
     const router = useRouter();
     const { mutate } = tsr.auth.login.useMutation();
+    const [redirectToastIds, setRedirectToastIds] = useState<
+        (string | number)[]
+    >([]);
 
-    /* Show message indicating reason for redirecting to login page  */
+    /* Show toast message indicating reason for redirecting to login page */
     const searchParams = useSearchParams();
     useEffect(() => {
         // Do after 0.5 delay
@@ -22,18 +25,38 @@ export default function LoginPage() {
 
             switch (redirect) {
                 case "expiredSession":
-                    toast.error("Your session expired. Please log in again.", {
-                        duration: Infinity,
-                        closeButton: true,
-                    });
+                    showRedirectReason(
+                        "Your session expired. Please log in again."
+                    );
                     break;
             }
         }, 500);
     }, [searchParams]);
 
+    // Spawns a new toast that lingers indefinitely
+    function showRedirectReason(reason: string) {
+        setRedirectToastIds([
+            ...redirectToastIds,
+            toast.error(reason, {
+                duration: Infinity,
+                closeButton: true,
+            }),
+        ]);
+    }
+
+    function dismissRedirectToasts() {
+        for (const id of redirectToastIds) {
+            toast.dismiss(id);
+        }
+
+        setRedirectToastIds([]);
+    }
+
     async function handleLogin(
         body: ClientInferRequest<typeof contract.auth.login>["body"]
     ) {
+        dismissRedirectToasts();
+
         return new Promise<void>((resolve, reject) => {
             mutate(
                 { body },

@@ -49,6 +49,7 @@ export default function NavBar({ header, logo, links }: NavBarProps) {
                 >
                     {logo}
                     <h1 className="hidden font-bold lg:inline-block">
+                        <span className="font-normal">cooper / </span>
                         {header.display}
                     </h1>
                 </Link>

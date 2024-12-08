@@ -26,7 +26,7 @@ export default function MobileNavBar({ header, logo, links }: NavBarProps) {
                     </Button>
                 </DrawerTrigger>
                 <DrawerContent
-                    className="sm:max-w-sm mr-[260px] rounded-none min-w-[260px]"
+                    className="sm:max-w-sm mr-[280px] pr-4 rounded-none min-w-fit"
                     showBar={false}
                 >
                     <Button
@@ -42,10 +42,15 @@ export default function MobileNavBar({ header, logo, links }: NavBarProps) {
                         <div className="flex h-15 space-x-3 items-center ml-7">
                             <Link
                                 href={header.url}
-                                className="mr-4 flex items-center space-x-2 lg:mr-6"
+                                className="mr-4 flex items-center space-x-3 lg:mr-6"
                             >
                                 {logo}
-                                <h1 className="font-bold">{header.display}</h1>
+                                <h1 className="font-bold">
+                                    <span className="font-normal">
+                                        cooper /{" "}
+                                    </span>
+                                    {header.display}
+                                </h1>
                             </Link>
                         </div>
                         <ScrollArea className="flex-1 ml-7">

@@ -7,7 +7,7 @@ import BudgetCategory, { BudgetCategoryType } from "../db/budgetCategory";
 import { UserType } from "../db/user";
 
 const getTransactionsHandler: AppRouteImplementation<
-    typeof contract.transactions.getTransactions
+    typeof contract.budgeting.transactions.getTransactions
 > = async function () {
     const records = await BudgetTransaction.find()
         .populate<{
@@ -40,7 +40,7 @@ export const getTransactions = {
 };
 
 const newTransactionHandler: AppRouteImplementation<
-    typeof contract.transactions.newTransaction
+    typeof contract.budgeting.transactions.newTransaction
 > = async function ({ res, body }) {
     if (!(await BudgetAccount.findById(body.accountId))) {
         return {

@@ -1,10 +1,7 @@
 import { Metadata } from "next";
-
-import MobileNavBar from "@/components/navbars/mobileNavBar";
-import NavBar, { NavBarItem } from "@/components/navbars/navBar";
-import AccountDropdown from "@/components/accountDropdown";
-import ThemeBtn from "@/components/theming/themeBtn";
-import SearchBar from "@/components/searchBar";
+import { NavBarItem } from "@/components/navbars/navBar";
+import { Wallet } from "lucide-react";
+import Header from "@/components/navbars/header";
 
 export const metadata: Metadata = {
     title: "budgeting - Dashboard",
@@ -18,10 +15,10 @@ export default async function DashboardLayout({
 }>) {
     const header = {
         kind: "link",
-        display: "cooper/budgeting",
+        display: "budgeting",
         url: "/app/budgeting/dashboard",
     };
-
+    const logo = <Wallet strokeWidth={1.4} />;
     const links: NavBarItem[] = [
         {
             kind: "group",
@@ -49,23 +46,7 @@ export default async function DashboardLayout({
 
     return (
         <div className="relative flex min-h-screen w-full flex-col bg-background">
-            <header className="sticky flex justify-center top-0 z-50 w-full border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                <div className="container flex h-14 max-w-screen-2xl items-center">
-                    {/* Shows only on wide screens (desktop) */}
-                    <NavBar header={header} links={links} />
-
-                    {/* Shows only on smaller screens (mobile) */}
-                    <MobileNavBar header={header} links={links} />
-
-                    <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-                        <SearchBar />
-                        <nav className="flex items-center gap-2">
-                            <ThemeBtn variant="ghost" />
-                            <AccountDropdown />
-                        </nav>
-                    </div>
-                </div>
-            </header>
+            <Header header={header} links={links} logo={logo} />
             <main className="flex-1 border-b">
                 <div className="flex justify-center py-6 md:py-0">
                     <div className="container flex max-w-screen-2xl items-center break-words">

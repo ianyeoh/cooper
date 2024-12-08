@@ -55,13 +55,15 @@ const router = s.router(contract, {
         signup,
         session,
     },
-    transactions: {
-        getTransactions,
-        newTransaction,
-    },
-    accounts: {
-        getAccounts,
-        newAccount,
+    budgeting: {
+        transactions: {
+            getTransactions,
+            newTransaction,
+        },
+        accounts: {
+            getAccounts,
+            newAccount,
+        },
     },
     users: {
         getUserProfile,
