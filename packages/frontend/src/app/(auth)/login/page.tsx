@@ -1,16 +1,35 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { LoginForm } from "@/components/forms/loginForm";
 import { tsr } from "@/lib/ts-rest-client";
 import { parseError } from "@cooper/ts-rest/src/utils.ts";
 import { ClientInferRequest } from "@ts-rest/core";
 import { contract } from "@cooper/ts-rest/src/contract";
+import { useEffect } from "react";
 
 export default function LoginPage() {
     const router = useRouter();
     const { mutate } = tsr.auth.login.useMutation();
+
+    /* Show message indicating reason for redirecting to login page  */
+    const searchParams = useSearchParams();
+    useEffect(() => {
+        // Do after 0.5 delay
+        setTimeout(() => {
+            const redirect = searchParams.get("redirect");
+
+            switch (redirect) {
+                case "expiredSession":
+                    toast.error("Your session expired. Please log in again.", {
+                        duration: Infinity,
+                        closeButton: true,
+                    });
+                    break;
+            }
+        }, 500);
+    }, [searchParams]);
 
     async function handleLogin(
         body: ClientInferRequest<typeof contract.auth.login>["body"]

@@ -1,20 +1,27 @@
+"use client";
+
 import Link from "next/link";
-import { ReactNode } from "react";
+import {
+    ComponentPropsWithoutRef,
+    ElementRef,
+    forwardRef,
+    ReactNode,
+} from "react";
 import {
     NavigationMenu,
     NavigationMenuContent,
-    NavigationMenuIndicator,
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
     NavigationMenuTrigger,
-    NavigationMenuViewport,
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { cn } from "@/lib/utils";
 
 export type NavBarLink = {
     display: string;
     url: string;
+    description?: string;
 };
 
 export type NavBarGroup = {
@@ -53,38 +60,80 @@ export default function NavBar({ header, logo, links }: NavBarProps) {
                         switch (item.kind) {
                             case "group":
                                 return (
-                                    <NavigationMenuItem>
+                                    <NavigationMenuItem key={item.title}>
                                         <NavigationMenuTrigger className="text-sm">
-                                            Item One
+                                            {item.title}
                                         </NavigationMenuTrigger>
                                         <NavigationMenuContent>
                                             <NavigationMenuLink>
-                                                Link
+                                                <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+                                                    {item.links.map((link) => {
+                                                        return (
+                                                            <ListItem
+                                                                title={
+                                                                    link.display
+                                                                }
+                                                                key={link.url}
+                                                                href={link.url}
+                                                            >
+                                                                {
+                                                                    link.description
+                                                                }
+                                                            </ListItem>
+                                                        );
+                                                    })}
+                                                </ul>
                                             </NavigationMenuLink>
                                         </NavigationMenuContent>
                                     </NavigationMenuItem>
                                 );
                             case "link":
                                 return (
-                                    <NavigationMenuItem>
-                                        <NavigationMenuTrigger className="text-sm">
-                                            Item One
-                                        </NavigationMenuTrigger>
+                                    <NavigationMenuItem key={item.url}>
+                                        <Link
+                                            href={item.url}
+                                            legacyBehavior
+                                            passHref
+                                        >
+                                            <NavigationMenuLink
+                                                className={navigationMenuTriggerStyle()}
+                                            >
+                                                {item.display}
+                                            </NavigationMenuLink>
+                                        </Link>
                                     </NavigationMenuItem>
                                 );
                         }
                     })}
                 </NavigationMenuList>
             </NavigationMenu>
-
-            {/* <nav className="flex items-center gap-4 text-sm lg:gap-6">
-                <Link
-                    href="/app/budgeting/transactions"
-                    className="transition-colors hover:text-foreground/80 text-foreground/60"
-                >
-                    Transactions
-                </Link>
-            </nav> */}
         </div>
     );
 }
+
+const ListItem = forwardRef<ElementRef<"a">, ComponentPropsWithoutRef<"a">>(
+    ({ className, title, children, ...props }, ref) => {
+        return (
+            <li>
+                <NavigationMenuLink asChild>
+                    <a
+                        ref={ref}
+                        className={cn(
+                            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                            className
+                        )}
+                        {...props}
+                    >
+                        <div className="text-sm font-medium leading-none">
+                            {title}
+                        </div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                            {children}
+                        </p>
+                    </a>
+                </NavigationMenuLink>
+            </li>
+        );
+    }
+);
+ListItem.displayName = "ListItem";

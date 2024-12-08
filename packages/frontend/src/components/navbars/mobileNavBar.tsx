@@ -26,7 +26,7 @@ export default function MobileNavBar({ header, logo, links }: NavBarProps) {
                     </Button>
                 </DrawerTrigger>
                 <DrawerContent
-                    className="sm:max-w-sm mr-[200px] rounded-none min-w-[200px]"
+                    className="sm:max-w-sm mr-[260px] rounded-none min-w-[260px]"
                     showBar={false}
                 >
                     <Button
@@ -61,6 +61,7 @@ export default function MobileNavBar({ header, logo, links }: NavBarProps) {
                                                     {item.links.map((link) => {
                                                         return (
                                                             <Link
+                                                                className="hover:underline"
                                                                 href={link.url}
                                                                 key={link.url}
                                                             >
@@ -73,6 +74,7 @@ export default function MobileNavBar({ header, logo, links }: NavBarProps) {
                                         case "link":
                                             return (
                                                 <Link
+                                                    className="hover:underline"
                                                     href={item.url}
                                                     key={item.url}
                                                 >

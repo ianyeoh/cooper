@@ -1,14 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { fetch } from "./lib/ts-rest-server";
+import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 /**
  * Returns true the session is authenticated - sessions are tracked
  * based on a http cookie with key "id" which are set/deleted by the
  * backend server.
  */
-async function authenticated(request: NextRequest) {
-    const sessionId = request.cookies.get("id");
-
+async function authenticated(sessionId: RequestCookie | undefined) {
     if (!sessionId) return false;
 
     const response = await fetch.auth.session({});
@@ -27,7 +26,9 @@ export async function middleware(request: NextRequest) {
     const isRootUrl = url === "/";
     const protectedPrefixes = ["/app"]; // paths that require user to be logged in
     const unauthenticatedPrefixes = ["/login", "/signup"]; // paths that require user to be logged out
-    const isAuthenticated = await authenticated(request);
+
+    const sessionId = request.cookies.get("id");
+    const isAuthenticated = await authenticated(sessionId);
 
     if (isAuthenticated) {
         if (
@@ -43,9 +44,21 @@ export async function middleware(request: NextRequest) {
             isRootUrl ||
             protectedPrefixes.some((prefix) => url.startsWith(prefix))
         ) {
-            return NextResponse.redirect(
-                new URL("/login", request.nextUrl.origin)
-            );
+            if (sessionId !== null) {
+                // Session has expired
+                return NextResponse.redirect(
+                    new URL(
+                        "/login?redirect=expiredSession",
+                        request.nextUrl.origin
+                    )
+                );
+            } else {
+                // Not a valid session (unauthenticated access from URL)
+
+                return NextResponse.redirect(
+                    new URL("/login", request.nextUrl.origin)
+                );
+            }
         }
     }
 

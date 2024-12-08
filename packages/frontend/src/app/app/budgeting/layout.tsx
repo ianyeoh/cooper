@@ -1,44 +1,21 @@
 import { Metadata } from "next";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdownMenu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import LogoutButton from "@/components/buttons/logoutBtn";
+
+import MobileNavBar from "@/components/navbars/mobileNavBar";
+import NavBar, { NavBarItem } from "@/components/navbars/navBar";
+import AccountDropdown from "@/components/accountDropdown";
 import ThemeBtn from "@/components/theming/themeBtn";
 import SearchBar from "@/components/searchBar";
-import MobileNavBar from "@/components/navbars/mobileNavBar";
-import { fetch } from "@/lib/ts-rest-server";
-import { redirect } from "next/navigation";
-import { initials } from "@/lib/utils";
-import NavBar, { NavBarItem } from "@/components/navbars/navBar";
 
 export const metadata: Metadata = {
     title: "budgeting - Dashboard",
     description: "Custom expense tracking solution",
 };
 
-async function getUserProfile() {
-    const response = await fetch.users.getUserProfile();
-
-    if (response.status === 200) {
-        return response.body;
-    } else {
-        redirect("/login");
-    }
-}
-
 export default async function DashboardLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const userProfile = await getUserProfile();
-
     const header = {
         kind: "link",
         display: "cooper/budgeting",
@@ -47,43 +24,24 @@ export default async function DashboardLayout({
 
     const links: NavBarItem[] = [
         {
-            kind: "link",
-            display: "Home",
-            url: "/app/",
-        },
-        {
             kind: "group",
             title: "Core",
             links: [
                 {
                     display: "Transactions",
                     url: "/app/budgeting/transactions",
+                    description:
+                        "View, edit and delete your budget transactions",
                 },
                 {
                     display: "Accounts",
-                    url: "/app/budgeting/transactions",
+                    url: "/app/budgeting/accounts",
+                    description: "View, edit and delete your accounts",
                 },
                 {
                     display: "Expenses",
-                    url: "/app/budgeting/transactions",
-                },
-            ],
-        },
-        {
-            kind: "group",
-            title: "Settings",
-            links: [
-                {
-                    display: "Account",
-                    url: "/app/budgeting/transactions",
-                },
-                {
-                    display: "Roles",
-                    url: "/app/budgeting/transactions",
-                },
-                {
-                    display: "Features",
-                    url: "/app/budgeting/transactions",
+                    url: "/app/budgeting/expenses",
+                    description: "View, edit and delete your expenses",
                 },
             ],
         },
@@ -103,26 +61,7 @@ export default async function DashboardLayout({
                         <SearchBar />
                         <nav className="flex items-center gap-2">
                             <ThemeBtn variant="ghost" />
-                            <DropdownMenu>
-                                <DropdownMenuTrigger className="rounded-full">
-                                    <Avatar>
-                                        {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
-                                        <AvatarFallback>
-                                            {initials(
-                                                `${userProfile.firstName} ${userProfile.lastName}`
-                                            )}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                    <DropdownMenuLabel>
-                                        My Account
-                                    </DropdownMenuLabel>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem>Profile</DropdownMenuItem>
-                                    <LogoutButton as="dropdownMenuItem" />
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                            <AccountDropdown />
                         </nav>
                     </div>
                 </div>
