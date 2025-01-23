@@ -1,11 +1,8 @@
 import { AppRouteImplementation } from "@ts-rest/express";
 import { compareSaltedHash, saltedHash } from "../lib/hashing";
 import { addMinutes } from "date-fns";
-import Session from "../db/session";
 import { contract } from "@cooper/ts-rest/src/contract";
 import { authed } from "../middleware/authed";
-import Authentication from "../db/authentication";
-import User from "../db/user";
 
 export const login: AppRouteImplementation<typeof contract.auth.login> =
     async function ({ body, req, res }) {

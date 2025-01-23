@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import Session from "../db/session";
 import mongoose from "mongoose";
 
 export async function authed(req: Request, res: Response, next: NextFunction) {

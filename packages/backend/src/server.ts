@@ -41,7 +41,7 @@ app.use(
         credentials: true,
     })
 );
-app.use(morgan("tiny"));
+app.use("[server]: :method :url :status :res[content-length] - :response-time ms");
 app.use(cookieParser());
 app.use(express.json());
 
@@ -78,6 +78,7 @@ const openapi = generateOpenApi(contract, {
     info: { title: "API Documentation", version: "1.0.0" },
 });
 
+// Serve API docs at /docs
 const apiDocs = express.Router();
 apiDocs.use(serve);
 apiDocs.get(
@@ -93,10 +94,6 @@ app.use(express.static("public"));
 
 // The Sentry error handler must be registered before any other error middleware but after all routers
 Sentry.setupExpressErrorHandler(app);
-
-/**
- * Server startup sequence
- */
 
 // Check if MongoDB connection string is set
 if (mongoURL == null) {

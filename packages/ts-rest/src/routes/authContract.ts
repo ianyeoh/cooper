@@ -9,9 +9,14 @@ const authContract = c.router(
             method: "POST",
             path: "/login",
             body: z.object({
-                username: z.string().min(2, {
-                    message: "Username must be longer than 2 characters",
-                }),
+                username: z
+                    .string()
+                    .min(2, {
+                        message: "Username must be longer than 2 characters",
+                    })
+                    .max(50, {
+                        message: "Username must be less than 50 characters",
+                    }),
                 password: z.string().min(2, {
                     message: "Password must be longer than 2 characters",
                 }),
@@ -47,15 +52,30 @@ const authContract = c.router(
             method: "POST",
             path: "/signup",
             body: z.object({
-                firstName: z.string().min(2, {
-                    message: "First name must be longer than 2 characters",
-                }),
-                lastName: z.string().min(2, {
-                    message: "Last name must be longer than 2 characters",
-                }),
-                username: z.string().min(2, {
-                    message: "Username must be longer than 2 characters",
-                }),
+                firstName: z
+                    .string()
+                    .min(2, {
+                        message: "First name must be longer than 2 characters",
+                    })
+                    .max(50, {
+                        message: "First name must be less than 50 characters",
+                    }),
+                lastName: z
+                    .string()
+                    .min(2, {
+                        message: "Last name must be longer than 2 characters",
+                    })
+                    .max(50, {
+                        message: "Last name must be less than 50 characters",
+                    }),
+                username: z
+                    .string()
+                    .min(2, {
+                        message: "Username must be longer than 2 characters",
+                    })
+                    .max(50, {
+                        message: "Username must be less than 50 characters",
+                    }),
                 password: z.string().min(2, {
                     message: "Password must be longer than 2 characters",
                 }),

@@ -1,9 +1,6 @@
 import { AppRouteImplementation } from "@ts-rest/express";
-import Session from "../db/session";
 import { contract } from "@cooper/ts-rest/src/contract";
 import { authed } from "../middleware/authed";
-import BudgetAccount from "../db/budgetAccount";
-import User, { UserType } from "../db/user";
 
 const getAccountsHandler: AppRouteImplementation<
     typeof contract.budgeting.accounts.getAccounts
