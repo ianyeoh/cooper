@@ -1,4 +1,3 @@
-import { trace } from "console";
 import { z } from "zod";
 
 // Authentication
@@ -9,7 +8,6 @@ export const Auth$UserSchema = z.object({
     password: z.string().min(2).max(50),
 });
 export type Auth$User = z.infer<typeof Auth$UserSchema>;
-export type Auth$Users = Map<string, Auth$User>;
 
 export const Auth$SessionSchema = z.object({
     sessionId: z.number(),
@@ -20,24 +18,31 @@ export const Auth$SessionSchema = z.object({
     expires: z.date(),
 });
 export type Auth$Session = z.infer<typeof Auth$SessionSchema>;
-export type Auth$Sessions = Map<number, Auth$Session>;
 
 // Budgeting
+export const Budgeting$Workspace = z.object({
+    workspaceId: z.number(),
+    users: z.array(z.string().min(2).max(50)),
+});
+export type Budgeting$Workspace = z.infer<typeof Budgeting$Workspace>;
+
 export const Budgeting$AccountSchema = z.object({
     accountId: z.number(),
     name: z.string().min(2).max(50),
     bank: z.string().min(2).max(50),
     description: z.string().min(2).max(255),
-    owner: z.string().min(2).max(50),
+    createdBy: z.string().min(2).max(50),
+    workspace: z.number(),
 });
 export type Budgeting$Account = z.infer<typeof Budgeting$AccountSchema>;
-export type Budgeting$Accounts = Map<number, Budgeting$Account>;
 
 export const Budgeting$CategorySchema = z.object({
+    categoryId: z.number(),
     name: z.string().min(2).max(50),
+    createdBy: z.string().min(2).max(50),
+    workspace: z.number(),
 });
 export type Budgeting$Category = z.infer<typeof Budgeting$CategorySchema>;
-export type Budgeting$Categories = Map<number, Budgeting$Category>;
 
 export const Budgeting$TransactionSchema = z.object({
     transactionId: z.number(),
@@ -48,6 +53,6 @@ export const Budgeting$TransactionSchema = z.object({
     amount: z.number(),
     comments: z.string().max(500).nullable(),
     createdBy: z.string().min(2).max(50),
+    workspace: z.number(),
 });
 export type Budgeting$Transaction = z.infer<typeof Budgeting$TransactionSchema>;
-export type Budgeting$Transactions = Map<number, Budgeting$Transaction>;
