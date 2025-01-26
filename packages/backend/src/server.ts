@@ -20,14 +20,15 @@ import { getUserProfile } from "./routes/users";
 import { getTransactions, newTransaction } from "./routes/transactions";
 import { status } from "./routes/status";
 import serverConfig from "../serverConfig.json";
+import InMemoryDatabase from "./database/in-memory/database";
 
 // Get configuration variables from environment
 const hostname = serverConfig.hostname;
 const port = serverConfig.port;
 
 config(); // Load variables from .env file into process.env
-const mongoURL = process.env.MONGO_URL;
-const mongoDB = process.env.MONGO_DB;
+// const mongoURL = process.env.MONGO_URL;
+// const mongoDB = process.env.MONGO_DB;
 
 /**
  * Express initialisation
@@ -41,7 +42,11 @@ app.use(
         credentials: true,
     })
 );
-app.use("[server]: :method :url :status :res[content-length] - :response-time ms");
+app.use(
+    morgan(
+        "[server]: :method :url :status :res[content-length] - :response-time ms"
+    )
+);
 app.use(cookieParser());
 app.use(express.json());
 
@@ -96,41 +101,19 @@ app.use(express.static("public"));
 Sentry.setupExpressErrorHandler(app);
 
 // Check if MongoDB connection string is set
-if (mongoURL == null) {
+// if (mongoURL == null) {
+//     console.log(
+//         `[server]: No MongoDB connection string set in environment or .env file`
+//     );
+//     throw new Error("Missing MONGO_URL environment variable");
+// }
+
+app.locals.database = new InMemoryDatabase();
+
+// Start server
+app.listen(port, hostname, () => {
+    console.log(`[server]: Server is running at http://${hostname}:${port}`);
     console.log(
-        `[server]: No MongoDB connection string set in environment or .env file`
+        `[server]: API documentation is available at http://${hostname}:${port}/docs`
     );
-    throw new Error("Missing MONGO_URL environment variable");
-}
-
-// Default MongoDB database name if not set
-console.log(`[server]: Attempting to connect to MongoDB...`);
-if (mongoDB == null) {
-    console.log(
-        `[server]: Database name not specified in environment, defaulting to "cooper"`
-    );
-}
-
-// Connect with Mongoose client
-mongoose
-    .connect(mongoURL, {
-        dbName: mongoDB || "cooper",
-    })
-    .then(() => {
-        console.log(
-            `[server]: Connected to MongoDB successfully, starting server`
-        );
-
-        // Start server
-        app.listen(port, hostname, () => {
-            console.log(
-                `[server]: Server is running at http://${hostname}:${port}`
-            );
-            console.log(
-                `[server]: API documentation is available at http://${hostname}:${port}/docs`
-            );
-        });
-    })
-    .catch((err: Error) => {
-        console.log(`[server]: Failed to connect to MongoDB: ${err}`);
-    });
+});

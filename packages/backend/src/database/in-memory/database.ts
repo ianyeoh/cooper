@@ -8,8 +8,11 @@ import {
     Budgeting$Account,
     Budgeting$AccountSchema,
     Budgeting$Category,
+    Budgeting$CategorySchema,
     Budgeting$Transaction,
+    Budgeting$TransactionSchema,
     Budgeting$Workspace,
+    Budgeting$WorkspaceSchema,
 } from "../types";
 
 export default class InMemoryDatabase implements DatabaseInterface {
@@ -23,14 +26,21 @@ export default class InMemoryDatabase implements DatabaseInterface {
     private budgetingCategories: Map<number, Budgeting$Category>;
     private budgetingTransactions: Map<number, Budgeting$Transaction>;
 
-    // Initialise default data-store values here
-    constructor() {
-        this.authUsers = new Map();
-        this.authSessions = new Map();
-        this.budgetingWorkspaces = new Map();
-        this.budgetingAccounts = new Map();
-        this.budgetingCategories = new Map();
-        this.budgetingTransactions = new Map();
+    // Initialise default data-store values
+    constructor(
+        initialUsers?: Map<string, Auth$User>,
+        initialSessions?: Map<number, Auth$Session>,
+        initialWorkspaces?: Map<number, Budgeting$Workspace>,
+        initialAccounts?: Map<number, Budgeting$Account>,
+        initialCategories?: Map<number, Budgeting$Category>,
+        initialTransactions?: Map<number, Budgeting$Transaction>
+    ) {
+        this.authUsers = initialUsers ?? new Map();
+        this.authSessions = initialSessions ?? new Map();
+        this.budgetingWorkspaces = initialWorkspaces ?? new Map();
+        this.budgetingAccounts = initialAccounts ?? new Map();
+        this.budgetingCategories = initialCategories ?? new Map();
+        this.budgetingTransactions = initialTransactions ?? new Map();
     }
 
     /**
@@ -47,6 +57,12 @@ export default class InMemoryDatabase implements DatabaseInterface {
         return newKey;
     }
 
+    /**
+     * Get a record from a generic map. Returns undefined if record not set.
+     * @param map Map to fetch record
+     * @param key Key of record to be fetched
+     * @returns
+     */
     _genericGet<KeyType>(map: Map<KeyType, any>, key: KeyType) {
         return map.get(key);
     }
@@ -82,10 +98,24 @@ export default class InMemoryDatabase implements DatabaseInterface {
         return newRecord;
     }
 
+    /**
+     * Deletes a record from a generic map.
+     * @param map Map from which record should be deleted
+     * @param key Key of record to be deleted
+     */
     _genericDelete<KeyType>(map: Map<KeyType, any>, key: KeyType) {
         map.delete(key);
     }
 
+    /**
+     * Updates a record in a generic map. All fields in data are optional,
+     * and only fields that are set will be updated.
+     * @param map Map to be updated
+     * @param schema Zod schema of map value, used to validate data
+     * @param key Key of record to be updated
+     * @param data Data which will update record, must be an object
+     * @returns
+     */
     _genericUpdate<KeyType, DataType extends z.ZodObject<any, any, any, any>>(
         map: Map<KeyType, z.infer<DataType>>,
         schema: DataType,
@@ -115,6 +145,14 @@ export default class InMemoryDatabase implements DatabaseInterface {
         return newData;
     }
 
+    /**
+     * Filter out all elements in a generic map based on given predicate. Each key/value
+     * pair will be passed to the predicate function. If the predicate returns true, the element
+     * will be included in the returned array.
+     * @param map Map of which records are filtered
+     * @param predicate Predicate function, must return a boolean
+     * @returns
+     */
     _genericMapFilter<KeyType, DataType>(
         map: Map<KeyType, DataType>,
         predicate: (
@@ -264,7 +302,7 @@ export default class InMemoryDatabase implements DatabaseInterface {
         const newKey = this._keyGen(this.budgetingWorkspaces);
         return this._genericCreate(
             this.budgetingWorkspaces,
-            Budgeting$Workspace,
+            Budgeting$WorkspaceSchema,
             newKey,
             {
                 workspaceId: newKey,
@@ -280,7 +318,7 @@ export default class InMemoryDatabase implements DatabaseInterface {
     updateWorkspace(workspaceId: number, users: string[]) {
         return this._genericUpdate(
             this.budgetingWorkspaces,
-            Budgeting$Workspace,
+            Budgeting$WorkspaceSchema,
             workspaceId,
             {
                 users,
@@ -359,9 +397,130 @@ export default class InMemoryDatabase implements DatabaseInterface {
      * ======================
      */
 
+    getCategory(categoryId: number) {
+        return this._genericGet(this.budgetingCategories, categoryId);
+    }
+
+    getWorkspaceCategories(workspace: number) {
+        return this._genericMapFilter(this.budgetingCategories, (category) => {
+            return category.workspace === workspace;
+        });
+    }
+
+    createCategory(name: string, createdBy: string, workspace: number) {
+        const newKey = this._keyGen(this.budgetingCategories);
+        return this._genericCreate(
+            this.budgetingCategories,
+            Budgeting$CategorySchema,
+            newKey,
+            {
+                categoryId: newKey,
+                name,
+                createdBy,
+                workspace,
+            }
+        );
+    }
+
+    deleteCategory(categoryId: number) {
+        this._genericDelete(this.budgetingCategories, categoryId);
+    }
+
+    updateCategory(
+        categoryId: number,
+        name?: string,
+        createdBy?: string,
+        workspace?: number
+    ) {
+        return this._genericUpdate(
+            this.budgetingCategories,
+            Budgeting$CategorySchema,
+            categoryId,
+            {
+                name,
+                createdBy,
+                workspace,
+            }
+        );
+    }
+
     /*
      * ======================
      * Budgeting.Transactions
      * ======================
      */
+
+    getTransaction(transactionId: number) {
+        return this._genericGet(this.budgetingTransactions, transactionId);
+    }
+
+    getWorkspaceTransactions(workspace: number) {
+        return this._genericMapFilter(
+            this.budgetingTransactions,
+            (transaction) => {
+                return transaction.workspace === workspace;
+            }
+        );
+    }
+
+    createTransaction(
+        date: Date,
+        description: string,
+        createdBy: string,
+        account: number,
+        category: string,
+        amount: number,
+        comments: string | null,
+        workspace: number
+    ) {
+        const newKey = this._keyGen(this.budgetingTransactions);
+        return this._genericCreate(
+            this.budgetingTransactions,
+            Budgeting$TransactionSchema,
+            newKey,
+            {
+                transactionId: newKey,
+                date,
+                description,
+                createdBy,
+                account,
+                category,
+                amount,
+                comments,
+                workspace,
+            }
+        );
+    }
+
+    deleteTransaction(transactionId: number) {
+        return this._genericDelete(this.budgetingTransactions, transactionId);
+    }
+
+    updateTransaction(
+        transactionId: number,
+        date?: Date,
+        description?: string,
+        createdBy?: string,
+        account?: number,
+        category?: string,
+        amount?: number,
+        comments?: string | null,
+        workspace?: number
+    ) {
+        return this._genericUpdate(
+            this.budgetingTransactions,
+            Budgeting$TransactionSchema,
+            transactionId,
+            {
+                date,
+                description,
+                createdBy,
+                account,
+                category,
+                amount,
+                comments,
+                workspace,
+            }
+        );
+    }
 }

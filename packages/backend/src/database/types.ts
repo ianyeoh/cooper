@@ -20,11 +20,11 @@ export const Auth$SessionSchema = z.object({
 export type Auth$Session = z.infer<typeof Auth$SessionSchema>;
 
 // Budgeting
-export const Budgeting$Workspace = z.object({
+export const Budgeting$WorkspaceSchema = z.object({
     workspaceId: z.number(),
     users: z.array(z.string().min(2).max(50)),
 });
-export type Budgeting$Workspace = z.infer<typeof Budgeting$Workspace>;
+export type Budgeting$Workspace = z.infer<typeof Budgeting$WorkspaceSchema>;
 
 export const Budgeting$AccountSchema = z.object({
     accountId: z.number(),

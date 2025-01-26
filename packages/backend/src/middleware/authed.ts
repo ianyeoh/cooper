@@ -4,6 +4,8 @@ import mongoose from "mongoose";
 export async function authed(req: Request, res: Response, next: NextFunction) {
     const sessionId = req.cookies.id;
 
+    req.app
+
     if (
         // Check input
         sessionId && // sessionId cookie present

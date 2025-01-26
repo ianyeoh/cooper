@@ -5,6 +5,7 @@ import { authed } from "../middleware/authed";
 const getAccountsHandler: AppRouteImplementation<
     typeof contract.budgeting.accounts.getAccounts
 > = async function () {
+
     const accounts = await BudgetAccount.find().populate<{ owner: UserType }>({
         path: "owner",
         select: ["username", "firstName", "lastName"],
