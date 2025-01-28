@@ -1,4 +1,4 @@
-import InMemoryDatabase from "./database/in-memory/database";
+import DatabaseInterface from "./database/interface";
 
 declare global {
     namespace Express {
@@ -6,7 +6,8 @@ declare global {
             sessionId?: string;
             userId?: string;
         }
-        export interface Request {
+        export interface Locals {
+            database: DatabaseInterface;
         }
     }
 }

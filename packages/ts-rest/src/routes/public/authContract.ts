@@ -1,5 +1,6 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
+import { Auth$Session } from "../../types";
 
 const c = initContract();
 
@@ -90,9 +91,16 @@ const authContract = c.router(
             },
             summary: "Sign up as new user",
         },
-        session: {
+        getSessions: {
             method: "GET",
-            path: "/session",
+            path: "/sessions",
+            responses: {
+                200: c.type<Auth$Session>(),
+            },
+        },
+        validSession: {
+            method: "GET",
+            path: "/sessions/validate",
             responses: {
                 200: z.object({
                     message: z.literal("Valid session"),

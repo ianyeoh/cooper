@@ -13,14 +13,14 @@ import {
     Budgeting$TransactionSchema,
     Budgeting$Workspace,
     Budgeting$WorkspaceSchema,
-} from "../types";
+} from "@cooper/ts-rest/src/types";
 
 export default class InMemoryDatabase implements DatabaseInterface {
-    // Authentication
+    // Authentication data structures
     private authUsers: Map<string, Auth$User>;
     private authSessions: Map<number, Auth$Session>;
 
-    // Budgeting
+    // Budgeting data structures
     private budgetingWorkspaces: Map<number, Budgeting$Workspace>;
     private budgetingAccounts: Map<number, Budgeting$Account>;
     private budgetingCategories: Map<number, Budgeting$Category>;
@@ -168,359 +168,362 @@ export default class InMemoryDatabase implements DatabaseInterface {
         return filterItems;
     }
 
-    /*
-     * ======================
-     *      Auth.Users
-     * ======================
-     */
+    auth = {
+        /*
+         * ======================
+         *      Auth.Users
+         * ======================
+         */
+        users: {
+            isValidLogin: (username: string, password: string) => {
+                const user = this.authUsers.get(username.toLowerCase());
+                if (user == null) return false;
+                return user.password === password;
+            },
+            getUser: (username: string) => {
+                return this._genericGet(this.authUsers, username.toLowerCase());
+            },
+            createUser: (user: Auth$User) => {
+                return this._genericCreate(
+                    this.authUsers,
+                    Auth$UserSchema,
+                    user.username.toLowerCase(),
+                    user
+                );
+            },
+            updateUser: (
+                username: string,
+                firstName?: string,
+                lastName?: string,
+                password?: string
+            ) => {
+                return this._genericUpdate(
+                    this.authUsers,
+                    Auth$UserSchema,
+                    username.toLowerCase(),
+                    {
+                        firstName,
+                        lastName,
+                        password,
+                    }
+                );
+            },
+            deleteUser: (username: string) => {
+                this._genericDelete(this.authUsers, username.toLowerCase());
+            },
+        },
+        /*
+         * ======================
+         *     Auth.Sessions
+         * ======================
+         */
+        sessions: {
+            getSession: (sessionId: number) => {
+                return this._genericGet(this.authSessions, sessionId);
+            },
+            getUserSessions: (username: string) => {
+                if (this.auth.users.getUser(username) == null)
+                    return new Error("User does not exist");
 
-    isValidLogin(username: string, password: string) {
-        const user = this.authUsers.get(username.toLowerCase());
-        if (user == null) return false;
-        return user.password === password;
-    }
+                return this._genericMapFilter(this.authSessions, (value) => {
+                    return (
+                        value.username.toLowerCase() === username.toLowerCase()
+                    );
+                });
+            },
+            createSession: (
+                username: string,
+                ip: string,
+                userAgent: string,
+                started: Date,
+                expires: Date
+            ) => {
+                const newKey = this._keyGen(this.authSessions);
+                return this._genericCreate(
+                    this.authSessions,
+                    Auth$SessionSchema,
+                    newKey,
+                    {
+                        sessionId: newKey,
+                        username,
+                        ip,
+                        userAgent,
+                        started,
+                        expires,
+                    }
+                );
+            },
+            deleteSession: (sessionId: number) => {
+                this._genericDelete(this.authSessions, sessionId);
+            },
+            updateSession: (
+                sessionId: number,
+                ip?: string,
+                userAgent?: string,
+                started?: Date,
+                expires?: Date
+            ) => {
+                return this._genericUpdate(
+                    this.authSessions,
+                    Auth$SessionSchema,
+                    sessionId,
+                    {
+                        sessionId,
+                        ip,
+                        userAgent,
+                        started,
+                        expires,
+                    }
+                );
+            },
+        },
+    };
 
-    getUser(username: string) {
-        return this._genericGet(this.authUsers, username.toLowerCase());
-    }
-
-    createUser(user: Auth$User) {
-        return this._genericCreate(
-            this.authUsers,
-            Auth$UserSchema,
-            user.username.toLowerCase(),
-            user
-        );
-    }
-
-    updateUser(
-        username: string,
-        firstName?: string,
-        lastName?: string,
-        password?: string
-    ) {
-        return this._genericUpdate(
-            this.authUsers,
-            Auth$UserSchema,
-            username.toLowerCase(),
-            {
-                firstName,
-                lastName,
-                password,
-            }
-        );
-    }
-
-    deleteUser(username: string) {
-        this._genericDelete(this.authUsers, username.toLowerCase());
-    }
-
-    /*
-     * ======================
-     *     Auth.Sessions
-     * ======================
-     */
-
-    getSession(sessionId: number) {
-        return this._genericGet(this.authSessions, sessionId);
-    }
-
-    getUserSessions(username: string) {
-        if (this.getUser(username) == null)
-            return new Error("User does not exist");
-
-        return this._genericMapFilter(this.authSessions, (value) => {
-            return value.username.toLowerCase() === username.toLowerCase();
-        });
-    }
-
-    createSession(
-        username: string,
-        ip: string,
-        userAgent: string,
-        started: Date,
-        expires: Date
-    ) {
-        const newKey = this._keyGen(this.authSessions);
-        return this._genericCreate(
-            this.authSessions,
-            Auth$SessionSchema,
-            newKey,
-            {
-                sessionId: newKey,
-                username,
-                ip,
-                userAgent,
-                started,
-                expires,
-            }
-        );
-    }
-
-    deleteSession(sessionId: number) {
-        this._genericDelete(this.authSessions, sessionId);
-    }
-
-    updateSession(
-        sessionId: number,
-        ip?: string,
-        userAgent?: string,
-        started?: Date,
-        expires?: Date
-    ) {
-        return this._genericUpdate(
-            this.authSessions,
-            Auth$SessionSchema,
-            sessionId,
-            {
-                sessionId,
-                ip,
-                userAgent,
-                started,
-                expires,
-            }
-        );
-    }
-
-    /*
-     * ======================
-     *  Budgeting.Workspaces
-     * ======================
-     */
-
-    getWorkspace(workspaceId: number) {
-        return this._genericGet(this.budgetingWorkspaces, workspaceId);
-    }
-
-    getUserWorkspaces(username: string) {
-        return this._genericMapFilter(this.budgetingWorkspaces, (value) => {
-            return value.users.includes(username.toLowerCase());
-        });
-    }
-
-    createWorkspace(username: string) {
-        const newKey = this._keyGen(this.budgetingWorkspaces);
-        return this._genericCreate(
-            this.budgetingWorkspaces,
-            Budgeting$WorkspaceSchema,
-            newKey,
-            {
-                workspaceId: newKey,
-                users: [username],
-            }
-        );
-    }
-
-    deleteWorkspace(workspaceId: number) {
-        this._genericDelete(this.budgetingWorkspaces, workspaceId);
-    }
-
-    updateWorkspace(workspaceId: number, users: string[]) {
-        return this._genericUpdate(
-            this.budgetingWorkspaces,
-            Budgeting$WorkspaceSchema,
-            workspaceId,
-            {
-                users,
-            }
-        );
-    }
-
-    /*
-     * ======================
-     *   Budgeting.Accounts
-     * ======================
-     */
-
-    getAccount(accountId: number) {
-        return this._genericGet(this.budgetingAccounts, accountId);
-    }
-
-    getWorkspaceAccounts(workspace: number) {
-        return this._genericMapFilter(this.budgetingAccounts, (value) => {
-            return value.workspace === workspace;
-        });
-    }
-
-    createAccount(
-        name: string,
-        bank: string,
-        description: string,
-        workspace: string,
-        createdBy: string
-    ) {
-        const newKey = this._keyGen(this.budgetingAccounts);
-        return this._genericCreate(
-            this.budgetingAccounts,
-            Budgeting$AccountSchema,
-            newKey,
-            {
-                accountId: newKey,
-                name,
-                bank,
-                description,
-                workspace,
-                createdBy,
-            }
-        );
-    }
-
-    deleteAccount(accountId: number) {
-        this._genericDelete(this.budgetingAccounts, accountId);
-    }
-
-    updateAccount(
-        accountId: number,
-        name?: string,
-        bank?: string,
-        description?: string,
-        workspace?: string,
-        createdBy?: string
-    ) {
-        return this._genericUpdate(
-            this.budgetingAccounts,
-            Budgeting$AccountSchema,
-            accountId,
-            {
-                name,
-                bank,
-                description,
-                workspace,
-                createdBy,
-            }
-        );
-    }
-
-    /*
-     * ======================
-     *  Budgeting.Categories
-     * ======================
-     */
-
-    getCategory(categoryId: number) {
-        return this._genericGet(this.budgetingCategories, categoryId);
-    }
-
-    getWorkspaceCategories(workspace: number) {
-        return this._genericMapFilter(this.budgetingCategories, (category) => {
-            return category.workspace === workspace;
-        });
-    }
-
-    createCategory(name: string, createdBy: string, workspace: number) {
-        const newKey = this._keyGen(this.budgetingCategories);
-        return this._genericCreate(
-            this.budgetingCategories,
-            Budgeting$CategorySchema,
-            newKey,
-            {
-                categoryId: newKey,
-                name,
-                createdBy,
-                workspace,
-            }
-        );
-    }
-
-    deleteCategory(categoryId: number) {
-        this._genericDelete(this.budgetingCategories, categoryId);
-    }
-
-    updateCategory(
-        categoryId: number,
-        name?: string,
-        createdBy?: string,
-        workspace?: number
-    ) {
-        return this._genericUpdate(
-            this.budgetingCategories,
-            Budgeting$CategorySchema,
-            categoryId,
-            {
-                name,
-                createdBy,
-                workspace,
-            }
-        );
-    }
-
-    /*
-     * ======================
-     * Budgeting.Transactions
-     * ======================
-     */
-
-    getTransaction(transactionId: number) {
-        return this._genericGet(this.budgetingTransactions, transactionId);
-    }
-
-    getWorkspaceTransactions(workspace: number) {
-        return this._genericMapFilter(
-            this.budgetingTransactions,
-            (transaction) => {
-                return transaction.workspace === workspace;
-            }
-        );
-    }
-
-    createTransaction(
-        date: Date,
-        description: string,
-        createdBy: string,
-        account: number,
-        category: string,
-        amount: number,
-        comments: string | null,
-        workspace: number
-    ) {
-        const newKey = this._keyGen(this.budgetingTransactions);
-        return this._genericCreate(
-            this.budgetingTransactions,
-            Budgeting$TransactionSchema,
-            newKey,
-            {
-                transactionId: newKey,
-                date,
-                description,
-                createdBy,
-                account,
-                category,
-                amount,
-                comments,
-                workspace,
-            }
-        );
-    }
-
-    deleteTransaction(transactionId: number) {
-        return this._genericDelete(this.budgetingTransactions, transactionId);
-    }
-
-    updateTransaction(
-        transactionId: number,
-        date?: Date,
-        description?: string,
-        createdBy?: string,
-        account?: number,
-        category?: string,
-        amount?: number,
-        comments?: string | null,
-        workspace?: number
-    ) {
-        return this._genericUpdate(
-            this.budgetingTransactions,
-            Budgeting$TransactionSchema,
-            transactionId,
-            {
-                date,
-                description,
-                createdBy,
-                account,
-                category,
-                amount,
-                comments,
-                workspace,
-            }
-        );
-    }
+    budgeting = {
+        /*
+         * ======================
+         *  Budgeting.Workspaces
+         * ======================
+         */
+        workspaces: {
+            getWorkspace: (workspaceId: number) => {
+                return this._genericGet(this.budgetingWorkspaces, workspaceId);
+            },
+            getUserWorkspaces: (username: string) => {
+                return this._genericMapFilter(
+                    this.budgetingWorkspaces,
+                    (value) => {
+                        return value.users.includes(username.toLowerCase());
+                    }
+                );
+            },
+            createWorkspace: (username: string) => {
+                const newKey = this._keyGen(this.budgetingWorkspaces);
+                return this._genericCreate(
+                    this.budgetingWorkspaces,
+                    Budgeting$WorkspaceSchema,
+                    newKey,
+                    {
+                        workspaceId: newKey,
+                        users: [username],
+                    }
+                );
+            },
+            deleteWorkspace: (workspaceId: number) => {
+                this._genericDelete(this.budgetingWorkspaces, workspaceId);
+            },
+            updateWorkspace: (workspaceId: number, users: string[]) => {
+                return this._genericUpdate(
+                    this.budgetingWorkspaces,
+                    Budgeting$WorkspaceSchema,
+                    workspaceId,
+                    {
+                        users,
+                    }
+                );
+            },
+        },
+        /*
+         * ======================
+         *   Budgeting.Accounts
+         * ======================
+         */
+        accounts: {
+            getAccount: (accountId: number) => {
+                return this._genericGet(this.budgetingAccounts, accountId);
+            },
+            getWorkspaceAccounts: (workspace: number) => {
+                return this._genericMapFilter(
+                    this.budgetingAccounts,
+                    (value) => {
+                        return value.workspace === workspace;
+                    }
+                );
+            },
+            createAccount: (
+                name: string,
+                bank: string,
+                description: string,
+                workspace: string,
+                createdBy: string
+            ) => {
+                const newKey = this._keyGen(this.budgetingAccounts);
+                return this._genericCreate(
+                    this.budgetingAccounts,
+                    Budgeting$AccountSchema,
+                    newKey,
+                    {
+                        accountId: newKey,
+                        name,
+                        bank,
+                        description,
+                        workspace,
+                        createdBy,
+                    }
+                );
+            },
+            deleteAccount: (accountId: number) => {
+                this._genericDelete(this.budgetingAccounts, accountId);
+            },
+            updateAccount: (
+                accountId: number,
+                name?: string,
+                bank?: string,
+                description?: string,
+                workspace?: string,
+                createdBy?: string
+            ) => {
+                return this._genericUpdate(
+                    this.budgetingAccounts,
+                    Budgeting$AccountSchema,
+                    accountId,
+                    {
+                        name,
+                        bank,
+                        description,
+                        workspace,
+                        createdBy,
+                    }
+                );
+            },
+        },
+        /*
+         * ======================
+         *  Budgeting.Categories
+         * ======================
+         */
+        categories: {
+            getCategory: (categoryId: number) => {
+                return this._genericGet(this.budgetingCategories, categoryId);
+            },
+            getWorkspaceCategories: (workspace: number) => {
+                return this._genericMapFilter(
+                    this.budgetingCategories,
+                    (category) => {
+                        return category.workspace === workspace;
+                    }
+                );
+            },
+            createCategory: (
+                name: string,
+                createdBy: string,
+                workspace: number
+            ) => {
+                const newKey = this._keyGen(this.budgetingCategories);
+                return this._genericCreate(
+                    this.budgetingCategories,
+                    Budgeting$CategorySchema,
+                    newKey,
+                    {
+                        categoryId: newKey,
+                        name,
+                        createdBy,
+                        workspace,
+                    }
+                );
+            },
+            deleteCategory: (categoryId: number) => {
+                this._genericDelete(this.budgetingCategories, categoryId);
+            },
+            updateCategory: (
+                categoryId: number,
+                name?: string,
+                createdBy?: string,
+                workspace?: number
+            ) => {
+                return this._genericUpdate(
+                    this.budgetingCategories,
+                    Budgeting$CategorySchema,
+                    categoryId,
+                    {
+                        name,
+                        createdBy,
+                        workspace,
+                    }
+                );
+            },
+        },
+        /*
+         * ======================
+         * Budgeting.Transactions
+         * ======================
+         */
+        transactions: {
+            getTransaction: (transactionId: number) => {
+                return this._genericGet(
+                    this.budgetingTransactions,
+                    transactionId
+                );
+            },
+            getWorkspaceTransactions: (workspace: number) => {
+                return this._genericMapFilter(
+                    this.budgetingTransactions,
+                    (transaction) => {
+                        return transaction.workspace === workspace;
+                    }
+                );
+            },
+            createTransaction: (
+                date: Date,
+                description: string,
+                createdBy: string,
+                account: number,
+                category: string,
+                amount: number,
+                comments: string | null,
+                workspace: number
+            ) => {
+                const newKey = this._keyGen(this.budgetingTransactions);
+                return this._genericCreate(
+                    this.budgetingTransactions,
+                    Budgeting$TransactionSchema,
+                    newKey,
+                    {
+                        transactionId: newKey,
+                        date,
+                        description,
+                        createdBy,
+                        account,
+                        category,
+                        amount,
+                        comments,
+                        workspace,
+                    }
+                );
+            },
+            deleteTransaction: (transactionId: number) => {
+                return this._genericDelete(
+                    this.budgetingTransactions,
+                    transactionId
+                );
+            },
+            updateTransaction: (
+                transactionId: number,
+                date?: Date,
+                description?: string,
+                createdBy?: string,
+                account?: number,
+                category?: string,
+                amount?: number,
+                comments?: string | null,
+                workspace?: number
+            ) => {
+                return this._genericUpdate(
+                    this.budgetingTransactions,
+                    Budgeting$TransactionSchema,
+                    transactionId,
+                    {
+                        date,
+                        description,
+                        createdBy,
+                        account,
+                        category,
+                        amount,
+                        comments,
+                        workspace,
+                    }
+                );
+            },
+        },
+    };
 }

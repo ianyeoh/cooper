@@ -1,7 +1,5 @@
 import { initContract } from "@ts-rest/core";
-import { z } from "zod";
-import transactionsContract from "./transactionsContract";
-import accountsContract from "./accountsContract";
+import workspacesContract from "./workspacesContract";
 
 const c = initContract();
 
@@ -10,8 +8,7 @@ const c = initContract();
  */
 const budgetingContract = c.router(
     {
-        transactions: transactionsContract,
-        accounts: accountsContract,
+        workspaces: workspacesContract,
     },
     {
         pathPrefix: "/budgeting",

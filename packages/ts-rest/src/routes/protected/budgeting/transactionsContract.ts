@@ -1,5 +1,6 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
+import { Budgeting$Transaction } from "../../../types";
 
 const c = initContract();
 
@@ -9,31 +10,7 @@ const transactionsContract = c.router(
             method: "GET",
             path: "/",
             responses: {
-                200: z.object({
-                    records: z.array(
-                        z.object({
-                            account: z.object({
-                                name: z.string().min(1),
-                                bank: z.string().min(1),
-                            }),
-                            date: z.date(),
-                            description: z.string(),
-                            category: z.object({
-                                name: z.string().min(1),
-                            }),
-                            amount: z.number().finite().safe(),
-                            comments: z.string().optional().nullable(),
-                            createdBy: z
-                                .object({
-                                    firstName: z.string().min(1),
-                                    lastName: z.string().min(1),
-                                })
-                                .optional(),
-                            createdAt: z.date(),
-                            updatedAt: z.date(),
-                        })
-                    ),
-                }),
+                200: c.type<Budgeting$Transaction[]>(),
             },
             summary: "Get transaction list",
         },
