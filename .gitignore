@@ -4,6 +4,7 @@
 
 # TS build
 build/
+.DS_Store
 
 # Below is a copy of https://github.com/github/gitignore/blob/HEAD/Node.gitignore
 
