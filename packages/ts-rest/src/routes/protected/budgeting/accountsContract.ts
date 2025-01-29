@@ -1,6 +1,6 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import { Budgeting$Account } from "../../../types";
+import { Budgeting$Account, Budgeting$AccountSchema } from "../../../types";
 
 const c = initContract();
 
@@ -17,11 +17,9 @@ const accountsContract = c.router(
         newAccount: {
             method: "POST",
             path: "/",
-            body: z.object({
-                name: z.string().min(1).max(50),
-                bank: z.string().min(1).max(50),
-                description: z.string().min(1).max(255).optional().nullable(),
-                ownerId: z.string().min(1).max(50),
+            body: Budgeting$AccountSchema.omit({
+                accountId: true,
+                workspace: true,
             }),
             responses: {
                 200: z.object({
@@ -34,6 +32,51 @@ const accountsContract = c.router(
             },
             summary: "Create a new account",
         },
+        /*
+         * These routes are separated and restricted by accountId
+         */
+        accounts: c.router(
+            {
+                updateAccount: {
+                    method: "POST",
+                    path: "/",
+                    body: Budgeting$AccountSchema.omit({
+                        accountId: true,
+                        workspace: true,
+                    }).partial(),
+                    responses: {
+                        200: z.object({
+                            message: z.literal("Account updated successfully"),
+                        }),
+                        400: z.object({
+                            error: z.literal("Invalid input"),
+                            reason: z.string().min(1),
+                        }),
+                    },
+                },
+                deleteAccount: {
+                    method: "POST",
+                    path: "/delete",
+                    body: z.any(),
+                    responses: {
+                        200: z.object({
+                            message: z.literal("Account deleted successfully"),
+                        }),
+                    },
+                },
+            },
+            {
+                pathPrefix: "/:accountId",
+                pathParams: Budgeting$AccountSchema.pick({
+                    accountId: true,
+                }),
+                commonResponses: {
+                    404: z.object({
+                        error: z.literal("Account does not exist"),
+                    }),
+                },
+            }
+        ),
     },
     {
         pathPrefix: "/accounts",

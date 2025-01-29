@@ -1,57 +1,80 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
+import { Budgeting$Category, Budgeting$CategorySchema } from "../../../types";
 
 const c = initContract();
 
 const categoriesContract = c.router(
     {
-        // getAccounts: {
-        //     method: "GET",
-        //     path: "/",
-        //     responses: {
-        //         200: z.object({
-        //             accounts: z.array(
-        //                 z.object({
-        //                     name: z.string().min(1).max(50),
-        //                     bank: z.string().min(1).max(50),
-        //                     description: z
-        //                         .string()
-        //                         .min(1)
-        //                         .optional()
-        //                         .nullable(),
-        //                     owner: z.object({
-        //                         firstName: z.string().min(1).max(50),
-        //                         lastName: z.string().min(1).max(50),
-        //                     }),
-        //                 })
-        //             ),
-        //         }),
-        //     },
-        //     summary: "Get list of categories",
-        // },
-        // newAccount: {
-        //     method: "POST",
-        //     path: "/",
-        //     body: z.object({
-        //         name: z.string().min(1).max(50),
-        //         bank: z.string().min(1).max(50),
-        //         description: z.string().min(1).optional().nullable(),
-        //         ownerId: z.string().min(1).max(50),
-        //     }),
-        //     responses: {
-        //         200: z.object({
-        //             message: z.literal("Account created successfully"),
-        //         }),
-        //         400: z.object({
-        //             error: z.literal("Invalid input"),
-        //             reason: z.string().min(1),
-        //         }),
-        //     },
-        //     summary: "Create a new account",
-        // },
+        getCategories: {
+            method: "GET",
+            path: "/",
+            responses: {
+                200: c.type<Budgeting$Category[]>(),
+            },
+            summary: "Get a list of categories",
+        },
+        newCategory: {
+            method: "POST",
+            path: "/",
+            body: Budgeting$CategorySchema.omit({
+                categoryId: true,
+                workspace: true,
+            }),
+            responses: {
+                200: z.literal("Category created successfully"),
+                400: z.object({
+                    error: z.literal("Invalid input"),
+                    reason: z.string().min(1),
+                }),
+            },
+            summary: "Create a new category",
+        },
+        /*
+         * These routes are separated and restricted by categoryId
+         */
+        categories: c.router(
+            {
+                updateCategory: {
+                    method: "POST",
+                    path: "/",
+                    body: Budgeting$CategorySchema.omit({
+                        categoryId: true,
+                    }).partial(),
+                    responses: {
+                        200: z.literal("Category updated successfully"),
+                        400: z.object({
+                            error: z.literal("Invalid input"),
+                            reason: z.string().min(1),
+                        }),
+                    },
+                    summary: "Update a category by id",
+                },
+                deleteCategory: {
+                    method: "POST",
+                    path: "/delete",
+                    body: z.any(),
+                    responses: {
+                        200: z.literal("Category updated successfully"),
+                    },
+                    summary: "Delete a category by id",
+                },
+            },
+            {
+                pathPrefix: "/:categoryId",
+                pathParams: Budgeting$CategorySchema.pick({
+                    categoryId: true,
+                }),
+                commonResponses: {
+                    404: z.object({
+                        error: z.literal("Category does not exist"),
+                    }),
+                },
+            }
+        ),
     },
     {
-        pathPrefix: "/accounts",
+        pathPrefix: "/categories",
     }
 );
 

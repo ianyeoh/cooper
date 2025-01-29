@@ -1,6 +1,6 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import { Auth$User } from "../../types";
+import { Auth$User } from "../../../types";
 
 const c = initContract();
 

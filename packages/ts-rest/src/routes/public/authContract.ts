@@ -1,6 +1,6 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import { Auth$Session } from "../../types";
+import { Auth$Session, Auth$UserSchema } from "../../types";
 
 const c = initContract();
 
@@ -9,19 +9,7 @@ const authContract = c.router(
         login: {
             method: "POST",
             path: "/login",
-            body: z.object({
-                username: z
-                    .string()
-                    .min(2, {
-                        message: "Username must be longer than 2 characters",
-                    })
-                    .max(50, {
-                        message: "Username must be less than 50 characters",
-                    }),
-                password: z.string().min(2, {
-                    message: "Password must be longer than 2 characters",
-                }),
-            }),
+            body: Auth$UserSchema.pick({ username: true, password: true }),
             responses: {
                 200: z.object({
                     message: z.literal("Logged in successfully"),
@@ -38,7 +26,7 @@ const authContract = c.router(
         logout: {
             method: "POST",
             path: "/logout",
-            body: z.object({}).optional().nullable(),
+            body: z.any(),
             responses: {
                 200: z.object({
                     message: z.literal("Logged out successfully"),
@@ -52,35 +40,7 @@ const authContract = c.router(
         signup: {
             method: "POST",
             path: "/signup",
-            body: z.object({
-                firstName: z
-                    .string()
-                    .min(2, {
-                        message: "First name must be longer than 2 characters",
-                    })
-                    .max(50, {
-                        message: "First name must be less than 50 characters",
-                    }),
-                lastName: z
-                    .string()
-                    .min(2, {
-                        message: "Last name must be longer than 2 characters",
-                    })
-                    .max(50, {
-                        message: "Last name must be less than 50 characters",
-                    }),
-                username: z
-                    .string()
-                    .min(2, {
-                        message: "Username must be longer than 2 characters",
-                    })
-                    .max(50, {
-                        message: "Username must be less than 50 characters",
-                    }),
-                password: z.string().min(2, {
-                    message: "Password must be longer than 2 characters",
-                }),
-            }),
+            body: Auth$UserSchema,
             responses: {
                 200: z.object({
                     message: z.literal("Signed up successfully"),

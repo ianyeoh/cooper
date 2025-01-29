@@ -1,6 +1,9 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import { Budgeting$Transaction } from "../../../types";
+import {
+    Budgeting$Transaction,
+    Budgeting$TransactionSchema,
+} from "../../../types";
 
 const c = initContract();
 
@@ -12,18 +15,14 @@ const transactionsContract = c.router(
             responses: {
                 200: c.type<Budgeting$Transaction[]>(),
             },
-            summary: "Get transaction list",
+            summary: "Get a list of transactions belonging to the workspace",
         },
         newTransaction: {
             method: "POST",
             path: "/",
-            body: z.object({
-                accountId: z.string().min(1),
-                date: z.date(),
-                description: z.string().min(1),
-                categoryId: z.string().min(1),
-                amount: z.number().finite().safe(),
-                comments: z.string().optional().nullable(),
+            body: Budgeting$TransactionSchema.omit({
+                transactionId: true,
+                workspace: true,
             }),
             responses: {
                 200: z.object({
@@ -34,15 +33,61 @@ const transactionsContract = c.router(
                     reason: z.string().min(1),
                 }),
             },
-            summary: "Get transaction list",
+            summary: "Create a new transaction",
         },
+        /*
+         * These routes are separated and restricted by transactionId
+         */
+        transactions: c.router(
+            {
+                updateTransaction: {
+                    method: "POST",
+                    path: "/",
+                    body: Budgeting$TransactionSchema.omit({
+                        transactionId: true,
+                        workspace: true,
+                    }).partial(),
+                    responses: {
+                        200: z.object({
+                            message: z.literal(
+                                "Transaction updated successfully"
+                            ),
+                        }),
+                        400: z.object({
+                            error: z.literal("Invalid input"),
+                            reason: z.string().min(1),
+                        }),
+                    },
+                    summary: "Update a transaction by id",
+                },
+                deleteTransaction: {
+                    method: "POST",
+                    path: "/delete",
+                    body: z.any(),
+                    responses: {
+                        200: z.object({
+                            message: z.literal(
+                                "Transaction deleted sucessfully"
+                            ),
+                        }),
+                    },
+                    summary: "Delete a transaction by id",
+                },
+            },
+            {
+                pathPrefix: "/:transactionId",
+                pathParams: Budgeting$TransactionSchema.pick({
+                    transactionId: true,
+                }),
+                commonResponses: {
+                    404: z.object({
+                        error: z.literal("Transaction does not exist"),
+                    }),
+                },
+            }
+        ),
     },
     {
-        commonResponses: {
-            401: z.object({
-                error: z.literal("Unauthorised"),
-            }),
-        },
         pathPrefix: "/transactions",
     }
 );

@@ -1,7 +1,7 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 import budgetingContract from "./budgeting/budgetingContract";
-import usersContract from "./usersContract";
+import usersContract from "./users/usersContract";
 
 const c = initContract();
 
