@@ -6,51 +6,39 @@ import { authed } from "../middleware/authed";
 
 export const login: AppRouteImplementation<typeof contract.auth.login> =
     async function ({ body, req, res }) {
-        const existingUser = await Authentication.findOne({
-            username: body.username,
-        }).exec();
+        const db = req.app.locals.database;
+        const existingUser = db.auth.users.getUser(body.username);
 
-        if (!existingUser) {
-            return {
-                status: 401,
-                body: {
-                    error: "Invalid username or password",
-                },
-            };
-        }
+        if (!existingUser) return contract.auth.login.responses[401];
 
         const passwordMatch = compareSaltedHash(
             body.password,
             existingUser.password
         );
 
-        if (!passwordMatch) {
-            return {
-                status: 401,
-                body: {
-                    error: "Invalid username or password",
-                },
-            };
-        }
+        if (!passwordMatch) return contract.auth.login.responses[401];
 
         const ip = req.ip ?? "Unknown";
-        const userAgent = req.get("user-agent");
+        const userAgent = req.get("user-agent") || "Unknown";
 
-        const session = new Session({
-            user: existingUser.user,
+        const newSession = db.auth.sessions.createSession(
+            existingUser.username,
             ip,
             userAgent,
-            started: new Date(),
-            expires: addMinutes(new Date(), 30),
-        });
-        await session.save();
+            new Date(),
+            addMinutes(new Date(), 30)
+        );
 
-        res.cookie("id", session.id, {
+        if (newSession instanceof Error) {
+            
+        }
+          
+          res.cookie("id", session.id, {
             secure: true,
             expires: session.expires,
             httpOnly: true,
             sameSite: "strict",
-        });
+          });
 
         return {
             status: 200,

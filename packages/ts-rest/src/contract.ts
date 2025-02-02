@@ -26,6 +26,12 @@ export const contract = c.router(
     },
     {
         pathPrefix: "/api",
+        commonResponses: {
+            500: c.type<{
+                error: string;
+            }>(),
+        },
+        strictStatusCodes: true,
     }
 );
 export type ContractType = typeof contract;
