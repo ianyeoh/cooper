@@ -1,10 +1,11 @@
+import { Auth$Session, Budgeting$Workspace } from "@cooper/ts-rest/src/types";
 import DatabaseInterface from "./database/interface";
 
 declare global {
     namespace Express {
         export interface Response {
-            sessionId?: string;
-            userId?: string;
+            session: Auth$Session;
+            workspace: Budgeting$Workspace;
         }
         export interface Locals {
             database: DatabaseInterface;

@@ -14,9 +14,6 @@ const authContract = c.router(
                 200: z.object({
                     message: z.literal("Logged in successfully"),
                 }),
-                400: z.object({
-                    error: z.literal("Already logged in"),
-                }),
                 401: z.object({
                     error: z.literal("Invalid username or password"),
                 }),

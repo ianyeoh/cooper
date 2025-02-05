@@ -38,7 +38,7 @@ const transactionsContract = c.router(
         /*
          * These routes are separated and restricted by transactionId
          */
-        transactions: c.router(
+        byId: c.router(
             {
                 updateTransaction: {
                     method: "POST",

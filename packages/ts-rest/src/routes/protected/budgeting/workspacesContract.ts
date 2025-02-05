@@ -20,7 +20,7 @@ const workspacesContract = c.router(
         newWorkspace: {
             method: "POST",
             path: "/",
-            body: Budgeting$WorkspaceSchema.omit({ workspaceId: true }),
+            body: z.any(),
             responses: {
                 200: z.literal("Workspace created successfully"),
                 400: z.object({
@@ -34,7 +34,7 @@ const workspacesContract = c.router(
         /*
          * These routes are separated and restricted by workspaceId
          */
-        workspaces: c.router(
+        byId: c.router(
             {
                 updateWorkspace: {
                     method: "POST",

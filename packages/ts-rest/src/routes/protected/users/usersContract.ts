@@ -10,7 +10,9 @@ const usersContract = c.router(
             method: "GET",
             path: "/:username",
             responses: {
-                200: c.type<Omit<Auth$User, "password">>(),
+                200: c.type<
+                    Pick<Auth$User, "username" | "firstName" | "lastName">
+                >(),
                 401: z.object({
                     error: z.literal("Unauthorised"),
                 }),

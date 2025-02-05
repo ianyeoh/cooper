@@ -1,26 +1,19 @@
 // Sentry (error logging) instrumentation, must be imported first
 import "./instrument";
 import * as Sentry from "@sentry/node";
-
-// All other imports
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import { config } from "dotenv";
-import mongoose from "mongoose";
-import process from "node:process";
 import { createExpressEndpoints, initServer } from "@ts-rest/express";
 import { generateOpenApi } from "@ts-rest/open-api";
 import { contract } from "@cooper/ts-rest/src/contract";
 import { serve, setup } from "swagger-ui-express";
 import cookieParser from "cookie-parser";
-import { login, logout, signup, session } from "./routes/auth";
-import { getAccounts, newAccount } from "./routes/accounts";
-import { getUserProfile } from "./routes/users";
-import { getTransactions, newTransaction } from "./routes/transactions";
-import { status } from "./routes/status";
 import serverConfig from "../serverConfig.json";
 import InMemoryDatabase from "./database/in-memory/database";
+
+import { status } from "./routes/public/status";
 
 // Get configuration variables from environment
 const hostname = serverConfig.hostname;
@@ -54,24 +47,12 @@ app.use(express.json());
 const s = initServer();
 const router = s.router(contract, {
     status,
-    auth: {
-        login,
-        logout,
-        signup,
-        session,
+    protected: {
+        users: {},
+        budgeting: {},
     },
-    budgeting: {
-        transactions: {
-            getTransactions,
-            newTransaction,
-        },
-        accounts: {
-            getAccounts,
-            newAccount,
-        },
-    },
-    users: {
-        getUserProfile,
+    public: {
+        auth: {},
     },
 });
 createExpressEndpoints(contract, router, app, {

@@ -1,9 +1,9 @@
 import { AppRouteImplementation } from "@ts-rest/express";
 import { contract } from "@cooper/ts-rest/src/contract";
-import { authed } from "../middleware/authed";
+import { authenticate } from "../../../middleware/authenticate";
 
 const getAccountsHandler: AppRouteImplementation<
-    typeof contract.budgeting.accounts.getAccounts
+    typeof contract.protected.budgeting.workspaces.
 > = async function () {
 
     const accounts = await BudgetAccount.find().populate<{ owner: UserType }>({
@@ -17,7 +17,7 @@ const getAccountsHandler: AppRouteImplementation<
     };
 };
 export const getAccounts = {
-    middleware: [authed],
+    middleware: [authenticate],
     handler: getAccountsHandler,
 };
 
@@ -53,6 +53,6 @@ const newAccountHandler: AppRouteImplementation<
     };
 };
 export const newAccount = {
-    middleware: [authed],
+    middleware: [authenticate],
     handler: newAccountHandler,
 };

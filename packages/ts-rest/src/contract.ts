@@ -1,7 +1,7 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import authContract from "./routes/public/authContract";
 import protectedContract from "./routes/protected/protectedContract";
+import publicContract from "./routes/public/publicContract";
 
 const c = initContract();
 
@@ -21,8 +21,8 @@ export const contract = c.router(
             },
             summary: "Get health status of server",
         },
-        auth: authContract,
-        protectedRoutes: protectedContract,
+        protected: protectedContract,
+        public: publicContract,
     },
     {
         pathPrefix: "/api",

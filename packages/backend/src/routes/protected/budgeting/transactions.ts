@@ -1,10 +1,6 @@
 import { AppRouteImplementation } from "@ts-rest/express";
-import BudgetTransaction from "../db/budgetTransaction";
 import { contract } from "@cooper/ts-rest/src/contract";
-import { authed } from "../middleware/authed";
-import BudgetAccount, { BudgetAccountType } from "../db/budgetAccount";
-import BudgetCategory, { BudgetCategoryType } from "../db/budgetCategory";
-import { UserType } from "../db/user";
+import { authenticate } from "../../../middleware/authenticate";
 
 const getTransactionsHandler: AppRouteImplementation<
     typeof contract.budgeting.transactions.getTransactions
@@ -35,7 +31,7 @@ const getTransactionsHandler: AppRouteImplementation<
     };
 };
 export const getTransactions = {
-    middleware: [authed],
+    middleware: [authenticate],
     handler: getTransactionsHandler,
 };
 
@@ -83,6 +79,6 @@ const newTransactionHandler: AppRouteImplementation<
     };
 };
 export const newTransaction = {
-    middleware: [authed],
+    middleware: [authenticate],
     handler: newTransactionHandler,
 };

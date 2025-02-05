@@ -33,7 +33,7 @@ const categoriesContract = c.router(
         /*
          * These routes are separated and restricted by categoryId
          */
-        categories: c.router(
+        byId: c.router(
             {
                 updateCategory: {
                     method: "POST",

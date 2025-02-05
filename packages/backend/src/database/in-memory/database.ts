@@ -15,6 +15,10 @@ import {
     Budgeting$WorkspaceSchema,
 } from "@cooper/ts-rest/src/types";
 
+/*
+ * An simple implementation of an in-memory database. Only for use in testing or demonstration,
+ * as it is not optimised for performance or security.
+ */
 export default class InMemoryDatabase implements DatabaseInterface {
     // Authentication data structures
     private authUsers: Map<string, Auth$User>;

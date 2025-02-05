@@ -35,7 +35,7 @@ const accountsContract = c.router(
         /*
          * These routes are separated and restricted by accountId
          */
-        accounts: c.router(
+        byId: c.router(
             {
                 updateAccount: {
                     method: "POST",
