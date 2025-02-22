@@ -1,6 +1,6 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import { Budgeting$Category, Budgeting$CategorySchema } from "../../../types";
+import { Budgeting$CategorySchema } from "@cooper/ts-rest/src/types";
 
 const c = initContract();
 
@@ -10,7 +10,9 @@ const categoriesContract = c.router(
             method: "GET",
             path: "/",
             responses: {
-                200: c.type<Budgeting$Category[]>(),
+                200: z.object({
+                    categories: z.array(Budgeting$CategorySchema),
+                }),
             },
             summary: "Get a list of categories",
         },
@@ -22,7 +24,9 @@ const categoriesContract = c.router(
                 workspace: true,
             }),
             responses: {
-                200: z.literal("Category created successfully"),
+                200: z.object({
+                    message: z.literal("Category created successfully"),
+                }),
                 400: z.object({
                     error: z.literal("Invalid input"),
                     reason: z.string().min(1),
@@ -40,9 +44,12 @@ const categoriesContract = c.router(
                     path: "/",
                     body: Budgeting$CategorySchema.omit({
                         categoryId: true,
+                        workspace: true,
                     }).partial(),
                     responses: {
-                        200: z.literal("Category updated successfully"),
+                        200: z.object({
+                            message: z.literal("Category updated successfully"),
+                        }),
                         400: z.object({
                             error: z.literal("Invalid input"),
                             reason: z.string().min(1),
@@ -55,7 +62,9 @@ const categoriesContract = c.router(
                     path: "/delete",
                     body: z.any(),
                     responses: {
-                        200: z.literal("Category updated successfully"),
+                        200: z.object({
+                            message: z.literal("Category deleted successfully"),
+                        }),
                     },
                     summary: "Delete a category by id",
                 },

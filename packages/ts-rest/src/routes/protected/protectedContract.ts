@@ -1,7 +1,7 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import budgetingContract from "./budgeting/budgetingContract";
-import usersContract from "./users/usersContract";
+import usersContract from "@cooper/ts-rest/src/routes/protected/users/usersContract";
+import workspacesContract from "@cooper/ts-rest/src/routes/protected/budgeting/workspacesContract";
 
 const c = initContract();
 
@@ -12,10 +12,12 @@ const c = initContract();
 const protectedContract = c.router(
     {
         users: usersContract,
-        budgeting: budgetingContract,
+        budgeting: {
+            workspaces: workspacesContract,
+        },
     },
     {
-        pathPrefix: "/",
+        pathPrefix: "",
         commonResponses: {
             401: z.object({
                 error: z.literal("Unauthorised"),

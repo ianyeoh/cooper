@@ -13,7 +13,7 @@ import { fetch } from "@/lib/ts-rest-server";
 import { redirect } from "next/navigation";
 
 async function getUserProfile() {
-    const response = await fetch.users.getUserProfile();
+    const response = await fetch.protected.users.getSelf();
 
     if (response.status === 200) {
         return response.body;

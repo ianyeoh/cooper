@@ -5,7 +5,7 @@ export const Auth$UserSchema = z.object({
     username: z.string().min(2).max(50),
     firstName: z.string().min(2).max(50),
     lastName: z.string().min(2).max(50),
-    password: z.string().min(2).max(50),
+    password: z.string().min(2).max(250),
 });
 export type Auth$User = z.infer<typeof Auth$UserSchema>;
 
@@ -13,7 +13,7 @@ export const Auth$SessionSchema = z.object({
     sessionId: z.number(),
     username: z.string().min(2).max(50),
     ip: z.string().ip(),
-    userAgent: z.string().min(2).max(50),
+    userAgent: z.string().min(2).max(250),
     started: z.date(),
     expires: z.date(),
 });

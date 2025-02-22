@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import guard from "@cooper/backend/src/middleware/guard";
 
-export async function validateWorkspace(
+export async function validateCategory(
     req: Request,
     res: Response,
     next: NextFunction
@@ -10,30 +10,28 @@ export async function validateWorkspace(
 
     // parseInt because we don't want to include "truthy" numbers
     // e.g. hello10 = 10 > this should be NaN
-    const workspaceId = parseInt(req.params.workspaceId, 10);
+    const categoryId = parseInt(req.params.categoryId, 10);
 
-    // workspaceId is wildly invalid
-    if (Number.isNaN(workspaceId)) {
+    if (Number.isNaN(categoryId)) {
         return res.status(401).json({ error: "Unauthorised" });
     }
 
-    const workspace = db.budgeting.workspaces.getWorkspace(workspaceId);
+    const category = db.budgeting.categories.getCategory(categoryId);
 
-    // Workspace does not exist
-    if (workspace == null) {
+    // Category does not exist
+    if (category == null) {
         return res.status(404).json({
-            error: "Workspace does not exist",
+            error: "Category does not exist",
         });
     }
 
-    const username = guard(res.session).username;
-    // User does not have access to workspace
-    if (!workspace.users.includes(username)) {
+    // Check that category being accessed belongs to the workspace
+    if (category.workspace !== guard(res.workspace).workspaceId) {
         return res.status(401).json({
             error: "Unauthorised",
         });
     }
 
-    res.workspace = workspace;
+    res.category = category;
     return next();
 }

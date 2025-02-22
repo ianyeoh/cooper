@@ -1,4 +1,4 @@
-import DatabaseInterface from "../interface";
+import DatabaseInterface from "@cooper/backend/src/database/in-memory/database";
 import { z } from "zod";
 import {
     Auth$Session,
@@ -31,14 +31,21 @@ export default class InMemoryDatabase implements DatabaseInterface {
     private budgetingTransactions: Map<number, Budgeting$Transaction>;
 
     // Initialise default data-store values
-    constructor(
-        initialUsers?: Map<string, Auth$User>,
-        initialSessions?: Map<number, Auth$Session>,
-        initialWorkspaces?: Map<number, Budgeting$Workspace>,
-        initialAccounts?: Map<number, Budgeting$Account>,
-        initialCategories?: Map<number, Budgeting$Category>,
-        initialTransactions?: Map<number, Budgeting$Transaction>
-    ) {
+    constructor({
+        initialUsers,
+        initialSessions,
+        initialWorkspaces,
+        initialAccounts,
+        initialCategories,
+        initialTransactions,
+    }: {
+        initialUsers?: Map<string, Auth$User>;
+        initialSessions?: Map<number, Auth$Session>;
+        initialWorkspaces?: Map<number, Budgeting$Workspace>;
+        initialAccounts?: Map<number, Budgeting$Account>;
+        initialCategories?: Map<number, Budgeting$Category>;
+        initialTransactions?: Map<number, Budgeting$Transaction>;
+    }) {
         this.authUsers = initialUsers ?? new Map();
         this.authSessions = initialSessions ?? new Map();
         this.budgetingWorkspaces = initialWorkspaces ?? new Map();
@@ -227,7 +234,8 @@ export default class InMemoryDatabase implements DatabaseInterface {
             },
             getUserSessions: (username: string) => {
                 if (this.auth.users.getUser(username) == null)
-                    return new Error("User does not exist");
+                    // return new Error("User does not exist");
+                    return [];
 
                 return this._genericMapFilter(this.authSessions, (value) => {
                     return (
@@ -348,7 +356,7 @@ export default class InMemoryDatabase implements DatabaseInterface {
                 name: string,
                 bank: string,
                 description: string,
-                workspace: string,
+                workspace: number,
                 createdBy: string
             ) => {
                 const newKey = this._keyGen(this.budgetingAccounts);
@@ -374,7 +382,6 @@ export default class InMemoryDatabase implements DatabaseInterface {
                 name?: string,
                 bank?: string,
                 description?: string,
-                workspace?: string,
                 createdBy?: string
             ) => {
                 return this._genericUpdate(
@@ -385,7 +392,6 @@ export default class InMemoryDatabase implements DatabaseInterface {
                         name,
                         bank,
                         description,
-                        workspace,
                         createdBy,
                     }
                 );

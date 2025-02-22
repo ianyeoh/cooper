@@ -10,17 +10,19 @@ import { parseError } from "@cooper/ts-rest/src/utils";
 
 export default function SignupPage() {
     const router = useRouter();
-    const { mutate } = tsr.auth.signup.useMutation();
+    const { mutate } = tsr.public.auth.signup.useMutation();
 
     async function handleSignup(
-        body: ClientInferRequest<typeof contract.auth.signup>["body"]
+        body: ClientInferRequest<typeof contract.public.auth.signup>["body"]
     ) {
         return new Promise<void>((resolve, reject) => {
             mutate(
                 { body },
                 {
                     onSuccess: async () => {
-                        toast.success("You were signed up successfully. Please log in.")
+                        toast.success(
+                            "You were signed up successfully. Please log in."
+                        );
                         router.push("/login");
                         resolve();
                     },
@@ -30,7 +32,7 @@ export default function SignupPage() {
 
                         const error = parseError(e);
                         if (error.isKnownError) {
-                            errMsg = `Failed to create new user: ${error.errMsg}`;
+                            errMsg = error.errMsg;
                         } else {
                             console.log(`Unknown error: ${JSON.stringify(e)}`);
                         }

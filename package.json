@@ -4,21 +4,22 @@
     "description": "A home management system written in TypeScript",
     "private": true,
     "scripts": {
-        "backend": "npm run dev --prefix packages/backend",
-        "frontend": "npm run dev --prefix packages/frontend",
+        "test:backend": "npm run test --prefix packages/backend",
+        "dev:backend": "npm run dev --prefix packages/backend",
+        "dev:frontend": "npm run dev --prefix packages/frontend",
         "dev": "concurrently \"npm run frontend\" \"npm run backend\"",
-        "build": "tsc --build --verbose"
+        "build": "npm install && tsc --build --verbose",
+        "lint": "eslint ."
     },
     "workspaces": [
         "packages/*"
     ],
-    "dependencies": {
-        "@cooper/ts-rest": "^1.0.0",
-        "typescript": "^5.6.3"
-    },
     "devDependencies": {
-        "@types/node": "^22.9.0",
+        "@eslint/js": "^9.21.0",
         "concurrently": "^9.1.0",
-        "ts-node": "^10.9.2"
+        "eslint": "^8.57.1",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.7.3",
+        "typescript-eslint": "^8.24.1"
     }
 }

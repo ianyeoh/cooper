@@ -1,9 +1,6 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import {
-    Budgeting$Transaction,
-    Budgeting$TransactionSchema,
-} from "../../../types";
+import { Budgeting$TransactionSchema } from "@cooper/ts-rest/src/types";
 
 const c = initContract();
 
@@ -13,7 +10,9 @@ const transactionsContract = c.router(
             method: "GET",
             path: "/",
             responses: {
-                200: c.type<Budgeting$Transaction[]>(),
+                200: z.object({
+                    transactions: z.array(Budgeting$TransactionSchema),
+                }),
             },
             summary: "Get a list of transactions belonging to the workspace",
         },

@@ -12,7 +12,7 @@ export default function LogoutButton(props: {
     className?: string;
 }) {
     const router = useRouter();
-    const { mutate, isPending } = tsr.auth.logout.useMutation({
+    const { mutate, isPending } = tsr.public.auth.logout.useMutation({
         onSuccess: () => {
             router.push("/login");
         },

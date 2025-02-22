@@ -24,7 +24,7 @@ export default interface DatabaseInterface {
 
         sessions: {
             getSession: (sessionId: number) => Auth$Session | undefined;
-            getUserSessions: (username: string) => Auth$Session[] | Error;
+            getUserSessions: (username: string) => Auth$Session[];
             createSession: (
                 username: string,
                 ip: string,
@@ -59,14 +59,12 @@ export default interface DatabaseInterface {
 
         accounts: {
             getAccount: (accountId: number) => Budgeting$Account | undefined;
-            getWorkspaceAccounts: (
-                workspace: number
-            ) => Budgeting$Account[] | Error;
+            getWorkspaceAccounts: (workspace: number) => Budgeting$Account[];
             createAccount: (
                 name: string,
                 bank: string,
                 description: string,
-                workspace: string,
+                workspace: number,
                 createdBy: string
             ) => Budgeting$Account | Error;
             deleteAccount: (accountId: number) => void;
@@ -75,7 +73,6 @@ export default interface DatabaseInterface {
                 name?: string,
                 bank?: string,
                 description?: string,
-                workspace?: string,
                 createdBy?: string
             ) => Budgeting$Account | Error /*  */;
         };
@@ -92,8 +89,7 @@ export default interface DatabaseInterface {
             updateCategory: (
                 categoryId: number,
                 name?: string,
-                createdBy?: string,
-                workspace?: number
+                createdBy?: string
             ) => Budgeting$Category | Error;
         };
 

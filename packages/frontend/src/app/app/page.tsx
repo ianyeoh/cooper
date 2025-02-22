@@ -81,8 +81,8 @@ export default function AppDirectory() {
             <main className="flex-1 border-b py-5 px-10 w-screen">
                 <div className="flex justify-center">
                     <div className="flex flex-wrap gap-y-6 gap-x-4 max-w-screen-2xl px-10">
-                        {apps.map((app) => {
-                            return <AppCard app={app} />;
+                        {apps.map((app, index) => {
+                            return <AppCard key={index} app={app} />;
                         })}
 
                         {/* Adding phantom cards to the end to ensure last row matches rest of flexbox */}

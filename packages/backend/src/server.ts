@@ -1,27 +1,52 @@
 // Sentry (error logging) instrumentation, must be imported first
-import "./instrument";
+import "@cooper/backend/src/instrument";
 import * as Sentry from "@sentry/node";
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
-import morgan from "morgan";
-import { config } from "dotenv";
+import {
+    consoleLogger,
+    activityLogger,
+    logger,
+} from "@cooper/backend/src/logging";
 import { createExpressEndpoints, initServer } from "@ts-rest/express";
-import { generateOpenApi } from "@ts-rest/open-api";
 import { contract } from "@cooper/ts-rest/src/contract";
 import { serve, setup } from "swagger-ui-express";
 import cookieParser from "cookie-parser";
-import serverConfig from "../serverConfig.json";
-import InMemoryDatabase from "./database/in-memory/database";
+import openapi from "@cooper/backend/src/openapi";
+import InMemoryDatabase from "@cooper/backend/src/database/in-memory/database";
 
-import { status } from "./routes/public/status";
-
-// Get configuration variables from environment
-const hostname = serverConfig.hostname;
-const port = serverConfig.port;
-
-config(); // Load variables from .env file into process.env
-// const mongoURL = process.env.MONGO_URL;
-// const mongoDB = process.env.MONGO_DB;
+import { getSelf, getUser } from "@cooper/backend/src/routes/protected/users";
+import {
+    getTransactions,
+    newTransaction,
+    updateTransaction,
+    deleteTransaction,
+} from "@cooper/backend/src/routes/protected/budgeting/transactions";
+import {
+    getAccounts,
+    newAccount,
+    updateAccount,
+    deleteAccount,
+} from "@cooper/backend/src/routes/protected/budgeting/accounts";
+import {
+    getWorkspaces,
+    newWorkspace,
+    updateWorkspace,
+    deleteWorkspace,
+} from "@cooper/backend/src/routes/protected/budgeting/workspaces";
+import {
+    getCategories,
+    newCategory,
+    updateCategory,
+    deleteCategory,
+} from "@cooper/backend/src/routes/protected/budgeting/categories";
+import {
+    login,
+    logout,
+    signup,
+    getSessions,
+    validSession,
+} from "@cooper/backend/src/routes/public/auth";
 
 /**
  * Express initialisation
@@ -35,33 +60,69 @@ app.use(
         credentials: true,
     })
 );
-app.use(
-    morgan(
-        "[server]: :method :url :status :res[content-length] - :response-time ms"
-    )
-);
+app.use(consoleLogger);
+app.use(activityLogger);
 app.use(cookieParser());
 app.use(express.json());
 
 // Initialise and mount ts-rest router
 const s = initServer();
+
+// Ignore type instantiation is excessively deep and possibly infinite error (T2589)
+// @ts-ignore
 const router = s.router(contract, {
-    status,
     protected: {
-        users: {},
-        budgeting: {},
+        users: {
+            getSelf,
+            getUser,
+        },
+        budgeting: {
+            workspaces: {
+                getWorkspaces,
+                newWorkspace,
+                byId: {
+                    updateWorkspace,
+                    deleteWorkspace,
+                    accounts: {
+                        getAccounts,
+                        newAccount,
+                        byId: {
+                            updateAccount,
+                            deleteAccount,
+                        },
+                    },
+                    categories: {
+                        getCategories,
+                        newCategory,
+                        byId: {
+                            updateCategory,
+                            deleteCategory,
+                        },
+                    },
+                    transactions: {
+                        getTransactions,
+                        newTransaction,
+                        byId: {
+                            updateTransaction,
+                            deleteTransaction,
+                        },
+                    },
+                },
+            },
+        },
     },
     public: {
-        auth: {},
+        auth: {
+            login,
+            logout,
+            signup,
+            validSession,
+            getSessions,
+        },
     },
 });
 createExpressEndpoints(contract, router, app, {
     responseValidation: true,
-});
-
-// Auto-generated Swagger API docs
-const openapi = generateOpenApi(contract, {
-    info: { title: "API Documentation", version: "1.0.0" },
 });
 
 // Serve API docs at /docs
@@ -81,20 +142,37 @@ app.use(express.static("public"));
 // The Sentry error handler must be registered before any other error middleware but after all routers
 Sentry.setupExpressErrorHandler(app);
 
-// Check if MongoDB connection string is set
-// if (mongoURL == null) {
-//     console.log(
-//         `[server]: No MongoDB connection string set in environment or .env file`
-//     );
-//     throw new Error("Missing MONGO_URL environment variable");
-// }
+app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
+    if (req.body) {
+        logger.error(req.body);
+    }
 
-app.locals.database = new InMemoryDatabase();
+    if (err instanceof Error) {
+        logger.error(
+            `${err.name} - ${err.cause} - ${err.message} - ${err.stack}`
+        );
+    }
 
-// Start server
-app.listen(port, hostname, () => {
-    console.log(`[server]: Server is running at http://${hostname}:${port}`);
-    console.log(
-        `[server]: API documentation is available at http://${hostname}:${port}/docs`
-    );
+    res.status(500).json({
+        error: "Unexpected server error. Please try again later.",
+    });
+    return;
 });
+
+app.locals.database = new InMemoryDatabase({
+    initialUsers: new Map([
+        [
+            "ianyeoh",
+            {
+                username: "ianyeoh",
+                firstName: "Ian",
+                lastName: "Yeoh",
+                // hard-coded hash value of asd, for testing
+                password:
+                    "$2a$10$C/5nLYy.wjdrIGcQmKxiZ.OcQ9aQephzCTb10RVBvyzfKveYHJQoi",
+            },
+        ],
+    ]),
+});
+
+export default app;

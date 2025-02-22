@@ -7,7 +7,7 @@ import { ClientInferResponseBody } from "@ts-rest/core";
 
 async function getTransactionData(): Promise<
     ClientInferResponseBody<
-        typeof contract.transactions.getTransactions,
+        typeof contract.protected.budgeting.workspaces.byId.transactions.getTransactions,
         200
     >["records"]
 > {

@@ -10,7 +10,7 @@ import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 async function authenticated(sessionId: RequestCookie | undefined) {
     if (!sessionId) return false;
 
-    const response = await fetch.auth.session({});
+    const response = await fetch.public.auth.validSession();
 
     return response.status === 200;
 }

@@ -12,8 +12,10 @@
         "rootDir": "./src",
         "outDir": "./build",
         "composite": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "noImplicitAny": false,
+        "types": ["node", "mocha", "express"]
     },
-    "files": ["src/custom.d.ts"],
-    "include": ["src/**/*"]
+    "files": ["src/global.d.ts"],
+    "include": ["**/*.ts", "**/*.tsx", "src/global.d.ts"]
 }

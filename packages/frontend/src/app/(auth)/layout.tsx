@@ -33,14 +33,6 @@ export default function AuthenticationLayout({
                 <div className="max-w-[400px] space-y-6 mx-6">
                     <ThemeBtn className="absolute top-7 right-9 hidden sm:flex" />
 
-                    <div className="flex flex-col space-y-2 text-center px-8">
-                        <h1 className="text-2xl font-semibold tracking-tight">
-                            Sign in
-                        </h1>
-                        <p className="text-sm text-muted-foreground">
-                            Enter your username and password
-                        </p>
-                    </div>
                     {children}
                 </div>
             </div>

@@ -1,6 +1,6 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import { Budgeting$Account, Budgeting$AccountSchema } from "../../../types";
+import { Budgeting$AccountSchema } from "@cooper/ts-rest/src/types";
 
 const c = initContract();
 
@@ -10,7 +10,9 @@ const accountsContract = c.router(
             method: "GET",
             path: "/",
             responses: {
-                200: c.type<Budgeting$Account[]>(),
+                200: z.object({
+                    accounts: z.array(Budgeting$AccountSchema),
+                }),
             },
             summary: "Get list of accounts",
         },
@@ -53,6 +55,7 @@ const accountsContract = c.router(
                             reason: z.string().min(1),
                         }),
                     },
+                    summary: "Update details for an existing account",
                 },
                 deleteAccount: {
                     method: "POST",
@@ -63,6 +66,7 @@ const accountsContract = c.router(
                             message: z.literal("Account deleted successfully"),
                         }),
                     },
+                    summary: "Delete an account",
                 },
             },
             {
@@ -75,6 +79,7 @@ const accountsContract = c.router(
                         error: z.literal("Account does not exist"),
                     }),
                 },
+                summary: "Actions taken on existing accounts by account id",
             }
         ),
     },

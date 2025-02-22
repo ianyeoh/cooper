@@ -1,6 +1,6 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import { Auth$Session, Auth$UserSchema } from "../../types";
+import { Auth$SessionSchema, Auth$UserSchema } from "@cooper/ts-rest/src/types";
 
 const c = initContract();
 
@@ -52,8 +52,11 @@ const authContract = c.router(
             method: "GET",
             path: "/sessions",
             responses: {
-                200: c.type<Auth$Session>(),
+                200: z.object({
+                    sessions: z.array(Auth$SessionSchema),
+                }),
             },
+            summary: "Get list of sessions belonging to the user",
         },
         validSession: {
             method: "GET",

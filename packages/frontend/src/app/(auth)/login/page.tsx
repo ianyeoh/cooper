@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 
 export default function LoginPage() {
     const router = useRouter();
-    const { mutate } = tsr.auth.login.useMutation();
+    const { mutate } = tsr.public.auth.login.useMutation();
     const [redirectToastIds, setRedirectToastIds] = useState<
         (string | number)[]
     >([]);
@@ -53,7 +53,7 @@ export default function LoginPage() {
     }
 
     async function handleLogin(
-        body: ClientInferRequest<typeof contract.auth.login>["body"]
+        body: ClientInferRequest<typeof contract.public.auth.login>["body"]
     ) {
         dismissRedirectToasts();
 
@@ -71,7 +71,7 @@ export default function LoginPage() {
 
                         const error = parseError(e);
                         if (error.isKnownError) {
-                            errMsg = `Failed to log you in: ${error.errMsg}`;
+                            errMsg = `${error.errMsg}`;
                         } else {
                             console.log(`Unknown error: ${JSON.stringify(e)}`);
                         }
