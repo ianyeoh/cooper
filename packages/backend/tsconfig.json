@@ -2,7 +2,7 @@
     "compilerOptions": {
         "target": "es2022",
         "module": "commonjs",
-        "moduleResolution": "node",
+        "moduleResolution": "node10",
         "declaration": true,
         "strict": true,
         "incremental": true,
@@ -14,8 +14,7 @@
         "composite": true,
         "resolveJsonModule": true,
         "noImplicitAny": false,
-        "types": ["node", "mocha", "express"]
+        "typeRoots": ["./src/types", "../../node_modules/@types"]
     },
-    "files": ["src/global.d.ts"],
-    "include": ["**/*.ts", "**/*.tsx", "src/global.d.ts"]
+    "include": ["src/**/*"]
 }

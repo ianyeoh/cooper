@@ -67,7 +67,7 @@ export const login: AppRouteImplementation<typeof contract.public.auth.login> =
         };
     };
 
-export const logout: AppRouteImplementation<
+const logoutHandler: AppRouteImplementation<
     typeof contract.public.auth.logout
 > = async function ({ req, res }) {
     const db = req.app.locals.database;
@@ -84,6 +84,10 @@ export const logout: AppRouteImplementation<
             message: "Logged out successfully",
         },
     };
+};
+export const logout = {
+    middleware: [authenticate],
+    handler: logoutHandler,
 };
 
 export const signup: AppRouteImplementation<
@@ -126,7 +130,9 @@ const getSessionsHandler: AppRouteImplementation<
 > = async function ({ req, res }) {
     const db = req.app.locals.database;
 
-    const sessions = db.auth.sessions.getUserSessions(guard(res.session).username);
+    const sessions = db.auth.sessions.getUserSessions(
+        guard(res.session).username
+    );
 
     return {
         status: 200,

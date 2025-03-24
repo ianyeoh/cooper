@@ -4,7 +4,6 @@ import { Server } from "http";
 
 let server: Server;
 
-
 export const mochaHooks = {
     beforeAll: new Promise((resolve, reject) => {
         console.log("Pre-test: start server");

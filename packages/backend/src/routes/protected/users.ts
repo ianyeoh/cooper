@@ -7,7 +7,6 @@ const getSelfHandler: AppRouteImplementation<
     typeof contract.protected.users.getSelf
 > = async function ({ req, res }) {
     const db = req.app.locals.database;
-
     const user = db.auth.users.getUser(guard(res.session).username);
 
     if (!user) {
