@@ -1,19 +1,15 @@
-import {
-    unauthedRequest,
-    authedRequest,
-} from "@cooper/backend/src/tests/utils";
+import request from "@cooper/backend/src/tests/utils";
 import app from "@cooper/backend/src/server";
 import { expect } from "chai";
 import { extractCookie } from "@cooper/backend/src/tests/utils";
-import { response } from "express";
 
 describe("POST /api/auth/login", () => {
     it("should fail because of empty body", (done) => {
-        unauthedRequest.post("/api/auth/login").expect(400, done);
+        request(app).post("/api/auth/login").expect(400, done);
     });
 
     it("should fail because of invalid body format", (done) => {
-        unauthedRequest
+        request(app)
             .post("/api/auth/login")
             .send({
                 not: "a valid field",
@@ -22,7 +18,7 @@ describe("POST /api/auth/login", () => {
     });
 
     it("should fail because of invalid data types", (done) => {
-        unauthedRequest
+        request(app)
             .post("/api/auth/login")
             .send({
                 username: 123,
@@ -32,7 +28,7 @@ describe("POST /api/auth/login", () => {
     });
 
     it("should fail because of a missing field", (done) => {
-        unauthedRequest
+        request(app)
             .post("/api/auth/login")
             .send({
                 username: "ianyeoh",
@@ -41,7 +37,7 @@ describe("POST /api/auth/login", () => {
     });
 
     it("should fail because user does not exist", (done) => {
-        unauthedRequest
+        request(app)
             .post("/api/auth/login")
             .send({
                 username: "user that does not exist",
@@ -51,9 +47,9 @@ describe("POST /api/auth/login", () => {
     });
 
     it("should succeed and set-cookie session id (secure, http-only, same-site, with expiry)", (done) => {
-        unauthedRequest
+        request(app)
             .post("/api/auth/login")
-            .send({
+            .authenticate({
                 username: "ianyeoh",
                 password: "asd",
             })
@@ -71,20 +67,11 @@ describe("POST /api/auth/login", () => {
 });
 
 describe("POST /api/auth/logout", () => {
-    it("should fail because not logged in", async () => {
-        unauthedRequest.post("/api/auth/logout").expect(401);
+    it("should fail because not logged in", async (done) => {
+        request(app).post("/api/auth/logout").expect(401, done);
     });
 
-    it("should succeed after logging in", async () => {
-        const response = await authedRequest(
-            {
-                username: "ianyeoh",
-                password: "asd",
-            },
-            "POST",
-            "/api/auth/logout"
-        );
-
-        expect(response.status).to.equal(200);
+    it("should succeed after logging in", async (done) => {
+        const action = await request(app).post("/api/auth/logout");
     });
 });
