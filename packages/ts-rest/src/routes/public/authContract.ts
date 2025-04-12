@@ -55,6 +55,9 @@ const authContract = c.router(
                 200: z.object({
                     sessions: z.array(Auth$SessionSchema),
                 }),
+                401: z.object({
+                    error: z.literal("Unauthorised"),
+                }),
             },
             summary: "Get list of sessions belonging to the user",
         },

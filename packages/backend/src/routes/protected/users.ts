@@ -13,10 +13,12 @@ const getSelfHandler: AppRouteImplementation<
         throw user;
     }
 
+    const { username, firstName, lastName } = user;
+
     return {
         status: 200,
         body: {
-            user,
+            user: { username, firstName, lastName },
         },
     };
 };

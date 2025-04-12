@@ -3,10 +3,7 @@ import { initContract } from "@ts-rest/core";
 import transactionsContract from "@cooper/ts-rest/src/routes/protected/budgeting/transactionsContract";
 import accountsContract from "@cooper/ts-rest/src/routes/protected/budgeting/accountsContract";
 import categoriesContract from "@cooper/ts-rest/src/routes/protected/budgeting/categoriesContract";
-import {
-    Budgeting$Workspace,
-    Budgeting$WorkspaceSchema,
-} from "@cooper/ts-rest/src/types";
+import { Budgeting$WorkspaceSchema } from "@cooper/ts-rest/src/types";
 
 const c = initContract();
 

@@ -1,8 +1,5 @@
 import app from "@cooper/backend/src/server";
 import serverConfig from "@cooper/backend/serverConfig.json";
-// import { config } from "dotenv";
-
-// config(); // Load variables from .env file into process.env
 
 // Get configuration variables from environment
 const hostname = serverConfig.hostname;

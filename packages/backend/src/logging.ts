@@ -1,8 +1,9 @@
 import morgan from "morgan";
 import winston from "winston";
-import chalk from "chalk";
+import pc from "picocolors";
+import config from "@cooper/backend/serverConfig.json";
 
-const logFolder = "./logs";
+const logFolder = config.logFolder;
 const logger = winston.createLogger({
     level: "info",
     format: winston.format.combine(
@@ -38,17 +39,17 @@ const consoleLogger = morgan(
         // Check if status is an error code
         let statusCode: string;
         if (Number.isNaN(status) || status >= 400) {
-            statusCode = chalk.red.bold(tokens.status(req, res));
+            statusCode = pc.red(pc.bold(tokens.status(req, res)));
         } else {
-            statusCode = chalk.green.bold(tokens.status(req, res));
+            statusCode = pc.green(pc.bold(tokens.status(req, res)));
         }
 
         return [
             "[server]:",
-            chalk.yellow(tokens.method(req, res)),
+            pc.yellow(tokens.method(req, res)),
             statusCode,
-            chalk.white(tokens.url(req, res)),
-            chalk.yellow(tokens["response-time"](req, res) + " ms"),
+            pc.white(tokens.url(req, res)),
+            pc.yellow(tokens["response-time"](req, res) + " ms"),
         ].join(" ");
     }
 );

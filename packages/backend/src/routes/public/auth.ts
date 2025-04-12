@@ -76,12 +76,19 @@ const logoutHandler: AppRouteImplementation<
     if (sessionId != null) {
         db.auth.sessions.deleteSession(sessionId);
         res.clearCookie("id");
+
+        return {
+            status: 200,
+            body: {
+                message: "Logged out successfully",
+            },
+        };
     }
 
     return {
-        status: 200,
+        status: 401,
         body: {
-            message: "Logged out successfully",
+            error: "Unauthorised",
         },
     };
 };

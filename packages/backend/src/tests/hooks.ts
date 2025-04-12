@@ -1,28 +1,18 @@
-import app from "@cooper/backend/src/server";
-import serverConfig from "@cooper/backend/serverConfig.json";
-import { Server } from "http";
-
-let server: Server;
+import { request, testRoute } from "@cooper/backend/src/tests/utils";
+import { generateMock } from "@anatine/zod-mock";
+import { Auth$UserSchema } from "@cooper/ts-rest/src/types";
+import { seed } from "@cooper/backend/src/tests/mocking";
+import { contract } from "@cooper/ts-rest/src/contract";
 
 export const mochaHooks = {
-    beforeAll: new Promise((resolve, reject) => {
-        console.log("Pre-test: start server");
-        const hostname = serverConfig.hostname;
-        const port = serverConfig.port;
-        server = app.listen(port, hostname, (err) => {
-            if (err) reject(err);
+    beforeEach: async function () {
+        await request().get("/testing/reset").expect(200);
 
-            console.log("Server started successfully");
-            resolve(null);
-        });
-    }),
-    afterAll: new Promise((resolve, reject) => {
-        console.log("Post-test: server teardown");
-        server.close((err) => {
-            if (err) reject(err);
-
-            console.log("Server stopped successfully");
-            resolve(null);
-        });
-    }),
+        // Create a new initial user for use in tests on protected routes
+        // Simplifies other tests by removing need to do this step
+        const mockUser = generateMock(Auth$UserSchema, { seed });
+        await testRoute(request(), contract.public.auth.signup)
+            .send(mockUser)
+            .expect(200);
+    },
 };

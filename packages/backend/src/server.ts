@@ -14,6 +14,7 @@ import { serve, setup } from "swagger-ui-express";
 import cookieParser from "cookie-parser";
 import openapi from "@cooper/backend/src/openapi";
 import InMemoryDatabase from "@cooper/backend/src/database/in-memory/database";
+import { config } from "dotenv";
 
 import { getSelf, getUser } from "@cooper/backend/src/routes/protected/users";
 import {
@@ -48,6 +49,8 @@ import {
     validSession,
 } from "@cooper/backend/src/routes/public/auth";
 
+config(); // Load variables from .env file into process.env
+
 /**
  * Express initialisation
  */
@@ -60,10 +63,42 @@ app.use(
         credentials: true,
     })
 );
-app.use(consoleLogger);
+
+if (process.env.NODE_ENV != "test") app.use(consoleLogger);
 app.use(activityLogger);
 app.use(cookieParser());
 app.use(express.json());
+
+if (process.env.NODE_ENV == "test") {
+    // Use in-memory mock database for testing performance
+    app.locals.database = new InMemoryDatabase({});
+
+    // Allow for our tests to reset the database with a call to this endpoint
+    app.get(
+        "/testing/reset",
+        (req: Request, res: Response, _next: NextFunction) => {
+            req.app.locals.database = new InMemoryDatabase({});
+            res.status(200).send();
+        }
+    );
+} else {
+    // TODO: Change to Postgres DB
+    app.locals.database = new InMemoryDatabase({
+        initialUsers: new Map([
+            [
+                "ianyeoh",
+                {
+                    username: "ianyeoh",
+                    firstName: "Ian",
+                    lastName: "Yeoh",
+                    // hard-coded hash value of "asd", for testing
+                    password:
+                        "$2a$10$C/5nLYy.wjdrIGcQmKxiZ.OcQ9aQephzCTb10RVBvyzfKveYHJQoi",
+                },
+            ],
+        ]),
+    });
+}
 
 // Initialise and mount ts-rest router
 const s = initServer();
@@ -157,22 +192,6 @@ app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
         error: "Unexpected server error. Please try again later.",
     });
     return;
-});
-
-app.locals.database = new InMemoryDatabase({
-    initialUsers: new Map([
-        [
-            "ianyeoh",
-            {
-                username: "ianyeoh",
-                firstName: "Ian",
-                lastName: "Yeoh",
-                // hard-coded hash value of asd, for testing
-                password:
-                    "$2a$10$C/5nLYy.wjdrIGcQmKxiZ.OcQ9aQephzCTb10RVBvyzfKveYHJQoi",
-            },
-        ],
-    ]),
 });
 
 export default app;

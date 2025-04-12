@@ -10,7 +10,13 @@ const usersContract = c.router(
             method: "GET",
             path: "/self",
             responses: {
-                200: z.any(),
+                200: z.object({
+                    user: Auth$UserSchema.pick({
+                        username: true,
+                        firstName: true,
+                        lastName: true,
+                    }),
+                }),
                 401: z.object({
                     error: z.literal("Unauthorised"),
                 }),
