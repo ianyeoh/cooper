@@ -59,7 +59,8 @@ const updateAccountHandler: AppRouteImplementation<
   const db = req.app.locals.database;
 
   const accountId = guard(res.account).accountId;
-  const { description, name, bank, createdBy } = body;
+  const createdBy = guard(res.session).username;
+  const { description, name, bank } = body;
 
   const updatedAccount = db.budgeting.accounts.updateAccount(accountId, name, bank, description, createdBy);
 

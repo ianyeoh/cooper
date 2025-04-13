@@ -28,7 +28,7 @@ export const contract = c.router(
         error: z.string().nonempty(),
       }),
     },
-    // strictStatusCodes: true,
+    strictStatusCodes: true,
   },
 );
 export type ContractType = typeof contract;

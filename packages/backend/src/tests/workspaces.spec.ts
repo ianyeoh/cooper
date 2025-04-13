@@ -169,6 +169,43 @@ describe(testFor(updateWorkspace), () => {
       }),
     ).to.equal(true);
   });
+
+  it("should fail to update for user without access to workspace", async function () {
+    // Login
+    const authedRequest = await authenticate({
+      username: existingUser.username,
+      password: existingUser.password,
+    });
+
+    const oldWorkspaceName = "Workspace";
+    const newWorkspaceName = "Updated Workspace Name";
+
+    expect(oldWorkspaceName).to.not.equal(newWorkspaceName);
+
+    // Create a new workspace
+    const createdWorkspace = await createWorkspace(authedRequest, {
+      name: oldWorkspaceName,
+    });
+
+    // Create other user
+    const otherUser = generateMock(Auth$UserSchema, { seed: seed + 1 });
+    await testRoute(request(), signup).send(otherUser).expect(200);
+
+    // Login with other user
+    const otherAuthedRequest = await authenticate({
+      username: otherUser.username,
+      password: otherUser.password,
+    });
+
+    // Try to update workspace with other account
+    await testRoute(otherAuthedRequest, updateWorkspace, {
+      workspaceId: createdWorkspace.workspaceId,
+    })
+      .send({
+        name: newWorkspaceName,
+      })
+      .expect(401);
+  });
 });
 
 describe(testFor(deleteWorkspace), () => {
@@ -203,7 +240,7 @@ describe(testFor(deleteWorkspace), () => {
       name: "Workspace",
     });
 
-    // Update workspace name
+    // Delete workspace
     await testRoute(authedRequest, deleteWorkspace, {
       workspaceId: createdWorkspace.workspaceId,
     }).expect(200);
@@ -212,5 +249,33 @@ describe(testFor(deleteWorkspace), () => {
     await getUsersWorkspaces(authedRequest, {
       excludes: createdWorkspace.workspaceId,
     });
+  });
+
+  it("should fail to delete for user without access to workspace", async function () {
+    // Login
+    const authedRequest = await authenticate({
+      username: existingUser.username,
+      password: existingUser.password,
+    });
+
+    // Create a new workspace
+    const createdWorkspace = await createWorkspace(authedRequest, {
+      name: "Workspace",
+    });
+
+    // Create other user
+    const otherUser = generateMock(Auth$UserSchema, { seed: seed + 1 });
+    await testRoute(request(), signup).send(otherUser).expect(200);
+
+    // Login with other user
+    const otherAuthedRequest = await authenticate({
+      username: otherUser.username,
+      password: otherUser.password,
+    });
+
+    // Try to delete workspace, should fail
+    await testRoute(otherAuthedRequest, deleteWorkspace, {
+      workspaceId: createdWorkspace.workspaceId,
+    }).expect(401);
   });
 });

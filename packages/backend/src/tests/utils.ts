@@ -3,7 +3,7 @@ import app from "@cooper/backend/src/server";
 import TestAgent from "supertest/lib/agent";
 import Test from "supertest/lib/test";
 import { expect } from "chai";
-import { contract } from "@cooper/ts-rest";
+import { contract } from "@cooper/ts-rest/src/contract";
 import { Budgeting$Account } from "@cooper/ts-rest/src/types";
 
 /**
