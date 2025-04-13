@@ -72,7 +72,12 @@ export default interface DatabaseInterface {
       getWorkspaceCategories: (workspace: number) => Budgeting$Category[];
       createCategory: (name: string, createdBy: string, workspace: number) => Budgeting$Category | Error;
       deleteCategory: (categoryId: number) => void;
-      updateCategory: (categoryId: number, name?: string, createdBy?: string) => Budgeting$Category | Error;
+      updateCategory: (
+        categoryId: number,
+        workspace: number,
+        name?: string,
+        createdBy?: string,
+      ) => Budgeting$Category | Error;
     };
 
     transactions: {
@@ -91,6 +96,7 @@ export default interface DatabaseInterface {
       deleteTransaction: (transactionId: number) => void;
       updateTransaction: (
         transactionId: number,
+        workspace: number,
         date?: Date,
         description?: string,
         createdBy?: string,
@@ -98,7 +104,6 @@ export default interface DatabaseInterface {
         category?: string,
         amount?: number,
         comments?: string | null,
-        workspace?: number,
       ) => Budgeting$Transaction | Error;
     };
   };

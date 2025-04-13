@@ -4,7 +4,7 @@ import TestAgent from "supertest/lib/agent";
 import Test from "supertest/lib/test";
 import { expect } from "chai";
 import { contract } from "@cooper/ts-rest/src/contract";
-import { Budgeting$Account } from "@cooper/ts-rest/src/types";
+import { Budgeting$Account, Budgeting$Category, Budgeting$Transaction } from "@cooper/ts-rest/src/types";
 
 /**
  * Factory to create supertest object with our backend Express app
@@ -199,6 +199,58 @@ async function createAccount(authedRequest: TestAgent<Test>, workspaceId: string
   return request.body.account;
 }
 
+async function createCategory(authedRequest: TestAgent<Test>, workspaceId: string, category: Budgeting$Category) {
+  const newCategory = contract.protected.budgeting.workspaces.byId.categories.newCategory;
+
+  const request = await testRoute(authedRequest, newCategory, {
+    workspaceId,
+  })
+    .send({ name: category.name })
+    .expect(200);
+
+  expect(request.body.category).to.deep.include({
+    name: category.name,
+    workspace: workspaceId,
+  });
+  expect(request.body.category).to.have.own.property("categoryId");
+
+  return request.body.category;
+}
+
+async function createTransaction(
+  authedRequest: TestAgent<Test>,
+  workspaceId: string,
+  accountId: string,
+  transaction: Budgeting$Transaction,
+) {
+  const newTransaction = contract.protected.budgeting.workspaces.byId.transactions.newTransaction;
+
+  const request = await testRoute(authedRequest, newTransaction, {
+    workspaceId,
+  })
+    .send({
+      account: accountId,
+      date: transaction.date,
+      description: transaction.description,
+      category: transaction.category,
+      amount: transaction.amount,
+      comments: transaction.comments,
+    })
+    .expect(200);
+
+  expect(request.body.transaction).to.deep.include({
+    account: accountId,
+    description: transaction.description,
+    category: transaction.category,
+    amount: transaction.amount,
+    comments: transaction.comments,
+    workspace: workspaceId,
+  });
+  expect(request.body.transaction).to.have.own.property("transactionId");
+
+  return request.body.transaction;
+}
+
 export {
   extractCookies,
   request,
@@ -209,4 +261,6 @@ export {
   createWorkspace,
   getUsersWorkspaces,
   createAccount,
+  createCategory,
+  createTransaction,
 };

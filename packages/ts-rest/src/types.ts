@@ -14,8 +14,8 @@ export const Auth$SessionSchema = z.object({
   username: z.string().min(2).max(50),
   ip: z.string().ip(),
   userAgent: z.string().min(2).max(250),
-  started: z.date(),
-  expires: z.date(),
+  started: z.coerce.date(),
+  expires: z.coerce.date(),
 });
 export type Auth$Session = z.infer<typeof Auth$SessionSchema>;
 
@@ -48,7 +48,7 @@ export type Budgeting$Category = z.infer<typeof Budgeting$CategorySchema>;
 export const Budgeting$TransactionSchema = z.object({
   transactionId: z.number(),
   account: z.number(),
-  date: z.date(),
+  date: z.coerce.date(),
   description: z.string().min(2).max(255),
   category: z.string().min(2).max(50),
   amount: z.number(),

@@ -344,7 +344,7 @@ export default class InMemoryDatabase implements DatabaseInterface {
       deleteCategory: (categoryId: number) => {
         this._genericDelete(this.budgetingCategories, categoryId);
       },
-      updateCategory: (categoryId: number, name?: string, createdBy?: string, workspace?: number) => {
+      updateCategory: (categoryId: number, workspace: number, name?: string, createdBy?: string) => {
         return this._genericUpdate(this.budgetingCategories, Budgeting$CategorySchema, categoryId, {
           name,
           createdBy,
@@ -394,6 +394,7 @@ export default class InMemoryDatabase implements DatabaseInterface {
       },
       updateTransaction: (
         transactionId: number,
+        workspace: number,
         date?: Date,
         description?: string,
         createdBy?: string,
@@ -401,7 +402,6 @@ export default class InMemoryDatabase implements DatabaseInterface {
         category?: string,
         amount?: number,
         comments?: string | null,
-        workspace?: number,
       ) => {
         return this._genericUpdate(this.budgetingTransactions, Budgeting$TransactionSchema, transactionId, {
           date,

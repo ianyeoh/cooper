@@ -22,10 +22,12 @@ const categoriesContract = c.router(
       body: Budgeting$CategorySchema.omit({
         categoryId: true,
         workspace: true,
+        createdBy: true,
       }),
       responses: {
         200: z.object({
           message: z.literal("Category created successfully"),
+          category: Budgeting$CategorySchema,
         }),
         400: z.object({
           error: z.literal("Invalid input"),
@@ -45,6 +47,7 @@ const categoriesContract = c.router(
           body: Budgeting$CategorySchema.omit({
             categoryId: true,
             workspace: true,
+            createdBy: true,
           }).partial(),
           responses: {
             200: z.object({

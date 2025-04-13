@@ -22,10 +22,12 @@ const transactionsContract = c.router(
       body: Budgeting$TransactionSchema.omit({
         transactionId: true,
         workspace: true,
+        createdBy: true,
       }),
       responses: {
         200: z.object({
           message: z.literal("Transaction created successfully"),
+          transaction: Budgeting$TransactionSchema,
         }),
         400: z.object({
           error: z.literal("Invalid input"),
@@ -45,6 +47,7 @@ const transactionsContract = c.router(
           body: Budgeting$TransactionSchema.omit({
             transactionId: true,
             workspace: true,
+            createdBy: true,
           }).partial(),
           responses: {
             200: z.object({

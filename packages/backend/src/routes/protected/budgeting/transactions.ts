@@ -30,8 +30,9 @@ const newTransactionHandler: AppRouteImplementation<
 > = async function ({ req, res, body }) {
   const db = req.app.locals.database;
   const workspaceId = guard(res.workspace).workspaceId;
+  const createdBy = guard(res.session).username;
 
-  const { description, date, createdBy, account, category, amount, comments } = body;
+  const { description, date, account, category, amount, comments } = body;
 
   const newTransaction = db.budgeting.transactions.createTransaction(
     date,
@@ -50,7 +51,7 @@ const newTransactionHandler: AppRouteImplementation<
 
   return {
     status: 200,
-    body: { message: "Transaction created successfully" },
+    body: { message: "Transaction created successfully", transaction: newTransaction },
   };
 };
 export const newTransaction = {
@@ -63,11 +64,13 @@ const updateTransactionHandler: AppRouteImplementation<
 > = async function ({ req, res, body }) {
   const db = req.app.locals.database;
 
-  const transactionId = guard(res.transaction).transactionId;
-  const { description, date, createdBy, account, category, amount, comments } = body;
+  const workspaceId = guard(res.workspace).workspaceId;
+  const { transactionId, createdBy } = guard(res.transaction);
+  const { description, date, account, category, amount, comments } = body;
 
   const updatedTransaction = db.budgeting.transactions.updateTransaction(
     transactionId,
+    workspaceId,
     date,
     description,
     createdBy,

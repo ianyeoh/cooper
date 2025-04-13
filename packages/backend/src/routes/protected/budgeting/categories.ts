@@ -32,7 +32,8 @@ const newCategoryHandler: AppRouteImplementation<
   const db = req.app.locals.database;
 
   const workspaceId = guard(res.workspace).workspaceId;
-  const { name, createdBy } = body;
+  const createdBy = guard(res.session).username;
+  const { name } = body;
 
   const newCategory = db.budgeting.categories.createCategory(name, createdBy, workspaceId);
 
@@ -44,6 +45,7 @@ const newCategoryHandler: AppRouteImplementation<
     status: 200,
     body: {
       message: "Category created successfully",
+      category: newCategory,
     },
   };
 };
@@ -57,10 +59,11 @@ const updateCategoryHandler: AppRouteImplementation<
 > = async function ({ req, res, body }) {
   const db = req.app.locals.database;
 
-  const categoryId = guard(res.category).categoryId;
-  const { name, createdBy } = body;
+  const workspaceId = guard(res.workspace).workspaceId;
+  const { categoryId, createdBy } = guard(res.category);
+  const { name } = body;
 
-  const updatedCategory = db.budgeting.categories.updateCategory(categoryId, name, createdBy);
+  const updatedCategory = db.budgeting.categories.updateCategory(categoryId, workspaceId, name, createdBy);
 
   if (updatedCategory instanceof Error) {
     throw updatedCategory;

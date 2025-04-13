@@ -281,7 +281,7 @@ describe(testFor(deleteAccount), () => {
       generateMock(Budgeting$AccountSchema, { seed }),
     );
 
-    // Update wrong accountId, should fail
+    // Delete wrong accountId, should fail
     await testRoute(authedRequest, deleteAccount, {
       workspaceId: createdWorkspace.workspaceId,
       accountId: createdAccount.accountId + 1,
