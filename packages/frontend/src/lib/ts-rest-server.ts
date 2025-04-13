@@ -6,11 +6,9 @@ import { cookies } from "next/headers";
  * Forward cookies from request to Next.js page to the backend API server
  */
 function proxyServerCookies() {
-    const allCookies = cookies().getAll();
+  const allCookies = cookies().getAll();
 
-    return allCookies
-        .map((cookie) => `${cookie.name}=${cookie.value};`)
-        .join(" ");
+  return allCookies.map((cookie) => `${cookie.name}=${cookie.value};`).join(" ");
 }
 
 /**
@@ -19,10 +17,10 @@ function proxyServerCookies() {
  * Use for server side backend API calls (e.g. middleware, server components)
  */
 export const fetch = initClient(contract, {
-    baseUrl: "http://localhost:3000", // self reference to Next.js server (from server)
-    credentials: "include", // for our cookie based sessions
-    api: async (args) => {
-        args.headers.cookie = proxyServerCookies();
-        return tsRestFetchApi(args);
-    },
+  baseUrl: "http://localhost:3000", // self reference to Next.js server (from server)
+  credentials: "include", // for our cookie based sessions
+  api: async (args) => {
+    args.headers.cookie = proxyServerCookies();
+    return tsRestFetchApi(args);
+  },
 });

@@ -15,20 +15,20 @@ const c = initContract();
  *
  */
 export const contract = c.router(
-    {
-        protected: protectedContract,
-        public: {
-            auth: authContract,
-        },
+  {
+    protected: protectedContract,
+    public: {
+      auth: authContract,
     },
-    {
-        pathPrefix: "/api",
-        commonResponses: {
-            500: z.object({
-                error: z.string().nonempty(),
-            }),
-        },
-        // strictStatusCodes: true,
-    }
+  },
+  {
+    pathPrefix: "/api",
+    commonResponses: {
+      500: z.object({
+        error: z.string().nonempty(),
+      }),
+    },
+    // strictStatusCodes: true,
+  },
 );
 export type ContractType = typeof contract;

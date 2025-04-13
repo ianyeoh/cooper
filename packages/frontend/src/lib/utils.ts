@@ -7,7 +7,7 @@ import { twMerge } from "tailwind-merge";
  * @returns {string} Merged className string (space delimited)
  */
 export function cn(...inputs: ClassValue[]): string {
-    return twMerge(clsx(inputs));
+  return twMerge(clsx(inputs));
 }
 
 /**
@@ -16,12 +16,12 @@ export function cn(...inputs: ClassValue[]): string {
  * @returns {string} Initials from full name
  */
 export function initials(fullName: string): string {
-    const allNames = fullName.trim().split(" ");
-    const initials = allNames.reduce((acc, curr, index) => {
-        if (index === 0 || index === allNames.length - 1) {
-            acc = `${acc}${curr.charAt(0).toUpperCase()}`;
-        }
-        return acc;
-    }, "");
-    return initials;
+  const allNames = fullName.trim().split(" ");
+  const initials = allNames.reduce((acc, curr, index) => {
+    if (index === 0 || index === allNames.length - 1) {
+      acc = `${acc}${curr.charAt(0).toUpperCase()}`;
+    }
+    return acc;
+  }, "");
+  return initials;
 }

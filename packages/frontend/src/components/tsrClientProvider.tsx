@@ -5,11 +5,11 @@ import { tsr } from "@/lib/ts-rest-client";
 import { ReactNode } from "react";
 
 export function TSRClientProvider({ children }: { children: ReactNode }) {
-    const queryClient = new QueryClient();
+  const queryClient = new QueryClient();
 
-    return (
-        <QueryClientProvider client={queryClient}>
-            <tsr.ReactQueryProvider>{children}</tsr.ReactQueryProvider>
-        </QueryClientProvider>
-    );
+  return (
+    <QueryClientProvider client={queryClient}>
+      <tsr.ReactQueryProvider>{children}</tsr.ReactQueryProvider>
+    </QueryClientProvider>
+  );
 }

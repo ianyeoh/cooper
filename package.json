@@ -1,22 +1,30 @@
 {
-    "name": "cooper",
-    "version": "1.0.0",
-    "description": "A home management system written in TypeScript",
-    "private": true,
-    "scripts": {
-        "test:backend": "npm run test --prefix packages/backend",
-        "dev:backend": "npm run dev --prefix packages/backend",
-        "dev:frontend": "npm run dev --prefix packages/frontend",
-        "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
-        "build": "npm install && tsc --build --verbose",
-        "lint": "eslint --fix ."
-    },
-    "workspaces": [
-        "packages/*"
-    ],
-    "devDependencies": {
-        "concurrently": "^9.1.0",
-        "ts-node": "^10.9.2",
-        "typescript": "^5.7.3"
-    }
+  "name": "cooper",
+  "version": "1.0.0",
+  "description": "A home management system written in TypeScript",
+  "private": true,
+  "scripts": {
+    "test:backend": "npm run test --prefix packages/backend",
+    "coverage:backend": "npm run coverage --prefix packages/backend",
+    "dev:backend": "npm run dev --prefix packages/backend",
+    "dev:frontend": "npm run dev --prefix packages/frontend",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "build": "npm install && tsc --build --verbose",
+    "lint": "eslint . --fix",
+    "format": "prettier --log-level warn --write \"./**/*.{tsx,ts,json}\""
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@eslint/js": "^9.24.0",
+    "concurrently": "^9.1.0",
+    "eslint": "^8.57.1",
+    "globals": "^16.0.0",
+    "nyc": "^17.1.0",
+    "prettier": "^3.5.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.29.1"
+  }
 }

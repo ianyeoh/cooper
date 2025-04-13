@@ -1,13 +1,9 @@
 // Sentry (error logging) instrumentation, must be imported first
 import "@cooper/backend/src/instrument";
 import * as Sentry from "@sentry/node";
-import express, { Request, Response, NextFunction } from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
-import {
-    consoleLogger,
-    activityLogger,
-    logger,
-} from "@cooper/backend/src/logging";
+import { consoleLogger, activityLogger, logger } from "@cooper/backend/src/logging";
 import { createExpressEndpoints, initServer } from "@ts-rest/express";
 import { contract } from "@cooper/ts-rest/src/contract";
 import { serve, setup } from "swagger-ui-express";
@@ -18,50 +14,41 @@ import { config } from "dotenv";
 
 import { getSelf, getUser } from "@cooper/backend/src/routes/protected/users";
 import {
-    getTransactions,
-    newTransaction,
-    updateTransaction,
-    deleteTransaction,
+  getTransactions,
+  newTransaction,
+  updateTransaction,
+  deleteTransaction,
 } from "@cooper/backend/src/routes/protected/budgeting/transactions";
 import {
-    getAccounts,
-    newAccount,
-    updateAccount,
-    deleteAccount,
+  getAccounts,
+  newAccount,
+  updateAccount,
+  deleteAccount,
 } from "@cooper/backend/src/routes/protected/budgeting/accounts";
 import {
-    getWorkspaces,
-    newWorkspace,
-    updateWorkspace,
-    deleteWorkspace,
+  getWorkspaces,
+  newWorkspace,
+  updateWorkspace,
+  deleteWorkspace,
 } from "@cooper/backend/src/routes/protected/budgeting/workspaces";
 import {
-    getCategories,
-    newCategory,
-    updateCategory,
-    deleteCategory,
+  getCategories,
+  newCategory,
+  updateCategory,
+  deleteCategory,
 } from "@cooper/backend/src/routes/protected/budgeting/categories";
-import {
-    login,
-    logout,
-    signup,
-    getSessions,
-    validSession,
-} from "@cooper/backend/src/routes/public/auth";
+import { login, logout, signup, getSessions, validSession } from "@cooper/backend/src/routes/public/auth";
 
 config(); // Load variables from .env file into process.env
 
-/**
- * Express initialisation
- */
 const app = express();
 
 // Express middleware and route handlers
 app.use(
-    cors({
-        origin: true,
-        credentials: true,
-    })
+  cors({
+    origin: true,
+    credentials: true,
+  }),
 );
 
 if (process.env.NODE_ENV != "test") app.use(consoleLogger);
@@ -70,104 +57,99 @@ app.use(cookieParser());
 app.use(express.json());
 
 if (process.env.NODE_ENV == "test") {
-    // Use in-memory mock database for testing performance
-    app.locals.database = new InMemoryDatabase({});
+  // Use in-memory mock database for testing performance
+  app.locals.database = new InMemoryDatabase({});
 
-    // Allow for our tests to reset the database with a call to this endpoint
-    app.get(
-        "/testing/reset",
-        (req: Request, res: Response, _next: NextFunction) => {
-            req.app.locals.database = new InMemoryDatabase({});
-            res.status(200).send();
-        }
-    );
+  // Allow for our tests to reset the database with a call to this endpoint
+  app.get("/testing/reset", (req: Request, res: Response) => {
+    req.app.locals.database = new InMemoryDatabase({});
+    res.status(200).send();
+  });
 } else {
-    // TODO: Change to Postgres DB
-    app.locals.database = new InMemoryDatabase({
-        initialUsers: new Map([
-            [
-                "ianyeoh",
-                {
-                    username: "ianyeoh",
-                    firstName: "Ian",
-                    lastName: "Yeoh",
-                    // hard-coded hash value of "asd", for testing
-                    password:
-                        "$2a$10$C/5nLYy.wjdrIGcQmKxiZ.OcQ9aQephzCTb10RVBvyzfKveYHJQoi",
-                },
-            ],
-        ]),
-    });
+  // TODO: Change to Postgres DB
+  app.locals.database = new InMemoryDatabase({
+    initialUsers: new Map([
+      [
+        "ianyeoh",
+        {
+          username: "ianyeoh",
+          firstName: "Ian",
+          lastName: "Yeoh",
+          // hard-coded hash value of "asd", for testing
+          password: "$2a$10$C/5nLYy.wjdrIGcQmKxiZ.OcQ9aQephzCTb10RVBvyzfKveYHJQoi",
+        },
+      ],
+    ]),
+  });
 }
 
 // Initialise and mount ts-rest router
 const s = initServer();
 
-// Ignore type instantiation is excessively deep and possibly infinite error (T2589)
-// @ts-ignore
+// @ts-expect-error Ignore type instantiation is excessively deep and possibly infinite error (T2589)
 const router = s.router(contract, {
-    protected: {
-        users: {
-            getSelf,
-            getUser,
-        },
-        budgeting: {
-            workspaces: {
-                getWorkspaces,
-                newWorkspace,
-                byId: {
-                    updateWorkspace,
-                    deleteWorkspace,
-                    accounts: {
-                        getAccounts,
-                        newAccount,
-                        byId: {
-                            updateAccount,
-                            deleteAccount,
-                        },
-                    },
-                    categories: {
-                        getCategories,
-                        newCategory,
-                        byId: {
-                            updateCategory,
-                            deleteCategory,
-                        },
-                    },
-                    transactions: {
-                        getTransactions,
-                        newTransaction,
-                        byId: {
-                            updateTransaction,
-                            deleteTransaction,
-                        },
-                    },
-                },
+  protected: {
+    users: {
+      getSelf,
+      getUser,
+    },
+    budgeting: {
+      workspaces: {
+        getWorkspaces,
+        newWorkspace,
+        byId: {
+          updateWorkspace,
+          deleteWorkspace,
+          accounts: {
+            getAccounts,
+            newAccount,
+            byId: {
+              updateAccount,
+              deleteAccount,
             },
+          },
+          categories: {
+            getCategories,
+            newCategory,
+            byId: {
+              updateCategory,
+              deleteCategory,
+            },
+          },
+          transactions: {
+            getTransactions,
+            newTransaction,
+            byId: {
+              updateTransaction,
+              deleteTransaction,
+            },
+          },
         },
+      },
     },
-    public: {
-        auth: {
-            login,
-            logout,
-            signup,
-            validSession,
-            getSessions,
-        },
+  },
+  public: {
+    auth: {
+      login,
+      logout,
+      signup,
+      validSession,
+      getSessions,
     },
+  },
 });
 createExpressEndpoints(contract, router, app, {
-    responseValidation: true,
+  responseValidation: true,
 });
 
 // Serve API docs at /docs
 const apiDocs = express.Router();
 apiDocs.use(serve);
 apiDocs.get(
-    "/",
-    setup(openapi, {
-        customCssUrl: "/static/theme-flattop.css",
-    })
+  "/",
+  setup(openapi, {
+    customCssUrl: "/static/theme-flattop.css",
+  }),
 );
 app.use("/docs", apiDocs);
 
@@ -177,21 +159,27 @@ app.use(express.static("public"));
 // The Sentry error handler must be registered before any other error middleware but after all routers
 Sentry.setupExpressErrorHandler(app);
 
-app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
-    if (req.body) {
-        logger.error(req.body);
-    }
+// Generic error handler
+app.use((err: unknown, req: Request, res: Response) => {
+  if (process.env.NODE_ENV == "test") {
+    logger.info(req.body);
+    logger.info(err);
+  }
 
-    if (err instanceof Error) {
-        logger.error(
-            `${err.name} - ${err.cause} - ${err.message} - ${err.stack}`
-        );
-    }
+  if (req.body) {
+    logger.error(req.body);
+  }
 
-    res.status(500).json({
-        error: "Unexpected server error. Please try again later.",
-    });
-    return;
+  if (err instanceof Error) {
+    logger.error(`${err.name} - ${err.cause} - ${err.message} - ${err.stack}`);
+  } else {
+    logger.error(JSON.stringify(err));
+  }
+
+  res.status(500).json({
+    error: "Unexpected server error. Please try again later.",
+  });
+  return;
 });
 
 export default app;

@@ -6,106 +6,96 @@ import { validateAccount } from "@cooper/backend/src/middleware/validateAccount"
 import guard from "@cooper/backend/src/middleware/guard";
 
 const getAccountsHandler: AppRouteImplementation<
-    typeof contract.protected.budgeting.workspaces.byId.accounts.getAccounts
+  typeof contract.protected.budgeting.workspaces.byId.accounts.getAccounts
 > = async function ({ req, res }) {
-    const db = req.app.locals.database;
-    const workspaceId = guard(res.workspace).workspaceId;
+  const db = req.app.locals.database;
+  const workspaceId = guard(res.workspace).workspaceId;
 
-    const accounts = db.budgeting.accounts.getWorkspaceAccounts(workspaceId);
+  const accounts = db.budgeting.accounts.getWorkspaceAccounts(workspaceId);
 
-    return {
-        status: 200,
-        body: {
-            accounts,
-        },
-    };
+  return {
+    status: 200,
+    body: {
+      accounts,
+    },
+  };
 };
 export const getAccounts = {
-    middleware: [authenticate, validateWorkspace],
-    handler: getAccountsHandler,
+  middleware: [authenticate, validateWorkspace],
+  handler: getAccountsHandler,
 };
 
 const newAccountHandler: AppRouteImplementation<
-    typeof contract.protected.budgeting.workspaces.byId.accounts.newAccount
+  typeof contract.protected.budgeting.workspaces.byId.accounts.newAccount
 > = async function ({ req, res, body }) {
-    const db = req.app.locals.database;
-    const workspaceId = guard(res.workspace).workspaceId;
+  const db = req.app.locals.database;
+  const createdBy = guard(res.session).username;
+  const workspaceId = guard(res.workspace).workspaceId;
 
-    const { description, name, bank, createdBy } = body;
+  const { description, name, bank } = body;
 
-    const newAccount = db.budgeting.accounts.createAccount(
-        name,
-        bank,
-        description,
-        workspaceId,
-        createdBy
-    );
+  const newAccount = db.budgeting.accounts.createAccount(name, bank, description, workspaceId, createdBy);
 
-    if (newAccount instanceof Error) {
-        throw newAccount;
-    }
+  if (newAccount instanceof Error) {
+    throw newAccount;
+  }
 
-    return {
-        status: 200,
-        body: {
-            message: "Account created successfully",
-        },
-    };
+  return {
+    status: 200,
+    body: {
+      message: "Account created successfully",
+      account: newAccount,
+    },
+  };
 };
 export const newAccount = {
-    middleware: [authenticate, validateWorkspace],
-    handler: newAccountHandler,
+  middleware: [authenticate, validateWorkspace],
+  handler: newAccountHandler,
 };
 
 const updateAccountHandler: AppRouteImplementation<
-    typeof contract.protected.budgeting.workspaces.byId.accounts.byId.updateAccount
+  typeof contract.protected.budgeting.workspaces.byId.accounts.byId.updateAccount
 > = async function ({ req, res, body }) {
-    const db = req.app.locals.database;
+  const db = req.app.locals.database;
 
-    const accountId = guard(res.account).accountId;
-    const { description, name, bank, createdBy } = body;
+  const accountId = guard(res.account).accountId;
+  const { description, name, bank, createdBy } = body;
 
-    const updatedAccount = db.budgeting.accounts.updateAccount(
-        accountId,
-        name,
-        bank,
-        description,
-        createdBy
-    );
+  const updatedAccount = db.budgeting.accounts.updateAccount(accountId, name, bank, description, createdBy);
 
-    if (updatedAccount instanceof Error) {
-        throw updatedAccount;
-    }
+  if (updatedAccount instanceof Error) {
+    throw updatedAccount;
+  }
 
-    return {
-        status: 200,
-        body: {
-            message: "Account updated successfully",
-        },
-    };
+  return {
+    status: 200,
+    body: {
+      message: "Account updated successfully",
+    },
+  };
 };
 export const updateAccount = {
-    middleware: [authenticate, validateWorkspace, validateAccount],
-    handler: updateAccountHandler,
+  middleware: [authenticate, validateWorkspace, validateAccount],
+  handler: updateAccountHandler,
 };
 
 const deleteAccountHandler: AppRouteImplementation<
-    typeof contract.protected.budgeting.workspaces.byId.accounts.byId.deleteAccount
+  typeof contract.protected.budgeting.workspaces.byId.accounts.byId.deleteAccount
 > = async function ({ req, res }) {
-    const db = req.app.locals.database;
+  const db = req.app.locals.database;
 
-    const accountId = guard(res.account).accountId;
+  const accountId = guard(res.account).accountId;
 
-    db.budgeting.accounts.deleteAccount(accountId);
+  db.budgeting.accounts.deleteAccount(accountId);
 
-    return {
-        status: 200,
-        body: {
-            message: "Account deleted successfully",
-        },
-    };
+  return {
+    status: 200,
+    body: {
+      message: "Account deleted successfully",
+    },
+  };
 };
 export const deleteAccount = {
-    middleware: [authenticate, validateWorkspace, validateAccount],
-    handler: deleteAccountHandler,
+  middleware: [authenticate, validateWorkspace, validateAccount],
+  handler: deleteAccountHandler,
 };

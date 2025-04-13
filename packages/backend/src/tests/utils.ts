@@ -1,27 +1,57 @@
-import { default as supertestRequest, Response } from "supertest";
+import { default as supertestRequest } from "supertest";
 import app from "@cooper/backend/src/server";
 import TestAgent from "supertest/lib/agent";
-import { contract } from "@cooper/ts-rest/src/contract";
+import Test from "supertest/lib/test";
+import { expect } from "chai";
+import { contract } from "@cooper/ts-rest";
+import { Budgeting$Account } from "@cooper/ts-rest/src/types";
+
+/**
+ * Factory to create supertest object with our backend Express app
+ */
+const request = function () {
+  return supertestRequest(app);
+};
+
+/**
+ * Factory to create an authed supertest object factory,
+ * where cookies are persisted with subsequent requests
+ */
+const authenticate = async function ({ username, password }: { username: string; password: string }) {
+  const newAuthedRequest = supertestRequest.agent(app);
+
+  // Login
+  const response = await newAuthedRequest.post("/api/auth/login").send({
+    username,
+    password,
+  });
+
+  // Put the sessionId cookie in the cookie jar for subsequent requests
+  const cookies = extractCookies(response);
+  newAuthedRequest.jar.setCookie(`id=${cookies[0]["id"]}`);
+
+  return newAuthedRequest;
+};
 
 /**
  * Extracts the set-cookie header on a supertest response
  * @param response Supertest response object
  * @returns Object containing cookie fields, keys are strings, values are strings or undefined
  */
-function extractCookies(response: Response): {
-    [key: string]: string;
+function extractCookies(response: { headers: { [key: string]: string } }): {
+  [key: string]: string;
 }[] {
-    const cookies = Object.values(response.headers["set-cookie"]).map(
-        (cookieStr) => {
-            return cookieStr.split("; ").reduce((obj, item) => {
-                const [key, value] = item.split("=");
-                obj[key] = value;
-                return obj;
-            }, {});
-        }
-    );
+  if (!("set-cookie" in response.headers)) throw new Error("Set-Cookie not in response headers");
 
-    return cookies;
+  const cookies = Object.values(response.headers["set-cookie"]).map((cookieStr: string) => {
+    return cookieStr.split("; ").reduce((obj, item) => {
+      const [key, value] = item.split("=");
+      obj[key] = value;
+      return obj;
+    }, {});
+  });
+
+  return cookies;
 }
 
 /**
@@ -31,7 +61,7 @@ function extractCookies(response: Response): {
  * @returns {string} String in format [route.method] [route.path]
  */
 function testFor(route: { method: string; path: string }): string {
-    return `${route.method} ${route.path}`;
+  return `${route.method} ${route.path}`;
 }
 
 /**
@@ -54,73 +84,129 @@ function testFor(route: { method: string; path: string }): string {
  * @returns Supertest route test with method and path already set
  */
 function testRoute(
-    request: TestAgent,
-    route: {
-        method: "GET" | "POST" | "DELETE" | "PUT" | "PATCH";
-        path: string;
-    },
-    args?: {
-        [key: string]: string;
-    }
-) {
-    let routePath = route.path;
-
-    if (args) {
-        Object.entries(args).forEach(([key, value]) => {
-            if (routePath.includes(`:${key}`)) {
-                routePath = routePath.replace(`:${key}`, value);
-            } else {
-                throw new Error(`:${key} does not exist in path ${routePath}`);
-            }
-        });
-    }
-
-    return request[route.method.toLowerCase()](routePath);
-}
-
-function testProtected(route: {
+  request: TestAgent,
+  route: {
     method: "GET" | "POST" | "DELETE" | "PUT" | "PATCH";
     path: string;
-}) {
-    return it("should fail because not logged in", function (done) {
-        testRoute(request(), route).expect(401, done);
+  },
+  args?: {
+    [key: string]: string;
+  },
+): Test {
+  let routePath = route.path;
+
+  if (args) {
+    Object.entries(args).forEach(([key, value]) => {
+      if (routePath.includes(`:${key}`)) {
+        routePath = routePath.replace(`:${key}`, value);
+      } else {
+        throw new Error(`:${key} does not exist in path ${routePath}`);
+      }
     });
+  }
+
+  return request[route.method.toLowerCase()](routePath);
 }
 
-const request = function () {
-    return supertestRequest(app);
-};
+/**
+ * Ensures route cannot be accessed by an unauthenticated session
+ * @param route ts-rest route to be tested
+ * @returns Fully configured mocha unit test
+ */
+function testProtected(route: { method: "GET" | "POST" | "DELETE" | "PUT" | "PATCH"; path: string }) {
+  return it("should fail because not logged in", function (done) {
+    testRoute(request(), route).expect(401, done);
+  });
+}
 
-// Authed supertest object factory, cookies are persisted with subsequent requests
-const authenticate = async function ({
-    username,
-    password,
-}: {
-    username: string;
-    password: string;
-}) {
-    const newAuthedRequest = supertestRequest.agent(app);
+async function createWorkspace(
+  authedRequest: TestAgent<Test>,
+  workspace: {
+    name: string;
+  },
+) {
+  const { newWorkspace } = contract.protected.budgeting.workspaces;
 
-    // Do the login
-    const response: Response = await newAuthedRequest
-        .post("/api/auth/login")
-        .send({
-            username,
-            password,
-        });
+  // Create workspace
+  const response = await testRoute(authedRequest, newWorkspace).send(workspace).expect(200);
 
-    // Put the sessionId cookie in the jar for subsequent requests
-    const cookies = extractCookies(response);
-    newAuthedRequest.jar.setCookie(`id=${cookies[0]["id"]}`);
+  // Basic generic validation
+  expect(response.body.workspace).to.contain.keys("workspaceId");
 
-    return newAuthedRequest;
-};
+  return response.body.workspace;
+}
+
+async function getUsersWorkspaces(
+  authedRequest: TestAgent<Test>,
+  opts?: {
+    size?: number;
+    includes?: number;
+    excludes?: number;
+  },
+) {
+  const { getWorkspaces } = contract.protected.budgeting.workspaces;
+
+  const response = await testRoute(authedRequest, getWorkspaces).expect(200);
+
+  // Basic generic validation
+  expect(response.body.workspaces).to.be.an("array");
+
+  if (opts) {
+    // That the array contains opts.size number of workspaces
+    if (opts.size) {
+      expect(response.body.workspaces).to.have.lengthOf(opts.size);
+    }
+
+    // That the array contains the workspace with matching workspaceId
+    if (opts.includes) {
+      expect(
+        response.body.workspaces.some((workspace: { workspaceId: number }) => {
+          return workspace.workspaceId === opts.includes;
+        }),
+      ).to.equal(true);
+    }
+
+    // That the array does not contain an account with workspaceId
+    if (opts.excludes) {
+      expect(
+        response.body.workspaces.some((workspace: { workspaceId: number }) => {
+          return workspace.workspaceId === opts.excludes;
+        }),
+      ).to.equal(false);
+    }
+  }
+
+  return response.body.workspaces;
+}
+
+async function createAccount(authedRequest: TestAgent<Test>, workspaceId: string, account: Budgeting$Account) {
+  const newAccount = contract.protected.budgeting.workspaces.byId.accounts.newAccount;
+
+  const request = await testRoute(authedRequest, newAccount, {
+    workspaceId,
+  })
+    .send({ description: account.description, name: account.name, bank: account.bank })
+    .expect(200);
+
+  expect(request.body.account).to.deep.include({
+    description: account.description,
+    name: account.name,
+    bank: account.bank,
+    workspace: workspaceId,
+  });
+  expect(request.body.account).to.have.own.property("accountId");
+
+  return request.body.account;
+}
 
 export {
-    extractCookies,
-    request,
-    authenticate,
-    testFor,
-    testRoute,
-    testProtected,
+  extractCookies,
+  request,
+  authenticate,
+  testFor,
+  testRoute,
+  testProtected,
+  createWorkspace,
+  getUsersWorkspaces,
+  createAccount,
 };

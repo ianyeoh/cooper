@@ -3,54 +3,50 @@ import { contract } from "@cooper/ts-rest/src/contract";
 import { authenticate } from "../../middleware/authenticate";
 import guard from "@cooper/backend/src/middleware/guard";
 
-const getSelfHandler: AppRouteImplementation<
-    typeof contract.protected.users.getSelf
-> = async function ({ req, res }) {
-    const db = req.app.locals.database;
-    const user = db.auth.users.getUser(guard(res.session).username);
+const getSelfHandler: AppRouteImplementation<typeof contract.protected.users.getSelf> = async function ({ req, res }) {
+  const db = req.app.locals.database;
+  const user = db.auth.users.getUser(guard(res.session).username);
 
-    if (!user) {
-        throw user;
-    }
+  if (!user) {
+    throw user;
+  }
 
-    const { username, firstName, lastName } = user;
+  const { username, firstName, lastName } = user;
 
-    return {
-        status: 200,
-        body: {
-            user: { username, firstName, lastName },
-        },
-    };
+  return {
+    status: 200,
+    body: {
+      user: { username, firstName, lastName },
+    },
+  };
 };
 export const getSelf = {
-    middleware: [authenticate],
-    handler: getSelfHandler,
+  middleware: [authenticate],
+  handler: getSelfHandler,
 };
 
-const getUserHandler: AppRouteImplementation<
-    typeof contract.protected.users.getUser
-> = async function ({ req }) {
-    const db = req.app.locals.database;
+const getUserHandler: AppRouteImplementation<typeof contract.protected.users.getUser> = async function ({ req }) {
+  const db = req.app.locals.database;
 
-    const user = db.auth.users.getUser(req.params.username);
+  const user = db.auth.users.getUser(req.params.username);
 
-    if (!user) {
-        return {
-            status: 400,
-            body: {
-                error: "Invalid username",
-            },
-        };
-    }
-
+  if (!user) {
     return {
-        status: 200,
-        body: {
-            user,
-        },
+      status: 400,
+      body: {
+        error: "Invalid username",
+      },
     };
+  }
+
+  return {
+    status: 200,
+    body: {
+      user,
+    },
+  };
 };
 export const getUser = {
-    middleware: [authenticate],
-    handler: getUserHandler,
+  middleware: [authenticate],
+  handler: getUserHandler,
 };

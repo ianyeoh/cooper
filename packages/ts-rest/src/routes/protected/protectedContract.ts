@@ -10,20 +10,20 @@ const c = initContract();
  * Hence the routes should share a common 401 Unauthorised response.
  */
 const protectedContract = c.router(
-    {
-        users: usersContract,
-        budgeting: {
-            workspaces: workspacesContract,
-        },
+  {
+    users: usersContract,
+    budgeting: {
+      workspaces: workspacesContract,
     },
-    {
-        pathPrefix: "",
-        commonResponses: {
-            401: z.object({
-                error: z.literal("Unauthorised"),
-            }),
-        },
-    }
+  },
+  {
+    pathPrefix: "",
+    commonResponses: {
+      401: z.object({
+        error: z.literal("Unauthorised"),
+      }),
+    },
+  },
 );
 
 export default protectedContract;

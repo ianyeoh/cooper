@@ -1,5 +1,5 @@
 {
-    "hostname": "localhost",
-    "port": 3001,
-    "logFolder": "./logs"
+  "hostname": "localhost",
+  "port": 3001,
+  "logFolder": "./logs"
 }
