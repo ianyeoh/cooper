@@ -16,10 +16,7 @@ type AppList = App[];
 
 function AppCard({ app }: { app: App }) {
   return (
-    <Card
-      key={app.name}
-      className="transition ease-in-out hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] w-full sm:w-[270px] grow"
-    >
+    <Card key={app.name} className="transition ease-in-out hover:shadow-foreground/30 w-full sm:w-[270px] grow">
       <Link href={app.url}>
         <CardHeader>
           <div className="flex gap-5">
@@ -45,7 +42,7 @@ export default function AppDirectory() {
       name: "budgeting",
       description: "An all-in-one solution to budgeting finances and tracking expenses.",
       icon: <Wallet width={iconSize} height={iconSize} />,
-      url: "/app/budgeting/dashboard",
+      url: "/app/budgeting",
     },
     {
       name: "inventory",

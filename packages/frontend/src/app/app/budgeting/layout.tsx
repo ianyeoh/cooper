@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "Custom expense tracking solution",
 };
 
-export default async function DashboardLayout({
+export default async function BudgetingLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
