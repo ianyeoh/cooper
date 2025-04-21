@@ -9,36 +9,30 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import LogoutButton from "@/components/buttons/logoutBtn";
 import { initials } from "@/lib/utils";
-import { fetch } from "@/lib/ts-rest-server";
-import { redirect } from "next/navigation";
-
-async function getUserProfile() {
-  const response = await fetch.protected.users.getSelf();
-
-  if (response.status === 200) {
-    return response.body;
-  } else {
-    redirect("/login");
-  }
-}
+import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
+import { tsr } from "@/lib/tsr-query";
 
 export default async function AccountDropdown() {
-  const userProfile = await getUserProfile();
+  const tsrQueryClient = tsr.initQueryClient(new QueryClient());
+
+  await tsrQueryClient.protected.users.getSelf.prefetchQuery({ queryKey: ["userProfile"] });
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger className="rounded-full">
-        <Avatar>
-          {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
-          <AvatarFallback>{initials(`${userProfile.firstName} ${userProfile.lastName}`)}</AvatarFallback>
-        </Avatar>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>Profile</DropdownMenuItem>
-        <LogoutButton as="dropdownMenuItem" />
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <HydrationBoundary state={dehydrate(tsrQueryClient)}>
+      <DropdownMenu>
+        <DropdownMenuTrigger className="rounded-full">
+          <Avatar>
+            {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
+            <AvatarFallback>{initials(`${userProfile.firstName} ${userProfile.lastName}`)}</AvatarFallback>
+          </Avatar>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Profile</DropdownMenuItem>
+          <LogoutButton as="dropdownMenuItem" />
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </HydrationBoundary>
   );
 }

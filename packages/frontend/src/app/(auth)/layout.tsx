@@ -26,7 +26,7 @@ export default function AuthenticationLayout({ children }: { children: ReactNode
           <ThemeBtn className="ml-auto" />
         </div>
 
-        <div className="max-w-[400px] space-y-6 mx-6">
+        <div className="space-y-6 mx-6">
           <ThemeBtn className="absolute top-7 right-9 hidden sm:flex" />
 
           {children}

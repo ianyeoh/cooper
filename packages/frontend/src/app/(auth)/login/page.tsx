@@ -1,9 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { LoginForm } from "@/components/forms/loginForm";
-import { tsr } from "@/lib/ts-rest-client";
+import { tsr } from "@/lib/tsr-query";
 import { parseError } from "@cooper/ts-rest/src/utils.ts";
 import { ClientInferRequest } from "@ts-rest/core";
 import { contract } from "@cooper/ts-rest/src/contract";
@@ -77,5 +78,16 @@ export default function LoginPage() {
     });
   }
 
-  return <LoginForm onSubmit={handleLogin} />;
+  return (
+    <div>
+      <div className="flex flex-col space-y-2 text-center px-8">
+        <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
+        <p className="text-sm text-muted-foreground">Enter your username and password</p>
+      </div>
+      <LoginForm onSubmit={handleLogin} />
+      <Link href="/signup" className="text-sm text-muted-foreground float-right mt-2">
+        or <span className="underline">create an account</span>
+      </Link>
+    </div>
+  );
 }

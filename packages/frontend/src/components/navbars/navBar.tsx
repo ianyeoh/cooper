@@ -10,24 +10,26 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
+} from "@/components/ui/navigationMenu";
 import { cn } from "@/lib/utils";
 
 export type NavBarLink = {
+  kind: "link";
   display: string;
   url: string;
   description?: string;
 };
 
 export type NavBarGroup = {
+  kind: "group";
   title: string;
   links: NavBarLink[];
 };
 
-export type NavBarItem = (NavBarLink & { kind: "link" }) | (NavBarGroup & { kind: "group" });
+export type NavBarItem = NavBarLink | NavBarGroup;
 
 export type NavBarProps = {
-  header: NavBarLink;
+  header?: NavBarLink;
   logo?: ReactNode;
   links: NavBarItem[];
 };
@@ -35,15 +37,17 @@ export type NavBarProps = {
 export default function NavBar({ header, logo, links }: NavBarProps) {
   return (
     <div className="mr-8 hidden md:flex">
-      <div className="flex space-x-3 items-center">
-        <Link href={header.url} className="mr-4 flex items-center space-x-3 lg:mr-6">
-          {logo}
-          <h1 className="hidden font-bold lg:inline-block">
-            <span className="font-normal">cooper / </span>
-            {header.display}
-          </h1>
-        </Link>
-      </div>
+      {header && (
+        <div className="flex space-x-3 items-center">
+          <Link href={header.url} className="mr-4 flex items-center space-x-3 lg:mr-6">
+            {logo}
+            <h1 className="hidden font-bold lg:inline-block">
+              <span className="font-normal">cooper / </span>
+              {header.display}
+            </h1>
+          </Link>
+        </div>
+      )}
 
       <NavigationMenu>
         <NavigationMenuList>

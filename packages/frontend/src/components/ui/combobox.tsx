@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-export default function Combobox({ items, itemName }: { items: string[]; itemName: string }) {
+export default function Combobox({ items, itemName }: { items: { label: string; value: string }[]; itemName: string }) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
@@ -16,7 +16,7 @@ export default function Combobox({ items, itemName }: { items: string[]; itemNam
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] justify-between">
-          {value ? items.find((item) => item === value) : `Select ${itemName}...`}
+          {value ? items.find((item) => item.value === value)?.label : `Select ${itemName}...`}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -28,15 +28,15 @@ export default function Combobox({ items, itemName }: { items: string[]; itemNam
             <CommandGroup>
               {items.map((item) => (
                 <CommandItem
-                  key={item}
-                  value={item}
+                  key={item.label}
+                  value={item.label}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
                 >
-                  <Check className={cn("mr-2 h-4 w-4", value === item ? "opacity-100" : "opacity-0")} />
-                  {item}
+                  <Check className={cn("mr-2 h-4 w-4", value === item.value ? "opacity-100" : "opacity-0")} />
+                  {item.label}
                 </CommandItem>
               ))}
             </CommandGroup>

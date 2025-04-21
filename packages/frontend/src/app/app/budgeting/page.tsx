@@ -1,3 +1,5 @@
-export default function BudgetingHomePage() {
-  return <div>Hi</div>;
+import { redirect } from "next/navigation";
+
+export default async function BudgetingRoot() {
+  redirect(`/app/budgeting/workspaces`);
 }

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
 import { DropdownMenuItem } from "@/components/ui/dropdownMenu";
-import { tsr } from "@/lib/ts-rest-client";
+import { tsr } from "@/lib/tsr-query";
 
 export default function LogoutButton(props: { as: "button" | "dropdownMenuItem"; className?: string }) {
   const router = useRouter();

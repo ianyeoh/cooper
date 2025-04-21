@@ -2,9 +2,16 @@ import MobileNavBar from "@/components/navbars/mobileNavBar";
 import NavBar, { NavBarProps } from "@/components/navbars/navBar";
 import AccountDropdown from "@/components/accountDropdown";
 import ThemeBtn from "@/components/theming/themeBtn";
-import SearchBar from "@/components/searchBar";
+import SearchBar from "@/components/ui/searchBar";
 
-export default function Header({ header, logo, links }: NavBarProps) {
+export default function Header({
+  header,
+  logo,
+  links,
+  searchBar = true,
+}: {
+  searchBar?: boolean;
+} & NavBarProps) {
   return (
     <header className="sticky flex justify-center top-0 z-50 w-full border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center">
@@ -15,7 +22,7 @@ export default function Header({ header, logo, links }: NavBarProps) {
         <MobileNavBar header={header} links={links} logo={logo} />
 
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          <SearchBar />
+          {searchBar && <SearchBar />}
           <nav className="flex items-center gap-2">
             <ThemeBtn variant="ghost" />
             <AccountDropdown />

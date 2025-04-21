@@ -36,15 +36,18 @@ export default function MobileNavBar({ header, logo, links }: NavBarProps) {
             <X strokeWidth={1.5} size={17} />
           </Button>
           <div className="flex flex-col space-y-5 h-screen p-7">
-            <div className="flex h-15 space-x-3 items-center ml-7">
-              <Link href={header.url} className="mr-4 flex items-center space-x-3 lg:mr-6">
-                {logo}
-                <h1 className="font-bold">
-                  <span className="font-normal">cooper / </span>
-                  {header.display}
-                </h1>
-              </Link>
-            </div>
+            {header && (
+              <div className="flex h-15 space-x-3 items-center ml-7">
+                <Link href={header.url} className="mr-4 flex items-center space-x-3 lg:mr-6">
+                  {logo}
+                  <h1 className="font-bold">
+                    <span className="font-normal">cooper / </span>
+                    {header.display}
+                  </h1>
+                </Link>
+              </div>
+            )}
+
             <ScrollArea className="flex-1 ml-7">
               <div className="flex flex-col space-y-3">
                 {links.map((item) => {

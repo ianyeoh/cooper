@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ResponsiveDialog } from "@/components/responsiveDialog";
+import { ResponsiveDialog } from "@/components/ui/responsiveDialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import TransactionForm from "@/components/forms/transactionForm";

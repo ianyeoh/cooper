@@ -1,7 +1,7 @@
 // Sentry (error logging) instrumentation, must be imported first
 import "@cooper/backend/src/instrument";
 import * as Sentry from "@sentry/node";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import { consoleLogger, activityLogger, logger } from "@cooper/backend/src/logging";
 import { createExpressEndpoints, initServer } from "@ts-rest/express";
@@ -160,7 +160,8 @@ app.use(express.static("public"));
 Sentry.setupExpressErrorHandler(app);
 
 // Generic error handler
-app.use((err: unknown, req: Request, res: Response) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
   if (process.env.NODE_ENV == "test") {
     logger.info(req.body);
     logger.info(err);
@@ -173,7 +174,7 @@ app.use((err: unknown, req: Request, res: Response) => {
   if (err instanceof Error) {
     logger.error(`${err.name} - ${err.cause} - ${err.message} - ${err.stack}`);
   } else {
-    logger.error(JSON.stringify(err));
+    logger.error(err);
   }
 
   res.status(500).json({

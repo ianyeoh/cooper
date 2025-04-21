@@ -5,8 +5,8 @@ import { cookies } from "next/headers";
 /**
  * Forward cookies from request to Next.js page to the backend API server
  */
-function proxyServerCookies() {
-  const allCookies = cookies().getAll();
+async function proxyServerCookies() {
+  const allCookies = (await cookies()).getAll();
 
   return allCookies.map((cookie) => `${cookie.name}=${cookie.value};`).join(" ");
 }
@@ -20,7 +20,7 @@ export const fetch = initClient(contract, {
   baseUrl: "http://localhost:3000", // self reference to Next.js server (from server)
   credentials: "include", // for our cookie based sessions
   api: async (args) => {
-    args.headers.cookie = proxyServerCookies();
+    args.headers.cookie = await proxyServerCookies();
     return tsRestFetchApi(args);
   },
 });

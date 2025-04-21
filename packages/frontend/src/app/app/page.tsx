@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import ThemeBtn from "@/components/theming/themeBtn";
 import AccountDropdown from "@/components/accountDropdown";
-import { SquareTerminal, Wallet, Warehouse } from "lucide-react";
+import { SquareTerminal, Wallet /* , Warehouse */ } from "lucide-react";
 import Link from "next/link";
 
 type App = {
@@ -44,12 +44,12 @@ export default function AppDirectory() {
       icon: <Wallet width={iconSize} height={iconSize} />,
       url: "/app/budgeting",
     },
-    {
-      name: "inventory",
-      description: "Manage and track household items and their locations easily.",
-      icon: <Warehouse width={iconSize} height={iconSize} />,
-      url: "/app/inventory/dashboard",
-    },
+    // {
+    //   name: "inventory",
+    //   description: "Manage and track household items and their locations easily.",
+    //   icon: <Warehouse width={iconSize} height={iconSize} />,
+    //   url: "/app/inventory/dashboard",
+    // },
   ];
 
   return (

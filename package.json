@@ -11,7 +11,8 @@
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
     "build": "npm install && tsc --build --verbose",
     "lint": "eslint . --fix",
-    "format": "prettier --log-level warn --write \"./**/*.{tsx,ts,json}\""
+    "format": "prettier --log-level warn --write \"./**/*.{tsx,ts,json}\"",
+    "prepare": "husky install"
   },
   "workspaces": [
     "packages/*"
@@ -21,6 +22,8 @@
     "concurrently": "^9.1.0",
     "eslint": "^8.57.1",
     "globals": "^16.0.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.5.1",
     "nyc": "^17.1.0",
     "prettier": "^3.5.3",
     "ts-node": "^10.9.2",
