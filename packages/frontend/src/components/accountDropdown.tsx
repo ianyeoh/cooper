@@ -1,3 +1,5 @@
+"use client";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,30 +11,37 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import LogoutButton from "@/components/buttons/logoutBtn";
 import { initials } from "@/lib/utils";
-import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { tsr } from "@/lib/tsr-query";
+import { redirect } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default async function AccountDropdown() {
-  const tsrQueryClient = tsr.initQueryClient(new QueryClient());
+export default function AccountDropdown() {
+  const { data, isPending } = tsr.protected.users.getSelf.useQuery({
+    queryKey: ["selfUserProfile"],
+  });
 
-  await tsrQueryClient.protected.users.getSelf.prefetchQuery({ queryKey: ["userProfile"] });
+  if (isPending) {
+    return <Skeleton className="h-10 w-10 rounded-full" />;
+  }
+
+  if (data?.status !== 200) {
+    return redirect("/login");
+  }
 
   return (
-    <HydrationBoundary state={dehydrate(tsrQueryClient)}>
-      <DropdownMenu>
-        <DropdownMenuTrigger className="rounded-full">
-          <Avatar>
-            {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
-            <AvatarFallback>{initials(`${userProfile.firstName} ${userProfile.lastName}`)}</AvatarFallback>
-          </Avatar>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Profile</DropdownMenuItem>
-          <LogoutButton as="dropdownMenuItem" />
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </HydrationBoundary>
+    <DropdownMenu>
+      <DropdownMenuTrigger className="rounded-full">
+        <Avatar>
+          {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
+          <AvatarFallback>{initials(`${data.body.user.firstName} ${data.body.user.lastName}`)}</AvatarFallback>
+        </Avatar>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>Profile</DropdownMenuItem>
+        <LogoutButton as="dropdownMenuItem" />
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

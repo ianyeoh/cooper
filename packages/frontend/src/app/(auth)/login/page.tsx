@@ -30,7 +30,7 @@ export default function LoginPage() {
     }, 500);
   }, [searchParams]);
 
-  // Spawns a new toast that lingers indefinitely
+  /* Spawns a new toast that lingers indefinitely */
   function showRedirectReason(reason: string) {
     setRedirectToastIds([
       ...redirectToastIds,
@@ -45,7 +45,6 @@ export default function LoginPage() {
     for (const id of redirectToastIds) {
       toast.dismiss(id);
     }
-
     setRedirectToastIds([]);
   }
 

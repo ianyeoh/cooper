@@ -37,11 +37,11 @@ export type NavBarProps = {
 export default function NavBar({ header, logo, links }: NavBarProps) {
   return (
     <div className="mr-8 hidden md:flex">
-      {header && (
+      {header !== undefined && (
         <div className="flex space-x-3 items-center">
           <Link href={header.url} className="mr-4 flex items-center space-x-3 lg:mr-6">
             {logo}
-            <h1 className="hidden font-bold lg:inline-block">
+            <h1 className="font-bold lg:inline-block">
               <span className="font-normal">cooper / </span>
               {header.display}
             </h1>

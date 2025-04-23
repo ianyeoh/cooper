@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
  * Forward cookies from request to Next.js page to the backend API server
  */
 async function proxyServerCookies() {
-  const allCookies = (await cookies()).getAll();
+  const allCookies = cookies().getAll();
 
   return allCookies.map((cookie) => `${cookie.name}=${cookie.value};`).join(" ");
 }

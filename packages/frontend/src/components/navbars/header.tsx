@@ -1,28 +1,91 @@
+"use client";
+
 import MobileNavBar from "@/components/navbars/mobileNavBar";
 import NavBar, { NavBarProps } from "@/components/navbars/navBar";
 import AccountDropdown from "@/components/accountDropdown";
 import ThemeBtn from "@/components/theming/themeBtn";
 import SearchBar from "@/components/ui/searchBar";
+import { usePathname } from "next/navigation";
+import { SquareTerminal } from "lucide-react";
+import WorkspaceSelector from "@/components/budgeting/workspaceSelector";
 
-export default function Header({
-  header,
-  logo,
-  links,
-  searchBar = true,
-}: {
-  searchBar?: boolean;
-} & NavBarProps) {
+export default function Header() {
+  let navBarProps: NavBarProps = {
+    header: undefined,
+    logo: undefined,
+    links: [],
+  };
+  let showSearchbar: boolean = false;
+  let showWorkspaceSelector: boolean = false;
+
+  const pathname = usePathname();
+  if (pathname === "/app") {
+    navBarProps = {
+      header: {
+        kind: "link",
+        display: "apps",
+        url: "/app",
+        description: "Central app directory",
+      },
+      logo: <SquareTerminal strokeWidth={1.3} width={28} />,
+      links: [],
+    };
+  } else if (pathname === "/app/budgeting/workspaces") {
+    navBarProps = {
+      header: undefined,
+      logo: undefined,
+      links: [
+        {
+          kind: "link",
+          display: "Back",
+          url: "/app",
+          description: "Return to the central app directory",
+        },
+      ],
+    };
+  } else if (pathname.startsWith("/app/budgeting/workspaces/")) {
+    const workspaceId = pathname.replace(/^(\/app\/budgeting\/workspaces\/)/, "").split("/")[0];
+    navBarProps = {
+      header: undefined,
+      logo: undefined,
+      links: [
+        {
+          kind: "link",
+          display: "Transactions",
+          url: `/app/budgeting/workspaces/${workspaceId}/transactions`,
+          description: "View, edit and delete your budget transactions",
+        },
+        {
+          kind: "link",
+          display: "Accounts",
+          url: `/app/budgeting/workspaces/${workspaceId}/accounts`,
+          description: "View, edit and delete your accounts",
+        },
+        {
+          kind: "link",
+          display: "Expenses",
+          url: `/app/budgeting/workspaces/${workspaceId}/expenses`,
+          description: "View, edit and delete your expenses",
+        },
+      ],
+    };
+    showSearchbar = true;
+    showWorkspaceSelector = true;
+  }
+
   return (
     <header className="sticky flex justify-center top-0 z-50 w-full border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 max-w-screen-2xl items-center">
+      <div className="container flex h-14 max-w-screen-2xl items-center gap-1">
+        {showWorkspaceSelector && <WorkspaceSelector />}
+
         {/* Shows only on wide screens (desktop) */}
-        <NavBar header={header} links={links} logo={logo} />
+        <NavBar {...navBarProps} />
 
         {/* Shows only on smaller screens (mobile) */}
-        <MobileNavBar header={header} links={links} logo={logo} />
+        <MobileNavBar {...navBarProps} />
 
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          {searchBar && <SearchBar />}
+          {showSearchbar && <SearchBar />}
           <nav className="flex items-center gap-2">
             <ThemeBtn variant="ghost" />
             <AccountDropdown />
