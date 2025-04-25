@@ -12,20 +12,15 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import LogoutButton from "@/components/buttons/logoutBtn";
 import { initials } from "@/lib/utils";
 import { tsr } from "@/lib/tsr-query";
-import { redirect } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AccountDropdown() {
-  const { data, isPending } = tsr.protected.users.getSelf.useQuery({
-    queryKey: ["selfUserProfile"],
+  const { isLoading, data } = tsr.protected.budgeting.workspaces.getWorkspaces.useQuery({
+    queryKey: ["user"],
   });
 
-  if (isPending) {
-    return <Skeleton className="h-10 w-10 rounded-full" />;
-  }
-
-  if (data?.status !== 200) {
-    return redirect("/login");
+  if (isLoading) {
+    return <Skeleton className="h-12 w-12 rounded-full" />;
   }
 
   return (
@@ -33,7 +28,7 @@ export default function AccountDropdown() {
       <DropdownMenuTrigger className="rounded-full">
         <Avatar>
           {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
-          <AvatarFallback>{initials(`${data.body.user.firstName} ${data.body.user.lastName}`)}</AvatarFallback>
+          <AvatarFallback>{initials(`${data.user.firstName} ${data.user.lastName}`)}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

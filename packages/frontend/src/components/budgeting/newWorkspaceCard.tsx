@@ -22,6 +22,7 @@ export default function NewWorkspaceCard() {
         {
           onSuccess: async ({ body }) => {
             router.push(`/app/budgeting/workspaces/${body.workspace.workspaceId}`);
+            router.refresh();
             resolve();
           },
           onError: async (e) => {
@@ -45,7 +46,7 @@ export default function NewWorkspaceCard() {
   return (
     <Card className="w-[350px]">
       <CardHeader>
-        <CardTitle>Create Workspace</CardTitle>
+        <CardTitle>Create your first workspace</CardTitle>
         <CardDescription>
           A workspace is a collaborative area where you can invite others to view and edit your budgets.
         </CardDescription>

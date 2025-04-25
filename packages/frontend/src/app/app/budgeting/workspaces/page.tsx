@@ -1,25 +1,18 @@
-"use client";
-
 import { redirect } from "next/navigation";
 import NewWorkspaceCard from "@/components/budgeting/newWorkspaceCard";
-import { tsr } from "@/lib/tsr-query";
-import { Spinner } from "@/components/ui/spinner";
+import { fetch } from "@/lib/tsr-fetch";
 
-export default function BudgetingWorkspacePage() {
-  const { data, isPending } = tsr.protected.budgeting.workspaces.getWorkspaces.useQuery({
-    queryKey: ["workspaces"],
-  });
+export default async function BudgetingWorkspacePage() {
+  const { status, body } = await fetch.protected.budgeting.workspaces.getWorkspaces();
 
-  if (isPending) {
-    return <Spinner size="large" />;
+  if (status !== 200) {
+    redirect("/login");
   }
 
-  if (data?.status !== 200) {
-    return redirect("/login");
+  if (body.workspaces.length > 0) {
+    // If the user has at least one workspace created, go to that.
+    redirect(`/app/budgeting/workspaces/${body.workspaces[0].workspaceId}`);
   }
-
-  // If the user has at least one workspace created, go to that.
-  if (data.body.workspaces.length > 0) redirect(`/app/budgeting/workspaces/${data.body.workspaces[0].workspaceId}`);
 
   // Otherwise show a default page to create their first workspace
   return (

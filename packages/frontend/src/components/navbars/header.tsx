@@ -8,8 +8,31 @@ import SearchBar from "@/components/ui/searchBar";
 import { usePathname } from "next/navigation";
 import { SquareTerminal } from "lucide-react";
 import WorkspaceSelector from "@/components/budgeting/workspaceSelector";
+import { fetch } from "@/lib/tsr-fetch";
+import { redirect } from "next/navigation";
+import { tsr } from "@/lib/tsr-query";
 
 export default function Header() {
+  // Server Action
+  async function fetchData() {
+    const userResponse = await fetch.protected.users.getSelf();
+    const workspacesResponse = await fetch.protected.budgeting.workspaces.getWorkspaces();
+  }
+
+  if (userResponse.status !== 200 || workspacesResponse.status !== 200) {
+    redirect("/login");
+  }
+
+  // Cache the results
+  tsr.protected.users.getSelf.useQuery({
+    queryKey: ["user"],
+    initialData: userResponse,
+  });
+  tsr.protected.budgeting.workspaces.getWorkspaces.useQuery({
+    queryKey: ["workspaces"],
+    initialData: workspacesResponse,
+  });
+
   let navBarProps: NavBarProps = {
     header: undefined,
     logo: undefined,
@@ -17,6 +40,7 @@ export default function Header() {
   };
   let showSearchbar: boolean = false;
   let showWorkspaceSelector: boolean = false;
+  let workspaceId;
 
   const pathname = usePathname();
   if (pathname === "/app") {
@@ -44,7 +68,7 @@ export default function Header() {
       ],
     };
   } else if (pathname.startsWith("/app/budgeting/workspaces/")) {
-    const workspaceId = pathname.replace(/^(\/app\/budgeting\/workspaces\/)/, "").split("/")[0];
+    workspaceId = pathname.replace(/^(\/app\/budgeting\/workspaces\/)/, "").split("/")[0];
     navBarProps = {
       header: undefined,
       logo: undefined,
@@ -76,7 +100,7 @@ export default function Header() {
   return (
     <header className="sticky flex justify-center top-0 z-50 w-full border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center gap-1">
-        {showWorkspaceSelector && <WorkspaceSelector />}
+        {showWorkspaceSelector && <WorkspaceSelector defaultValue={workspaceId} />}
 
         {/* Shows only on wide screens (desktop) */}
         <NavBar {...navBarProps} />

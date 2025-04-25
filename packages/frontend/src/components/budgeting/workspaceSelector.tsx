@@ -1,6 +1,7 @@
 "use client";
 
-import { redirect, usePathname } from "next/navigation";
+import { Dispatch, SetStateAction, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -10,50 +11,54 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
 import { tsr } from "@/lib/tsr-query";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function WorkspaceSelector() {
-  const pathname = usePathname();
-
-  if (!pathname.startsWith("/app/budgeting/workspaces/")) {
-    throw new Error(
-      "Workspace selector not used in valid path. Is this component being rendered outside of the route /app/budgeting/workspaces/*?",
-    );
-  }
-
-  const workspaceId = pathname.replace(/^(\/app\/budgeting\/workspaces\/)/, "").split("/")[0];
-
-  const { data, isPending } = tsr.protected.budgeting.workspaces.getWorkspaces.useQuery({
+export default function WorkspaceSelector({
+  redirectOnSelect = true,
+  value,
+  onValueChange,
+  defaultValue,
+}: {
+  redirectOnSelect?: boolean;
+  value?: string;
+  onValueChange?: Dispatch<SetStateAction<string>>;
+  defaultValue?: string;
+}) {
+  const router = useRouter();
+  const { isLoading, data } = tsr.protected.budgeting.workspaces.getWorkspaces.useQuery({
     queryKey: ["workspaces"],
   });
 
-  if (isPending) {
-    return (
-      <div className="flex h-9 items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 shadow-sm ring-offset-background">
-        <Skeleton className="h-4 w-[150px]" />
-      </div>
-    );
+  const [internalState, setInternalState] = useState<string>(defaultValue ?? "");
+
+  /* Optionally controlled component*/
+  const isControlled = value !== undefined && onValueChange !== undefined;
+
+  const selectedWorkspace = isControlled ? value : internalState;
+  const onSelectedWorkspaceChange = isControlled ? onValueChange : setInternalState;
+
+  function handleSelect(value: string) {
+    onSelectedWorkspaceChange(`/app/budgeting/workspaces/${value}`);
+
+    if (redirectOnSelect) {
+      router.push(`/app/budgeting/workspaces/${value}`);
+    }
   }
 
-  if (data?.status !== 200) {
-    return;
+  if (isLoading) {
+    return <Skeleton className="h-4 w-[180px]" />;
   }
 
   return (
-    <Select
-      onValueChange={(value: string) => {
-        redirect(`/app/budgeting/workspaces/${value}`);
-      }}
-      defaultValue={workspaceId}
-    >
+    <Select value={selectedWorkspace} onValueChange={handleSelect} defaultValue={selectedWorkspace}>
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="Select workspace" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Your workspaces</SelectLabel>
-          {data.body.workspaces.map(({ name, workspaceId }) => {
+          {data?.body.workspaces.map(({ name, workspaceId }) => {
             return (
               <SelectItem key={name} value={String(workspaceId)}>
                 {name}

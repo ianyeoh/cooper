@@ -3,19 +3,18 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { toast } from "sonner";
 import { DropdownMenuItem } from "@/components/ui/dropdownMenu";
 import { tsr } from "@/lib/tsr-query";
 
 export default function LogoutButton(props: { as: "button" | "dropdownMenuItem"; className?: string }) {
   const router = useRouter();
+  const queryClient = tsr.useQueryClient();
   const { mutate, isPending } = tsr.public.auth.logout.useMutation({
     onSuccess: () => {
       router.push("/login");
     },
-    onError: (error) => {
-      console.log(error);
-      toast.error("Failed to log you out. Please try again later.");
+    onError: () => {
+      router.push("/login");
     },
   });
 
@@ -23,6 +22,7 @@ export default function LogoutButton(props: { as: "button" | "dropdownMenuItem";
 
   async function handleLogout() {
     mutate({ body: {} });
+    queryClient.clear();
   }
 
   switch (as) {

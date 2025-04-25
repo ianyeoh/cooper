@@ -52,6 +52,7 @@
     "winston": "^3.14.2"
   },
   "devDependencies": {
+    "@tanstack/react-query-devtools": "^5.74.6",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.16.10",
     "@types/react": "^18",
