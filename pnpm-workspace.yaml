@@ -1,0 +1,11 @@
+packages:
+  - packages/*
+
+onlyBuiltDependencies:
+  - '@scarf/scarf'
+  - '@sentry/cli'
+  - bcrypt
+  - esbuild
+  - sharp
+  - 'true'
+  - unrs-resolver
