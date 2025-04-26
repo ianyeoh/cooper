@@ -1,6 +1,6 @@
 import { contract } from "@cooper/ts-rest/src/contract";
 import { generateOpenApi } from "@ts-rest/open-api";
-import { PathsObject, OperationObject } from "openapi3-ts";
+import { PathsObject, OperationObject } from "openapi3-ts/oas31";
 
 // Auto-generated Swagger API docs
 const openapi = generateOpenApi(

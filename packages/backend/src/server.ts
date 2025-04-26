@@ -1,7 +1,7 @@
 // Sentry (error logging) instrumentation, must be imported first
 import "@cooper/backend/src/instrument";
 import * as Sentry from "@sentry/node";
-import express, { NextFunction, Request, Response } from "express";
+import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import { consoleLogger, activityLogger, logger } from "@cooper/backend/src/logging";
 import { createExpressEndpoints, initServer } from "@ts-rest/express";
@@ -41,7 +41,7 @@ import { login, logout, signup, getSessions, validSession } from "@cooper/backen
 
 config(); // Load variables from .env file into process.env
 
-const app = express();
+const app: Application = express();
 
 // Express middleware and route handlers
 app.use(

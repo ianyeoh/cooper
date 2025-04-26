@@ -6,10 +6,10 @@
   "scripts": {
     "prepare": "husky install",
     "format": "prettier --log-level warn --write \"./**/*.{tsx,ts,json}\"",
-    "test:backend": "pnpm run test --prefix packages/backend",
-    "coverage:backend": "pnpm run coverage --prefix packages/backend",
-    "dev:backend": "pnpm run dev --prefix packages/backend",
-    "dev:frontend": "pnpm run dev --prefix packages/frontend",
+    "test:backend": "pnpm --filter @cooper/backend run test",
+    "coverage:backend": "pnpm --filter @cooper/backend run coverage",
+    "dev:backend": "pnpm --filter @cooper/backend run dev",
+    "dev:frontend": "pnpm --filter @cooper/frontend run dev ",
     "dev": "concurrently \"pnpm run dev:frontend\" \"pnpm run dev:backend\"",
     "build": "pnpm install && tsc --build --verbose",
     "lint": "eslint . --fix"

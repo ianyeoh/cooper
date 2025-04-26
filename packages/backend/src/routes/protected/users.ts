@@ -1,6 +1,6 @@
 import { AppRouteImplementation } from "@ts-rest/express";
 import { contract } from "@cooper/ts-rest/src/contract";
-import { authenticate } from "../../middleware/authenticate";
+import { authenticate } from "@cooper/backend/src/middleware/authenticate";
 import guard from "@cooper/backend/src/middleware/guard";
 
 const getSelfHandler: AppRouteImplementation<typeof contract.protected.users.getSelf> = async function ({ req, res }) {

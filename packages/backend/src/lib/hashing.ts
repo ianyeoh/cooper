@@ -1,4 +1,4 @@
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 
 /**
  * Synchronously hashes given password using bcrypt algorithm
