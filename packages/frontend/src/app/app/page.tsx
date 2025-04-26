@@ -51,7 +51,7 @@ export default async function AppDirectory() {
   ];
 
   return (
-    <div className="flex flex-wrap gap-y-6 gap-x-4 max-w-screen-2xl py-5">
+    <div className="flex flex-wrap gap-y-6 gap-x-4 max-w-(--breakpoint-2xl) py-5">
       {apps.map((app, index) => {
         return <AppCard key={index} app={app} />;
       })}

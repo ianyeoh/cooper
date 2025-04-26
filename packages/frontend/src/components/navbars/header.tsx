@@ -113,8 +113,8 @@ export default function Header({
   }
 
   return (
-    <header className="sticky flex justify-center top-0 z-50 w-full border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 max-w-screen-2xl items-center gap-1">
+    <header className="sticky flex justify-center top-0 z-50 w-full border-border/40 bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/60">
+      <div className="container flex h-14 max-w-(--breakpoint-2xl) items-center gap-1">
         {showWorkspaceSelector && <WorkspaceSelector defaultValue={workspaceId} />}
 
         {/* Shows only on wide screens (desktop) */}

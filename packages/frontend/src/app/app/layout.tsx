@@ -22,12 +22,12 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       <Header userResponse={userResponse} workspacesResponse={workspacesResponse} />
       <main className="flex-1 border-b flex items-stretch">
         <div className="grow flex justify-center py-6 md:py-0">
-          <div className="container flex max-w-screen-2xl items-start break-words">{children}</div>
+          <div className="container flex max-w-(--breakpoint-2xl) items-start break-words">{children}</div>
         </div>
       </main>
       <footer>
         <div className="flex justify-center py-6 md:py-0">
-          <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row max-w-screen-2xl">
+          <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row max-w-(--breakpoint-2xl)">
             <p className="text-balance text-center text-sm leading-loose text-muted-foreground md:text-left">
               Built by Ian Yeoh.
             </p>

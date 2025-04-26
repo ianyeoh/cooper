@@ -12,7 +12,7 @@ export default function AuthenticationLayout({ children }: { children: ReactNode
           <House />
           <h1 className="text-lg font-medium">cooper</h1>
         </div>
-        <div className="flex-grow"></div>
+        <div className="grow"></div>
         <p className="text-lg">Home resource management made easy</p>
         <p className="text-sm">by Ian Yeoh</p>
       </div>
