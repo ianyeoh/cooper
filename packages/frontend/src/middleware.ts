@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { fetch } from "./lib/tsr-fetch";
+import { fetch } from "./lib/tsrFetch";
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 /**

@@ -8,22 +8,36 @@ import SearchBar from "@/components/ui/searchBar";
 import { usePathname } from "next/navigation";
 import { SquareTerminal } from "lucide-react";
 import WorkspaceSelector from "@/components/budgeting/workspaceSelector";
-import { fetch } from "@/lib/tsr-fetch";
-import { redirect } from "next/navigation";
-import { tsr } from "@/lib/tsr-query";
+import { tsr } from "@/lib/tsrQuery";
 
-export default function Header() {
-  // Server Action
-  async function fetchData() {
-    const userResponse = await fetch.protected.users.getSelf();
-    const workspacesResponse = await fetch.protected.budgeting.workspaces.getWorkspaces();
-  }
-
-  if (userResponse.status !== 200 || workspacesResponse.status !== 200) {
-    redirect("/login");
-  }
-
-  // Cache the results
+export default function Header({
+  userResponse,
+  workspacesResponse,
+}: {
+  userResponse: {
+    status: 200;
+    body: {
+      user: {
+        username: string;
+        firstName: string;
+        lastName: string;
+      };
+    };
+    headers: Headers;
+  };
+  workspacesResponse: {
+    status: 200;
+    body: {
+      workspaces: {
+        users: string[];
+        workspaceId: number;
+        name: string;
+      }[];
+    };
+    headers: Headers;
+  };
+}) {
+  // Cache initial data that was fetched server side
   tsr.protected.users.getSelf.useQuery({
     queryKey: ["user"],
     initialData: userResponse,
@@ -33,6 +47,7 @@ export default function Header() {
     initialData: workspacesResponse,
   });
 
+  // Conditionally render the header bar based on page location
   let navBarProps: NavBarProps = {
     header: undefined,
     logo: undefined,

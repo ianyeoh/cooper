@@ -11,8 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { tsr } from "@/lib/tsr-query";
+import { tsr } from "@/lib/tsrQuery";
 import { Skeleton } from "@/components/ui/skeleton";
+import { showErrorToast } from "@/lib/errorToast";
 
 export default function WorkspaceSelector({
   redirectOnSelect = true,
@@ -26,7 +27,7 @@ export default function WorkspaceSelector({
   defaultValue?: string;
 }) {
   const router = useRouter();
-  const { isLoading, data } = tsr.protected.budgeting.workspaces.getWorkspaces.useQuery({
+  const { isLoading, isError, data } = tsr.protected.budgeting.workspaces.getWorkspaces.useQuery({
     queryKey: ["workspaces"],
   });
 
@@ -47,6 +48,11 @@ export default function WorkspaceSelector({
   }
 
   if (isLoading) {
+    return <Skeleton className="h-4 w-[180px]" />;
+  }
+
+  if (isError || data?.status !== 200) {
+    showErrorToast("workspaces", data?.status ?? 500);
     return <Skeleton className="h-4 w-[180px]" />;
   }
 

@@ -5,7 +5,7 @@ import { SignupForm } from "@/components/forms/signupForm";
 import { toast } from "sonner";
 import { ClientInferRequest } from "@ts-rest/core";
 import { contract } from "@cooper/ts-rest/src/contract";
-import { tsr } from "@/lib/tsr-query";
+import { tsr } from "@/lib/tsrQuery";
 import { parseError } from "@cooper/ts-rest/src/utils";
 import Link from "next/link";
 

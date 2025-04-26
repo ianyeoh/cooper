@@ -1,7 +1,7 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { tsr } from "@/lib/tsr-query";
+import { tsr } from "@/lib/tsrQuery";
 import { ThemeProvider } from "@/components/theming/themeProvider";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 

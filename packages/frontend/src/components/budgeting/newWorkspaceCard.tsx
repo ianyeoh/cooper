@@ -7,7 +7,7 @@ import { WorkspaceForm } from "@/components/forms/workspaceForm";
 import { toast } from "sonner";
 import { parseError } from "@cooper/ts-rest/src/utils";
 import { useRouter } from "next/navigation";
-import { tsr } from "@/lib/tsr-query";
+import { tsr } from "@/lib/tsrQuery";
 
 export default function NewWorkspaceCard() {
   const router = useRouter();

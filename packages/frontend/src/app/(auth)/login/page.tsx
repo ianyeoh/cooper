@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { LoginForm } from "@/components/forms/loginForm";
-import { tsr } from "@/lib/tsr-query";
+import { tsr } from "@/lib/tsrQuery";
 import { parseError } from "@cooper/ts-rest/src/utils.ts";
 import { ClientInferRequest } from "@ts-rest/core";
 import { contract } from "@cooper/ts-rest/src/contract";
