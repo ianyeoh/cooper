@@ -13,19 +13,29 @@ import LogoutButton from "@/components/buttons/logoutBtn";
 import { initials } from "@/lib/utils";
 import { tsr } from "@/lib/tsrQuery";
 import { Skeleton } from "@/components/ui/skeleton";
-import { showErrorToast } from "@/lib/errorToast";
+import { showConnectionError, showErrorToast } from "@/lib/errorToast";
+import { isFetchError } from "@ts-rest/react-query/v5";
+import { useRouter } from "next/navigation";
 
 export default function AccountDropdown() {
-  const { isLoading, isError, data } = tsr.protected.users.getSelf.useQuery({
+  const router = useRouter();
+  const { isPending, data, error } = tsr.protected.users.getSelf.useQuery({
     queryKey: ["user"],
   });
 
-  if (isLoading) {
+  if (isPending) {
     return <Skeleton className="h-10 w-10 rounded-full" />;
   }
 
-  if (isError || data?.status !== 200) {
-    showErrorToast("user", data?.status ?? 500);
+  if (error) {
+    if (isFetchError(error)) {
+      showConnectionError();
+    } else if (error.status === 401) {
+      router.push("/login");
+    } else {
+      showErrorToast("user", error.status, error.body);
+    }
+
     return <Skeleton className="h-10 w-10 rounded-full" />;
   }
 
@@ -34,7 +44,7 @@ export default function AccountDropdown() {
       <DropdownMenuTrigger className="rounded-full">
         <Avatar>
           {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
-          <AvatarFallback>{initials(`${data?.body.user.firstName} ${data?.body.user.lastName}`)}</AvatarFallback>
+          <AvatarFallback>{initials(`${data.body.user.firstName} ${data.body.user.lastName}`)}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

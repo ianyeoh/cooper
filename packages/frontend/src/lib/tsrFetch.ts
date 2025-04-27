@@ -7,7 +7,6 @@ import { cookies } from "next/headers";
  */
 async function proxyServerCookies() {
   const allCookies = (await cookies()).getAll();
-
   return allCookies.map((cookie) => `${cookie.name}=${cookie.value};`).join(" ");
 }
 

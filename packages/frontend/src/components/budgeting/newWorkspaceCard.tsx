@@ -11,6 +11,7 @@ import { tsr } from "@/lib/tsrQuery";
 
 export default function NewWorkspaceCard() {
   const router = useRouter();
+  const queryClient = tsr.useQueryClient();
   const { mutate } = tsr.protected.budgeting.workspaces.newWorkspace.useMutation();
 
   function handleCreateWorkspace(
@@ -21,8 +22,10 @@ export default function NewWorkspaceCard() {
         { body },
         {
           onSuccess: async ({ body }) => {
+            queryClient.invalidateQueries({
+              queryKey: ["workspaces"],
+            });
             router.push(`/app/budgeting/workspaces/${body.workspace.workspaceId}`);
-            router.refresh();
             resolve();
           },
           onError: async (e) => {

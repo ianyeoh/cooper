@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/select";
 import { tsr } from "@/lib/tsrQuery";
 import { Skeleton } from "@/components/ui/skeleton";
-import { showErrorToast } from "@/lib/errorToast";
+import { showConnectionError, showErrorToast } from "@/lib/errorToast";
+import { isFetchError } from "@ts-rest/react-query/v5";
 
 export default function WorkspaceSelector({
   redirectOnSelect = true,
@@ -27,33 +28,52 @@ export default function WorkspaceSelector({
   defaultValue?: string;
 }) {
   const router = useRouter();
-  const { isLoading, isError, data } = tsr.protected.budgeting.workspaces.getWorkspaces.useQuery({
+  const { isPending, data, error } = tsr.protected.budgeting.workspaces.getWorkspaces.useQuery({
     queryKey: ["workspaces"],
   });
 
   const [internalState, setInternalState] = useState<string>(defaultValue ?? "");
 
-  /* Optionally controlled component*/
+  /* Optionally controlled component logic */
   const isControlled = value !== undefined && onValueChange !== undefined;
-
   const selectedWorkspace = isControlled ? value : internalState;
   const onSelectedWorkspaceChange = isControlled ? onValueChange : setInternalState;
 
   function handleSelect(value: string) {
-    onSelectedWorkspaceChange(`/app/budgeting/workspaces/${value}`);
+    onSelectedWorkspaceChange(value);
 
     if (redirectOnSelect) {
       router.push(`/app/budgeting/workspaces/${value}`);
     }
   }
 
-  if (isLoading) {
-    return <Skeleton className="h-4 w-[180px]" />;
+  /* Handle loading and error states while data in-transit */
+  if (isPending) {
+    return <Skeleton className="h-10 w-10 rounded-full" />;
   }
 
-  if (isError || data?.status !== 200) {
-    showErrorToast("workspaces", data?.status ?? 500);
-    return <Skeleton className="h-4 w-[180px]" />;
+  if (error) {
+    if (isFetchError(error)) {
+      showConnectionError();
+    } else if (error.status === 401) {
+      router.push("/login");
+    } else {
+      showErrorToast("user", error.status, error.body);
+    }
+
+    return <Skeleton className="h-10 w-10 rounded-full" />;
+  }
+
+  /*
+   * If somehow our selected value is a value that isn't a valid workspace, deselect it.
+   * Could happen if the user accesses an invalid workspace via the url.
+   */
+  if (
+    internalState !== "" &&
+    data &&
+    !data.body.workspaces.some((workspace) => workspace.workspaceId === parseInt(internalState))
+  ) {
+    onSelectedWorkspaceChange("");
   }
 
   return (

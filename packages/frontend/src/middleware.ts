@@ -41,7 +41,6 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL("/login?redirect=expiredSession", request.nextUrl.origin));
       } else {
         // Not a valid session (unauthenticated access from URL)
-
         return NextResponse.redirect(new URL("/login", request.nextUrl.origin));
       }
     }

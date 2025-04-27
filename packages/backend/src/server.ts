@@ -65,9 +65,8 @@ if (process.env.NODE_ENV == "test") {
     req.app.locals.database = new InMemoryDatabase({});
     res.status(200).send();
   });
-} else {
-  // TODO: Change to Postgres DB
-  app.locals.database = new InMemoryDatabase({
+} else if (process.env.NODE_ENV == "dev") {
+  const initialDatabase = {
     initialUsers: new Map([
       [
         "ianyeoh",
@@ -80,7 +79,19 @@ if (process.env.NODE_ENV == "test") {
         },
       ],
     ]),
+  };
+
+  // Use in-memory mock database for development
+  app.locals.database = new InMemoryDatabase(initialDatabase);
+
+  // Allow database reset (can be accessed with console command reset)
+  app.get("/testing/reset", (req: Request, res: Response) => {
+    req.app.locals.database = new InMemoryDatabase(initialDatabase);
+    res.status(200).send();
   });
+} else {
+  // TODO: Change to Postgres DB
+  app.locals.database = new InMemoryDatabase({});
 }
 
 // Initialise and mount ts-rest router
