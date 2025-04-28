@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import NewWorkspaceCard from "@/components/budgeting/newWorkspaceCard";
 import { fetch } from "@/lib/tsrFetch";
 
-export default async function BudgetingWorkspacePage() {
+export default async function WorkspacesPage() {
   const { status, body } = await fetch.protected.budgeting.workspaces.getWorkspaces();
 
   if (status !== 200) {

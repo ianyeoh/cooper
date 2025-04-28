@@ -7,7 +7,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdownMenu";
+} from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import LogoutButton from "@/components/buttons/logoutBtn";
 import { initials } from "@/lib/utils";
@@ -31,6 +31,7 @@ export default function AccountDropdown() {
     if (isFetchError(error)) {
       showConnectionError();
     } else if (error.status === 401) {
+      showErrorToast("user", 401, error.body);
       router.push("/login");
     } else {
       showErrorToast("user", error.status, error.body);

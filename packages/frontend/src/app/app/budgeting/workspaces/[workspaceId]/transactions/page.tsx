@@ -9,7 +9,7 @@ async function getTransactionData(): Promise<
   ClientInferResponseBody<
     typeof contract.protected.budgeting.workspaces.byId.transactions.getTransactions,
     200
-  >["records"]
+  >["transactions"]
 > {
   const response = await fetch.transactions.getTransactions();
 

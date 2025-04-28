@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { DropdownMenuItem } from "@/components/ui/dropdownMenu";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { tsr } from "@/lib/tsrQuery";
 
 export default function LogoutButton(props: { as: "button" | "dropdownMenuItem"; className?: string }) {

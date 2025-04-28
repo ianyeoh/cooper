@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scrollArea";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { NavBarProps } from "@/components/navbars/navBar";
@@ -25,7 +25,7 @@ export default function MobileNavBar({ header, logo, links }: NavBarProps) {
             <Menu strokeWidth={1.5} />
           </Button>
         </DrawerTrigger>
-        <DrawerContent className="sm:max-w-sm mr-[280px] pr-4 rounded-none min-w-fit" showBar={false}>
+        <DrawerContent className="sm:max-w-sm mr-[280px] pr-4 rounded-none min-w-fit">
           <Button
             variant="ghost"
             className="absolute top-5 right-5 p-0 h-fit hover:bg-background"

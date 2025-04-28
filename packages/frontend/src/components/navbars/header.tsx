@@ -100,12 +100,6 @@ export default function Header({
           url: `/app/budgeting/workspaces/${workspaceId}/accounts`,
           description: "View, edit and delete your accounts",
         },
-        {
-          kind: "link",
-          display: "Expenses",
-          url: `/app/budgeting/workspaces/${workspaceId}/expenses`,
-          description: "View, edit and delete your expenses",
-        },
       ],
     };
     showSearchbar = true;
