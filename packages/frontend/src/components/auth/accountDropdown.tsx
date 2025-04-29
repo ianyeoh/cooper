@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import LogoutButton from "@/components/buttons/logoutBtn";
+import LogoutButton from "@/components/auth/logoutBtn";
 import { initials } from "@/lib/utils";
 import { tsr } from "@/lib/tsrQuery";
 import { Skeleton } from "@/components/ui/skeleton";

@@ -15,7 +15,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTablePagination } from "@/components/tables/tablePagination";
 import { DataTableViewOptions } from "@/components/tables/tableViewOptions";
-import NewTransactionButton from "@/components/buttons/newTransactionBtn";
+import NewTransactionButton from "@/components/budgeting/newTransactionBtn";
 import DataTableTextFilter from "@/components/tables/tableTextFilter";
 import DataTable from "@/components/tables/dataTable";
 import DataTableAccountsFilter from "@/components/tables/tableAccountsFilter";

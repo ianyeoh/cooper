@@ -2,7 +2,7 @@
 
 import MobileNavBar from "@/components/navbars/mobileNavBar";
 import NavBar, { NavBarProps } from "@/components/navbars/navBar";
-import AccountDropdown from "@/components/accountDropdown";
+import AccountDropdown from "@/components/auth/accountDropdown";
 import ThemeBtn from "@/components/theming/themeBtn";
 import SearchBar from "@/components/ui/searchBar";
 import { usePathname } from "next/navigation";
