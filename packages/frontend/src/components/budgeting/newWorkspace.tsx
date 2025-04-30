@@ -10,14 +10,15 @@ import { ClientInferRequest } from "@ts-rest/core";
 import { contract } from "@cooper/ts-rest/src/contract";
 import { toast } from "sonner";
 import { parseError } from "@cooper/ts-rest/src/utils";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
 type NewWorkspaceButtonProps = {
   children?: ReactNode;
   open?: boolean;
   setOpen?: Dispatch<SetStateAction<boolean>>;
-} & (({ as: "button" } & ButtonProps) | { as: "no-trigger" });
+} & (({ as: "button" } & ButtonProps) | { as: "card" } | { as: "no-trigger" });
 
-export default function NewWorkspaceBtn({ as, children, open, setOpen, ...props }: NewWorkspaceButtonProps) {
+export default function NewWorkspace({ as, children, open, setOpen, ...props }: NewWorkspaceButtonProps) {
   const router = useRouter();
   const [unmanagedOpen, setUnmanagedOpen] = useState<boolean>(false);
   const queryClient = tsr.useQueryClient();
@@ -77,6 +78,9 @@ export default function NewWorkspaceBtn({ as, children, open, setOpen, ...props 
         </Button>
       );
       break;
+    case "card":
+      buttonElem = null;
+      break;
     case "no-trigger":
       buttonElem = null;
       break;
@@ -85,14 +89,28 @@ export default function NewWorkspaceBtn({ as, children, open, setOpen, ...props 
   return (
     <>
       {buttonElem}
-      <ResponsiveDialog
-        open={internalValue}
-        setOpen={setInternalValue}
-        title="Create workspace"
-        description="A workspace is a collaborative area where you can invite others to view and edit your budgets."
-      >
-        <WorkspaceForm onSubmit={handleCreateWorkspace} />
-      </ResponsiveDialog>
+      {as === "card" ? (
+        <Card className="w-[350px]">
+          <CardHeader>
+            <CardTitle>Create your first workspace</CardTitle>
+            <CardDescription>
+              A workspace is a collaborative area where you can invite others to view and edit your budgets.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <WorkspaceForm onSubmit={handleCreateWorkspace} />
+          </CardContent>
+        </Card>
+      ) : (
+        <ResponsiveDialog
+          open={internalValue}
+          setOpen={setInternalValue}
+          title="Create workspace"
+          description="A workspace is a collaborative area where you can invite others to view and edit your budgets."
+        >
+          <WorkspaceForm onSubmit={handleCreateWorkspace} buttonAlign="full" />
+        </ResponsiveDialog>
+      )}
     </>
   );
 }

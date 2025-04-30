@@ -31,8 +31,11 @@ export default function BudgetingDashboard({ workspaceId }: { workspaceId: strin
     return <Skeleton className="h-10 w-10 rounded-full" />;
   }
 
+  const workspaces = data.body.workspaces;
+  const workspace = workspaces.find((workspace) => String(workspace.workspaceId) === workspaceId);
+
   /* Invalid workspace */
-  if (!data?.body.workspaces.some((workspace) => workspace.workspaceId === parseInt(workspaceId))) {
+  if (!workspace) {
     return (
       <div className="grow h-full">
         <ResourceNotFound />
@@ -40,5 +43,5 @@ export default function BudgetingDashboard({ workspaceId }: { workspaceId: strin
     );
   }
 
-  return <div></div>;
+  return <div>Selected workspace: {workspace.name}</div>;
 }

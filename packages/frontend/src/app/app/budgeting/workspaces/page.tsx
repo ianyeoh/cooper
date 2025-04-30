@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import NewWorkspaceCard from "@/components/budgeting/newWorkspaceCard";
 import { fetch } from "@/lib/tsrFetch";
+import NewWorkspace from "@/components/budgeting/newWorkspace";
 
 export default async function WorkspacesPage() {
   const { status, body } = await fetch.protected.budgeting.workspaces.getWorkspaces();
@@ -17,7 +17,7 @@ export default async function WorkspacesPage() {
   // Otherwise show a default page to create their first workspace
   return (
     <div className="grow flex h-full justify-center items-center">
-      <NewWorkspaceCard />
+      <NewWorkspace />
     </div>
   );
 }

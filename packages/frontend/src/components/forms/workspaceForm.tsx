@@ -8,17 +8,39 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { z } from "zod";
 import { contract } from "@cooper/ts-rest/src/contract";
+import { cn } from "@/lib/utils";
 
 const workspaceSchema = contract.protected.budgeting.workspaces.newWorkspace.body;
 type WorkspaceType = z.infer<typeof workspaceSchema>;
 
-export function WorkspaceForm({ onSubmit }: { onSubmit: (values: WorkspaceType) => void }) {
+export function WorkspaceForm({
+  onSubmit,
+  buttonText,
+  buttonAlign = "end",
+  initialValues,
+}: {
+  onSubmit: (values: WorkspaceType) => void;
+  buttonText?: string;
+  buttonAlign?: "start" | "end" | "full";
+  initialValues?: WorkspaceType;
+}) {
   const form = useForm<WorkspaceType>({
     resolver: zodResolver(workspaceSchema),
-    defaultValues: {
+    defaultValues: initialValues ?? {
       name: "",
     },
   });
+
+  const submitButtonText = buttonText ?? "Create";
+  let submitButtonAlignment;
+  switch (buttonAlign) {
+    case "start":
+      submitButtonAlignment = "justify-start";
+      break;
+    case "end":
+      submitButtonAlignment = "justify-end";
+      break;
+  }
 
   return (
     <Form {...form}>
@@ -38,9 +60,13 @@ export function WorkspaceForm({ onSubmit }: { onSubmit: (values: WorkspaceType) 
             )}
           />
 
-          <div className="w-full flex justify-end">
-            <Button type="submit" className="" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? <Spinner size="small" /> : "Create"}
+          <div className={cn("w-full flex", submitButtonAlignment)}>
+            <Button
+              type="submit"
+              className={cn(buttonAlign === "full" ? "grow" : "")}
+              disabled={form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting ? <Spinner size="small" /> : submitButtonText}
             </Button>
           </div>
         </div>

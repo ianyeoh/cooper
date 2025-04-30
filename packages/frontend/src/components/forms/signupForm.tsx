@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { contract } from "@cooper/ts-rest/src/contract";
 import { z } from "zod";
+import { cn } from "@/lib/utils";
 
 const signupSchema = contract.public.auth.signup.body
   .extend({
@@ -18,10 +19,20 @@ const signupSchema = contract.public.auth.signup.body
   });
 type SignupType = z.infer<typeof signupSchema>;
 
-export function SignupForm({ onSubmit }: { onSubmit: (values: SignupType) => void }) {
+export function SignupForm({
+  onSubmit,
+  buttonText,
+  buttonAlign = "end",
+  initialValues,
+}: {
+  onSubmit: (values: SignupType) => void;
+  buttonText?: string;
+  buttonAlign?: "start" | "end" | "full";
+  initialValues?: SignupType;
+}) {
   const form = useForm<SignupType>({
     resolver: zodResolver(signupSchema),
-    defaultValues: {
+    defaultValues: initialValues ?? {
       username: "",
       firstName: "",
       lastName: "",
@@ -29,6 +40,17 @@ export function SignupForm({ onSubmit }: { onSubmit: (values: SignupType) => voi
       confirmPassword: "",
     },
   });
+
+  const submitButtonText = buttonText ?? "Sign up";
+  let submitButtonAlignment;
+  switch (buttonAlign) {
+    case "start":
+      submitButtonAlignment = "justify-start";
+      break;
+    case "end":
+      submitButtonAlignment = "justify-end";
+      break;
+  }
 
   return (
     <Form {...form}>
@@ -104,9 +126,15 @@ export function SignupForm({ onSubmit }: { onSubmit: (values: SignupType) => voi
             )}
           />
 
-          <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? <Spinner size="small" /> : "Sign up"}
-          </Button>
+          <div className={cn("w-full flex", submitButtonAlignment)}>
+            <Button
+              type="submit"
+              className={cn(buttonAlign === "full" ? "grow" : "")}
+              disabled={form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting ? <Spinner size="small" /> : submitButtonText}
+            </Button>
+          </div>
         </div>
       </form>
     </Form>

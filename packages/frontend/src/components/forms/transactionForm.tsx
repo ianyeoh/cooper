@@ -8,14 +8,25 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { contract } from "@cooper/ts-rest/src/contract";
 import { z } from "zod";
+import { cn } from "@/lib/utils";
 
-const transactionSchema = contract.transactions.newTransaction.body;
+const transactionSchema = contract.protected.budgeting.workspaces.byId.transactions.newTransaction.body;
 type TransactionType = z.infer<typeof transactionSchema>;
 
-export default function TransactionForm({ onSubmit }: { onSubmit: (values: TransactionType) => void }) {
+export default function TransactionForm({
+  onSubmit,
+  buttonText,
+  buttonAlign = "end",
+  initialValues,
+}: {
+  onSubmit: (values: TransactionType) => void;
+  buttonText?: string;
+  buttonAlign?: "start" | "end" | "full";
+  initialValues?: TransactionType;
+}) {
   const form = useForm<TransactionType>({
     resolver: zodResolver(transactionSchema),
-    defaultValues: {
+    defaultValues: initialValues ?? {
       description: "",
       date: new Date(),
       amount: 0,
@@ -24,6 +35,17 @@ export default function TransactionForm({ onSubmit }: { onSubmit: (values: Trans
       comments: "",
     },
   });
+
+  const submitButtonText = buttonText ?? "Create";
+  let submitButtonAlignment;
+  switch (buttonAlign) {
+    case "start":
+      submitButtonAlignment = "justify-start";
+      break;
+    case "end":
+      submitButtonAlignment = "justify-end";
+      break;
+  }
 
   return (
     <Form {...form}>
@@ -57,9 +79,15 @@ export default function TransactionForm({ onSubmit }: { onSubmit: (values: Trans
             )}
           />
 
-          <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? <Spinner size="small" /> : "Sign in"}
-          </Button>
+          <div className={cn("w-full flex", submitButtonAlignment)}>
+            <Button
+              type="submit"
+              className={cn(buttonAlign === "full" ? "grow" : "")}
+              disabled={form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting ? <Spinner size="small" /> : submitButtonText}
+            </Button>
+          </div>
         </div>
       </form>
     </Form>

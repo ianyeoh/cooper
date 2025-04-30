@@ -18,7 +18,10 @@ import { showConnectionError, showErrorToast } from "@/lib/errorToast";
 import { isFetchError } from "@ts-rest/react-query/v5";
 import { ChevronDown, UserRoundPlus, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
-import NewWorkspaceBtn from "@/components/budgeting/newWorkspaceBtn";
+import NewWorkspace from "@/components/budgeting/newWorkspace";
+import EditWorkspace from "@/components/budgeting/editWorkspace";
+
+type DialogOptions = "create" | "edit" | null;
 
 export default function WorkspaceSelector({
   redirectOnSelect = true,
@@ -36,9 +39,8 @@ export default function WorkspaceSelector({
     queryKey: ["workspaces"],
   });
 
-  const [createDialogOpen, setCreateDialogOpen] = useState<boolean>(false);
-
   const [internalState, setInternalState] = useState<string>(defaultValue ?? "");
+  const [dialogState, setDialogState] = useState<DialogOptions>(null);
 
   /* Optionally controlled component logic */
   const isControlled = value !== undefined && onValueChange !== undefined;
@@ -75,6 +77,11 @@ export default function WorkspaceSelector({
     onSelectedWorkspaceChange("");
   }
 
+  function toggleDialog(type: DialogOptions, open: boolean | ((b: boolean) => boolean)) {
+    if (!open || (open && dialogState === type)) setDialogState(null);
+    else setDialogState(type);
+  }
+
   return (
     <>
       <DropdownMenu>
@@ -103,7 +110,13 @@ export default function WorkspaceSelector({
                   {`Your workspace • ${workspace.users.length} member${workspace.users.length > 1 ? "s" : ""}`}
                 </DropdownMenuLabel>
                 <div className="flex mt-2 gap-1">
-                  <Button variant="outline" className="text-xs p-0 h-fit text-muted-foreground">
+                  <Button
+                    variant="outline"
+                    className="text-xs p-0 h-fit text-muted-foreground"
+                    onClick={() => {
+                      toggleDialog("edit", true);
+                    }}
+                  >
                     <div className="flex gap-1 px-2 py-1 items-center">
                       <Settings />
                       Settings
@@ -147,7 +160,7 @@ export default function WorkspaceSelector({
           <div className="p-1 gap-1">
             <DropdownMenuItem
               onClick={() => {
-                setCreateDialogOpen(true);
+                toggleDialog("create", true);
               }}
               className="text-xs font-semibold text-muted-foreground"
             >
@@ -157,7 +170,21 @@ export default function WorkspaceSelector({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <NewWorkspaceBtn as="no-trigger" open={createDialogOpen} setOpen={setCreateDialogOpen} />
+      <NewWorkspace
+        as="no-trigger"
+        open={dialogState === "create"}
+        setOpen={(open) => {
+          toggleDialog("create", open);
+        }}
+      />
+      <EditWorkspace
+        as="no-trigger"
+        workspaceId={internalState}
+        open={dialogState === "edit"}
+        setOpen={(open) => {
+          toggleDialog("edit", open);
+        }}
+      />
     </>
   );
 }

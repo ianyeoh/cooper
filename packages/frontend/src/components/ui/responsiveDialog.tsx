@@ -48,7 +48,7 @@ export function ResponsiveDialog({
           <DrawerTitle>{title}</DrawerTitle>
           <DrawerDescription>{description}</DrawerDescription>
         </DrawerHeader>
-        {children}
+        <div className="p-4 pb-0">{children}</div>
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>
