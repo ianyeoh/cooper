@@ -5,7 +5,7 @@
   "main": "build/index.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test mocha --timeout 10000 --require mocha-suppress-logs --require src/tests/hooks.ts --import=tsx src/**/*.spec.ts",
-    "coverage": "cross-env NODE_ENV=test nyc --reporter=text --reporter=html mocha --timeout 10000 --require mocha-suppress-logs --require src/tests/hooks.ts --import=tsx src/**/*.spec.ts",
+    "coverage": "cross-env NODE_ENV=test nyc --reporter=text --reporter=json mocha --timeout 10000 --require mocha-suppress-logs --require src/tests/hooks.ts --import=tsx src/**/*.spec.ts",
     "build": "tsc --build",
     "start": "node build/index.js",
     "dev": "cross-env NODE_ENV=dev ts-node-dev src/index.ts"
