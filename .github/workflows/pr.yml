@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -40,8 +40,6 @@ jobs:
       - name: Run backend tests and coverage
         run: pnpm run coverage:backend
 
-      - run: ls packages/backend/coverage
-
       - name: Upload code coverage for ref branch
         uses: actions/upload-artifact@v4
         with:
@@ -61,26 +59,26 @@ jobs:
         with:
           version: 10
           run_install: false
-      
+
       - name: Use Node.js v22.x
         uses: actions/setup-node@v4
         with:
           node-version: v22.x
-    
+
       - name: Download code coverage report from base branch
         uses: actions/download-artifact@v4
         with:
           name: ref-lcov.info
-    
+
       - name: Install dependencies
         run: pnpm install
-    
+
       - name: Run linter
         run: pnpm run lint
 
       - name: Run backend tests and coverage
         run: pnpm run coverage:backend
-        
+
       #  Compares two code coverage files and generates report as a comment
       - name: Generate Code Coverage report
         id: code-coverage
