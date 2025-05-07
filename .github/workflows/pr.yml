@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ref-lcov.info
-          path: ./packages/backend/coverage/lcov.info
+          path: packages/backend/coverage/lcov.info
 
   checks:
     runs-on: ubuntu-latest
