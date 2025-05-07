@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ref-lcov.info
-          path: packages/backend/coverage/lcov.info
+          path: /packages/backend/coverage/lcov.info
 
   checks:
     runs-on: ubuntu-latest
@@ -84,7 +84,7 @@ jobs:
         uses: barecheck/code-coverage-action@v1
         with:
           barecheck-github-app-token: ${{ secrets.BARECHECK_GITHUB_APP_TOKEN }}
-          lcov-file: "./packages/backend/coverage/lcov.info"
+          lcov-file: "/packages/backend/coverage/lcov.info"
           base-lcov-file: "./lcov.info"
           minimum-ratio: 0 # Fails Github action once code coverage is decreasing
           send-summary-comment: true
