@@ -2,7 +2,7 @@
 # with slight modifications to this file to upload generated code coverage HTML to gh-pages
 
 name: Upload coverage report
-description: Report and badge for code coverage
+description: Generates a coverage badge from code coverage report and uploads both items to gh-pages
 
 runs:
   using: composite
@@ -45,7 +45,7 @@ runs:
         fi
 
     - name: Checkout ${{ steps.pick-deploy-branch.outputs.deploy_branch }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ steps.pick-deploy-branch.outputs.deploy_branch }}
 
@@ -57,6 +57,7 @@ runs:
         npm i -g badgen-cli
         COLOR=$(node -p '+process.env.COV >= 95 ? `green` : `orange`')
         badgen -j coverage -s $COV% -c $COLOR > $RUNNER_TEMP/coverage.svg
+        cp -R ./coverage/lcov-report/ $RUNNER_TEMP/coverage/
 
     - name: Deploy Badges
       uses: Wandalen/wretry.action@master
@@ -68,7 +69,7 @@ runs:
           git reset --hard origin/${{ steps.pick-deploy-branch.outputs.deploy_branch }}
           mkdir -p badges
           mv $RUNNER_TEMP/coverage.svg badges/
-          cp -R ./coverage/lcov-report/ coverage/
+          mv $RUNNER_TEMP/coverage/ coverage/
           git add badges/coverage.svg coverage/
           git commit -m 'Update coverage'
           git push
@@ -77,6 +78,6 @@ runs:
     # Can't find 'action.yml', 'action.yaml' or 'Dockerfile' under '/home/runner/work/coverage-badge-action/coverage-badge-action/action.yml'.
     # Did you forget to run actions/checkout before running your local action?
     - name: Checkout Back
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.ref }}
