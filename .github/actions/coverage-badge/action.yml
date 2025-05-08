@@ -13,6 +13,7 @@ runs:
       run: |
         if [ -f "coverage/coverage-summary.json" ]; then
           COV=$(node -p 't=require(`./coverage/coverage-summary.json`).total,Math.min(...`lines|statements|functions|branches`.split(`|`).map(k=>t[k].pct))')
+          cp -R coverage/lcov-report/ $RUNNER_TEMP/coverage/
         elif [ -f "coverage.json" ]; then
           COV=$(python -c 'import json; print(json.load(open("coverage.json"))["totals"]["percent_covered_display"])')
         else
@@ -57,7 +58,6 @@ runs:
         npm i -g badgen-cli
         COLOR=$(node -p '+process.env.COV >= 95 ? `green` : `orange`')
         badgen -j coverage -s $COV% -c $COLOR > $RUNNER_TEMP/coverage.svg
-        cp -R ./coverage/lcov-report/ $RUNNER_TEMP/coverage/
 
     - name: Deploy Badges
       uses: Wandalen/wretry.action@master
