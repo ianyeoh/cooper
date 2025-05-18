@@ -37,10 +37,10 @@ jobs:
 
       - name: Run backend tests and coverage
         run: pnpm run coverage:backend
-      
+
       - name: Move coverage artifacts to root
         run: cp -R packages/backend/coverage/ coverage/
 
-      - name: Update coverage report and badge in gh-pages
+      - name: Upload coverage report to gh-pages
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
-        uses: ./.github/actions/coverage-badge
+        uses: ./.github/actions/coverage-report

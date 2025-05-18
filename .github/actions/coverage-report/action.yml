@@ -2,7 +2,7 @@
 # with slight modifications to this file to upload generated code coverage HTML to gh-pages
 
 name: Upload coverage report
-description: Generates a coverage badge from code coverage report and uploads both items to gh-pages
+description: Upload code coverage report to gh-pages
 
 runs:
   using: composite

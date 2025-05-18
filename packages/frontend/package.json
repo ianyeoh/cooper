@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "cypress run",
+    "test:edit": "cypress open"
   },
   "dependencies": {
     "@cooper/ts-rest": "workspace:*",
@@ -83,6 +85,7 @@
     "@types/node": "^20.16.10",
     "@types/react": "19.1.2",
     "@types/react-dom": "19.1.2",
+    "cypress": "^14.3.3",
     "eslint": "^9.25.1",
     "eslint-config-next": "15.3.1",
     "postcss": "^8",

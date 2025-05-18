@@ -7,6 +7,7 @@
     "prepare": "husky install",
     "format": "prettier --log-level warn --write \"./**/*.{tsx,ts,json}\"",
     "test:backend": "pnpm --filter @cooper/backend run test",
+    "test:frontend": "pnpm --filter @cooper/frontend run test",
     "coverage:backend": "pnpm --filter @cooper/backend run coverage",
     "dev:backend": "pnpm --filter @cooper/backend run dev",
     "dev:frontend": "pnpm --filter @cooper/frontend run dev ",
@@ -28,7 +29,8 @@
     "prettier": "^3.5.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.31.0"
+    "typescript-eslint": "^8.31.0",
+    "wait-on": "^8.0.3"
   },
   "resolutions": {
     "react": "^19.0.0",

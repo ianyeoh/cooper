@@ -1,11 +1,12 @@
 packages:
   - packages/*
-
+ignoredBuiltDependencies:
 onlyBuiltDependencies:
-  - '@scarf/scarf'
-  - '@sentry/cli'
+  - cypress
+  - "@scarf/scarf"
+  - "@sentry/cli"
   - bcrypt
   - esbuild
   - sharp
-  - 'true'
+  - "true"
   - unrs-resolver
