@@ -32,9 +32,9 @@ export function LoginForm({ onSubmit }: { onSubmit: (values: LoginType) => void 
               <FormItem>
                 <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input placeholder="Username" {...field} />
+                  <Input placeholder="Username" {...field} data-cy="username" />
                 </FormControl>
-                <FormMessage />
+                <FormMessage data-cy="usernameFeedback" />
               </FormItem>
             )}
           />
@@ -46,14 +46,14 @@ export function LoginForm({ onSubmit }: { onSubmit: (values: LoginType) => void 
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="Password" type="password" {...field} />
+                  <Input placeholder="Password" type="password" {...field} data-cy="password" />
                 </FormControl>
-                <FormMessage />
+                <FormMessage data-cy="passwordFeedback" />
               </FormItem>
             )}
           />
 
-          <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+          <Button type="submit" className="w-full" disabled={form.formState.isSubmitting} data-cy="submit">
             {form.formState.isSubmitting ? <Spinner size="small" /> : "Sign in"}
           </Button>
         </div>

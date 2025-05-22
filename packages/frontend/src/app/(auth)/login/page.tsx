@@ -51,7 +51,7 @@ export default function LoginPage() {
   async function handleLogin(body: ClientInferRequest<typeof contract.public.auth.login>["body"]) {
     dismissRedirectToasts();
 
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve) => {
       mutate(
         { body },
         {
@@ -70,7 +70,7 @@ export default function LoginPage() {
             }
 
             toast.error(errMsg);
-            reject(error);
+            resolve();
           },
         },
       );
@@ -84,7 +84,7 @@ export default function LoginPage() {
         <p className="text-sm text-muted-foreground">Enter your username and password</p>
       </div>
       <LoginForm onSubmit={handleLogin} />
-      <Link href="/signup" className="text-sm text-muted-foreground float-right mt-2">
+      <Link href="/signup" className="text-sm text-muted-foreground float-right mt-2" data-cy="signup">
         or <span className="underline">create an account</span>
       </Link>
     </div>
