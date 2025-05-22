@@ -7,8 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "cypress run",
-    "test:edit": "cypress open"
+    "cy:run": "cypress run",
+    "cy:open": "cypress open",
+    "test": "cross-env NODE_ENV=test start-server-and-test 'pnpm --filter @cooper/backend run dev & pnpm --filter @cooper/frontend run dev' http-get://localhost:3000/ cy:run"
   },
   "dependencies": {
     "@cooper/ts-rest": "workspace:*",
@@ -85,6 +86,7 @@
     "@types/node": "^20.16.10",
     "@types/react": "19.1.2",
     "@types/react-dom": "19.1.2",
+    "cross-env": "^7.0.3",
     "cypress": "^14.3.3",
     "eslint": "^9.25.1",
     "eslint-config-next": "15.3.1",

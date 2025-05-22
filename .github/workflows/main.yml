@@ -38,6 +38,9 @@ jobs:
       - name: Run backend tests and coverage
         run: pnpm run coverage:backend
 
+      - name: Run frontend tests
+        run: pnpm run test:frontend
+
       - name: Move coverage artifacts to root
         run: cp -R packages/backend/coverage/ coverage/
 
