@@ -7,9 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "cy:run": "cypress run",
-    "cy:open": "cypress open",
-    "test": "cross-env NODE_ENV=test start-server-and-test 'pnpm --filter @cooper/backend run dev & pnpm --filter @cooper/frontend run dev' http-get://localhost:3000/ cy:run"
+    "test:open": "cypress open",
+    "test": "cypress run"
   },
   "dependencies": {
     "@cooper/ts-rest": "workspace:*",
