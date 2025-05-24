@@ -5,7 +5,7 @@ const loginContract = contract.public.auth.login;
 
 describe("auth", () => {
   it("rejects non-existent user", () => {
-    cy.visit("http://localhost:3000/login");
+    cy.visit("/login");
 
     const user = generateUser();
 
@@ -25,7 +25,7 @@ describe("auth", () => {
     cy.contains("Invalid username or password");
 
     // Try to visit protected page
-    cy.visit("http://localhost:3000/app");
+    cy.visit("/app");
     // Should fail, bring us back to login
     cy.location().should((loc) => {
       expect(loc.pathname).to.eq("/login");
@@ -33,7 +33,7 @@ describe("auth", () => {
   });
 
   it("rejects login due to bad form entry", () => {
-    cy.visit("http://localhost:3000/login");
+    cy.visit("/login");
 
     cy.get('[data-cy="submit"]').click();
 
@@ -42,7 +42,7 @@ describe("auth", () => {
     cy.get('[data-cy="passwordFeedback"]').should("exist");
 
     // Try to visit protected page
-    cy.visit("http://localhost:3000/app");
+    cy.visit("/app");
     // Should fail, bring us back to login
     cy.location().should((loc) => {
       expect(loc.pathname).to.eq("/login");
@@ -50,7 +50,7 @@ describe("auth", () => {
   });
 
   it("allows switching from login to signup pages, vice versa", () => {
-    cy.visit("http://localhost:3000/login");
+    cy.visit("/login");
 
     // Go to signup page from login
     cy.get('[data-cy="signup"]').click();
@@ -68,7 +68,7 @@ describe("auth", () => {
   });
 
   it("rejects signup due to bad form entries", () => {
-    cy.visit("http://localhost:3000/signup");
+    cy.visit("/signup");
 
     // Submit without any values
     cy.get('[data-cy="submit"]').click();
@@ -121,7 +121,7 @@ describe("auth", () => {
   });
 
   it("allows signup, login should succeed", () => {
-    cy.visit("http://localhost:3000/signup");
+    cy.visit("/signup");
 
     const user = generateUser();
 
@@ -157,7 +157,7 @@ describe("auth", () => {
   });
 
   it("allows signup, login with bad password should fail", () => {
-    cy.visit("http://localhost:3000/signup");
+    cy.visit("/signup");
 
     const user = generateUser();
 
@@ -187,7 +187,7 @@ describe("auth", () => {
     cy.wait("@login").its("response.statusCode").should("eq", 401);
 
     // Try to access protected page
-    cy.visit("http://localhost:3000/app");
+    cy.visit("/app");
     // Should fail, bring us back to login page
     cy.location().should((loc) => {
       expect(loc.pathname).to.eq("/login");
