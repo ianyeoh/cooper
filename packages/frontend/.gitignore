@@ -4,6 +4,7 @@
 .pnp.js
 
 # testing
+/instrumented
 /coverage
 /cypress/screenshots
 

@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import ThemeBtn from "@/components/theming/themeBtn";
 import { GeistSans } from "geist/font/sans";
 import { cn } from "@/lib/utils.ts";
@@ -29,7 +29,7 @@ export default function AuthenticationLayout({ children }: { children: ReactNode
         <div className="space-y-6 mx-6">
           <ThemeBtn className="absolute top-7 right-9 hidden sm:flex" />
 
-          {children}
+          <Suspense>{children}</Suspense>
         </div>
       </div>
     </div>

@@ -1,21 +1,21 @@
-import { useState } from "react";
-import { ResponsiveDialog } from "@/components/ui/responsiveDialog";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import TransactionForm from "@/components/forms/transactionForm";
-import { contract } from "@cooper/ts-rest/src/contract";
-import { ClientInferRequest } from "@ts-rest/core";
+// import { useState } from "react";
+// import { ResponsiveDialog } from "@/components/ui/responsiveDialog";
+// import { Button } from "@/components/ui/button";
+// import { Plus } from "lucide-react";
+// import TransactionForm from "@/components/forms/transactionForm";
+// import { contract } from "@cooper/ts-rest/src/contract";
+// import { ClientInferRequest } from "@ts-rest/core";
 
 export default function NewTransactionButton() {
-  const [open, setOpen] = useState<boolean>(false);
+  // const [open, setOpen] = useState<boolean>(false);
 
-  function handleNewTransaction(body: ClientInferRequest<typeof contract.transactions.newTransaction>["body"]) {
-    console.log(body);
-  }
+  // function handleNewTransaction(body: ClientInferRequest<typeof contract.transactions.newTransaction>["body"]) {
+  //   console.log(body);
+  // }
 
   return (
     <>
-      <Button
+      {/* <Button
         variant="outline"
         onClick={() => {
           setOpen(true);
@@ -32,7 +32,7 @@ export default function NewTransactionButton() {
         description="Manually enter a new transaction"
       >
         <TransactionForm onSubmit={handleNewTransaction} />
-      </ResponsiveDialog>
+      </ResponsiveDialog> */}
     </>
   );
 }

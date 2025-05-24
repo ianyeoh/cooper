@@ -20,6 +20,17 @@ export default function LoginPage() {
   useEffect(() => {
     // Do after 0.5 delay
     setTimeout(() => {
+      /* Spawns a new toast that lingers indefinitely */
+      function showRedirectReason(reason: string) {
+        setRedirectToastIds([
+          ...redirectToastIds,
+          toast.error(reason, {
+            duration: Infinity,
+            closeButton: true,
+          }),
+        ]);
+      }
+
       const redirect = searchParams.get("redirect");
 
       switch (redirect) {
@@ -28,18 +39,7 @@ export default function LoginPage() {
           break;
       }
     }, 500);
-  }, [searchParams]);
-
-  /* Spawns a new toast that lingers indefinitely */
-  function showRedirectReason(reason: string) {
-    setRedirectToastIds([
-      ...redirectToastIds,
-      toast.error(reason, {
-        duration: Infinity,
-        closeButton: true,
-      }),
-    ]);
-  }
+  }, [searchParams, redirectToastIds]);
 
   function dismissRedirectToasts() {
     for (const id of redirectToastIds) {

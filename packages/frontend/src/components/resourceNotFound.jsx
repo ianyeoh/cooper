@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { useEffect, useRef, useState } from "react";
 import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
-import { Environment, Lightformer, OrbitControls, useGLTF } from "@react-three/drei";
+import { Environment, Lightformer, useGLTF } from "@react-three/drei";
 import { Physics, RigidBody, CuboidCollider } from "@react-three/rapier";
 import { MeshLineGeometry, MeshLineMaterial } from "meshline";
 
@@ -80,7 +80,7 @@ function WetFloorSign(props) {
       {...props}
       position={[0, 0, 0]}
       dispose={null}
-      onPointerUp={(e) => drag(false)}
+      onPointerUp={() => drag(false)}
       onPointerDown={(e) => drag(new THREE.Vector3().copy(e.point).sub(vec.copy(sign.current.translation())))}
       onPointerOver={() => hover(true)}
       onPointerOut={() => hover(false)}
