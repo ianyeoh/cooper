@@ -76,6 +76,9 @@ jobs:
       - name: Run linter
         run: pnpm run lint
 
+      - name: Build and compile
+        run: pnpm run build
+
       - name: Run tests and coverage
         run: pnpm run ci
 

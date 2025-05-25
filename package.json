@@ -9,7 +9,7 @@
     "lint": "eslint . --fix",
     "test:backend": "pnpm --filter @cooper/backend run test",
     "test:frontend": "pnpm --filter @cooper/frontend run test",
-    "ci": "pnpm run test:backend && start-server-and-test \"pnpm run start\" \"http-get://localhost:3000|http-get://localhost:3001\" \"pnpm run test:frontend\"",
+    "ci": "pnpm run test:backend && start-server-and-test \"pnpm run dev\" \"http-get://localhost:3000|http-get://localhost:3001\" \"pnpm run test:frontend\"",
     "coverage:backend": "pnpm --filter @cooper/backend run coverage",
     "build:ts": "tsc --build --verbose",
     "build:frontend": "pnpm --filter @cooper/frontend run build",
