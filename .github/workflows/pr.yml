@@ -37,13 +37,13 @@ jobs:
       - name: Run linter
         run: pnpm run lint
 
-      - name: Run backend tests and coverage
-        run: pnpm run coverage:backend
+      - name: Run tests and coverage
+        run: pnpm run ci
 
       - name: Upload code coverage for ref branch
         uses: actions/upload-artifact@v4
         with:
-          name: ref-lcov.info
+          name: backend-ref-lcov.info
           path: packages/backend/coverage/lcov.info
           if-no-files-found: error
 
@@ -68,7 +68,7 @@ jobs:
       - name: Download code coverage report from base branch
         uses: actions/download-artifact@v4
         with:
-          name: ref-lcov.info
+          name: backend-ref-lcov.info
 
       - name: Install dependencies
         run: pnpm install
@@ -76,8 +76,8 @@ jobs:
       - name: Run linter
         run: pnpm run lint
 
-      - name: Run backend tests and coverage
-        run: pnpm run coverage:backend
+      - name: Run tests and coverage
+        run: pnpm run ci
 
       #  Compares two code coverage files and generates report as a comment
       - name: Generate Code Coverage report

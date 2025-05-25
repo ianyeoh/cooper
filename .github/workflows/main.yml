@@ -38,13 +38,10 @@ jobs:
       - name: Build and compile
         run: pnpm run build
 
-      - name: Run backend tests and coverage
-        run: pnpm run coverage:backend
+      - name: Run tests and coverage
+        run: pnpm run ci
 
-      - name: Run frontend tests
-        run: pnpm start pnpm run test:frontend
-
-      - name: Move coverage artifacts to root
+      - name: Move backend coverage artifacts to root
         run: cp -R packages/backend/coverage/ coverage/
 
       - name: Upload coverage report to gh-pages
