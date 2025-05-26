@@ -14,7 +14,7 @@ export default function SignupPage() {
   const { mutate } = tsr.public.auth.signup.useMutation();
 
   async function handleSignup(body: ClientInferRequest<typeof contract.public.auth.signup>["body"]) {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve) => {
       mutate(
         { body },
         {
@@ -34,7 +34,7 @@ export default function SignupPage() {
             }
 
             toast.error(errMsg);
-            reject(error);
+            resolve();
           },
         },
       );
@@ -48,7 +48,7 @@ export default function SignupPage() {
         <p className="text-sm text-muted-foreground">Enter your details below</p>
       </div>
       <SignupForm onSubmit={handleSignup} />
-      <Link href="/login" className="text-sm text-muted-foreground float-right mt-2">
+      <Link href="/login" className="text-sm text-muted-foreground float-right mt-2" data-cy="login">
         or <span className="underline">log in</span>
       </Link>
     </div>

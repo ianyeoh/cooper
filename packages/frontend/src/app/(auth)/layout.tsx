@@ -1,12 +1,10 @@
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import ThemeBtn from "@/components/theming/themeBtn";
-import { GeistSans } from "geist/font/sans";
-import { cn } from "@/lib/utils.ts";
 import { House } from "lucide-react";
 
 export default function AuthenticationLayout({ children }: { children: ReactNode }) {
   return (
-    <div className={cn("flex h-[100vh] w-[100vw]", GeistSans.className)}>
+    <div className="flex h-[100vh] w-[100vw]">
       <div className="bg-zinc-900 h-[100%] w-[50%] flex-col p-8 text-white dark:border-r space-y-2 hidden sm:flex">
         <div className="flex space-x-3 items-center">
           <House />
@@ -29,7 +27,7 @@ export default function AuthenticationLayout({ children }: { children: ReactNode
         <div className="space-y-6 mx-6">
           <ThemeBtn className="absolute top-7 right-9 hidden sm:flex" />
 
-          {children}
+          <Suspense>{children}</Suspense>
         </div>
       </div>
     </div>

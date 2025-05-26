@@ -163,6 +163,13 @@ apiDocs.get(
   }),
 );
 app.use("/docs", apiDocs);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+app.use("", (req: Request, res: Response, _next: NextFunction) => {
+  res.status(200).json({
+    message: "Hello World!",
+  });
+  return;
+});
 
 // Serve static files from /public directory
 app.use(express.static("public"));
