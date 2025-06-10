@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "prepare": "husky install",
-    "format": "prettier --log-level warn --write \"./**/*.{tsx,ts,json}\"",
+    "format": "prettier --check \"./**/*.{tsx,ts,json}\"",
+    "format:fix": "prettier --check --write \"./**/*.{tsx,ts,json}\"",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test:backend": "pnpm --filter @cooper/backend run test",
