@@ -17,7 +17,7 @@ export default async function WorkspacesPage() {
   // Otherwise show a default page to create their first workspace
   return (
     <div className="grow flex h-full justify-center items-center">
-      <NewWorkspace />
+      <NewWorkspace as="card" />
     </div>
   );
 }

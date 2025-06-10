@@ -1,10 +1,11 @@
 packages:
   - packages/*
-
+ignoredBuiltDependencies: null
 onlyBuiltDependencies:
   - '@scarf/scarf'
   - '@sentry/cli'
   - bcrypt
+  - cypress
   - esbuild
   - sharp
   - 'true'

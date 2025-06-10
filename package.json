@@ -6,13 +6,21 @@
   "scripts": {
     "prepare": "husky install",
     "format": "prettier --log-level warn --write \"./**/*.{tsx,ts,json}\"",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test:backend": "pnpm --filter @cooper/backend run test",
+    "test:frontend": "pnpm --filter @cooper/frontend run test",
+    "ci": "pnpm run coverage:backend && start-server-and-test \"pnpm run start\" \"http-get://localhost:3000|http-get://localhost:3001\" \"pnpm run test:frontend\"",
     "coverage:backend": "pnpm --filter @cooper/backend run coverage",
+    "build:ts": "tsc --build --verbose",
+    "build:frontend": "pnpm --filter @cooper/frontend run build",
+    "build": "concurrently \"pnpm run build:ts\" \"pnpm run build:frontend\"",
+    "start:backend": "pnpm --filter @cooper/backend run start",
+    "start:frontend": "pnpm --filter @cooper/frontend run start",
+    "start": "concurrently \"pnpm run start:backend\" \"pnpm run start:frontend\"",
     "dev:backend": "pnpm --filter @cooper/backend run dev",
     "dev:frontend": "pnpm --filter @cooper/frontend run dev ",
-    "dev": "concurrently \"pnpm run dev:frontend\" \"pnpm run dev:backend\"",
-    "build": "pnpm install && tsc --build --verbose",
-    "lint": "eslint . --fix"
+    "dev": "concurrently \"pnpm run dev:frontend\" \"pnpm run dev:backend\""
   },
   "workspaces": [
     "packages/*"
@@ -26,6 +34,7 @@
     "lint-staged": "^15.5.1",
     "nyc": "^17.1.0",
     "prettier": "^3.5.3",
+    "start-server-and-test": "^2.0.12",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.31.0"

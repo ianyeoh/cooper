@@ -4,7 +4,9 @@
 .pnp.js
 
 # testing
+/instrumented
 /coverage
+/cypress/screenshots
 
 # next.js
 /.next/

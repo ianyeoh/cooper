@@ -1,8 +1,11 @@
+import { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 import config from "../backend/serverConfig.json" with { type: "json" };
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
+  // experimental: {
+  //   swcPlugins: [["swc-plugin-coverage-instrument", {}]],
+  // },
   async rewrites() {
     return [
       {
