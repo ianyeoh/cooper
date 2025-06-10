@@ -14,8 +14,8 @@ jobs:
       fail-fast: false
 
     steps:
-      - name: Run CI on the PR target branch
-        uses: ./.github/actions/ci
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.base_ref }}
 
@@ -30,6 +30,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: base-branch
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Run CI on the PR merge branch
         uses: ./.github/actions/ci
 

@@ -1,18 +1,9 @@
 name: Run CI
 description: Runs Continuous Integration pipeline - lint, build, test
 
-inputs:
-  branch:
-    description: The branch, tag or SHA to checkout. When checking out the repository that triggered a workflow, this defaults to the reference or SHA for that event. Otherwise, uses the default branch.
-    required: false
-
 runs:
   using: composite
   steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      ref: ${{ inputs.branch }}
-
     - name: Install pnpm
       uses: pnpm/action-setup@v4
       with:
