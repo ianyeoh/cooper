@@ -6,7 +6,8 @@
   "scripts": {
     "prepare": "husky install",
     "format": "prettier --log-level warn --write \"./**/*.{tsx,ts,json}\"",
-    "lint": "eslint . --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test:backend": "pnpm --filter @cooper/backend run test",
     "test:frontend": "pnpm --filter @cooper/frontend run test",
     "ci": "pnpm run coverage:backend && start-server-and-test \"pnpm run start\" \"http-get://localhost:3000|http-get://localhost:3001\" \"pnpm run test:frontend\"",
