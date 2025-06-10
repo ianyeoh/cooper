@@ -4,6 +4,7 @@ description: Lint, build, and test
 on: workflow_call
 
 jobs:
+  using: composite
   install-deps:
     runs-on: ubuntu-latest
     steps:
