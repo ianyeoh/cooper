@@ -1,0 +1,33 @@
+name: compare-branch
+
+on: workflow_call
+
+jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  compare-coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download code coverage report from base branch
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-ref-lcov.info
+
+      #  Compares two code coverage files and generates report as a comment
+      - name: Generate Code Coverage report
+        id: code-coverage
+        uses: barecheck/code-coverage-action@v1
+        with:
+          barecheck-github-app-token: ${{ secrets.BARECHECK_GITHUB_APP_TOKEN }}
+          lcov-file: "packages/backend/coverage/lcov.info"
+          base-lcov-file: "lcov.info"
+          minimum-ratio: 0 # Fails Github action once code coverage is decreasing
+          send-summary-comment: true
+          show-annotations: "warning" # Possible options warning|error

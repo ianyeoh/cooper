@@ -6,20 +6,18 @@ on:
       - main
 
 jobs:
-  ci:
+  checkout:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    strategy:
-      fail-fast: false
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run ci pipeline
-        uses: ./.github/workflows/ci.yml
+  ci:
+    uses: ./.github/workflows/ci.yml
 
+  publish-coverage:
+    runs-on: ubuntu-latest
+    steps:
       - name: Move backend coverage artifacts to root
         run: cp -R packages/backend/coverage/ coverage/
 
