@@ -17,8 +17,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run CI
-        uses: ./.github/actions/ci
+      - name: Run ci pipeline
+        uses: ./.github/workflows/ci
 
       - name: Move backend coverage artifacts to root
         run: cp -R packages/backend/coverage/ coverage/

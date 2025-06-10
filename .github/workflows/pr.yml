@@ -19,8 +19,8 @@ jobs:
         with:
           ref: ${{ github.base_ref }}
 
-      - name: Run CI on the PR target branch
-        uses: ./.github/actions/ci
+      - name: Run ci pipeline on the PR target branch
+        uses: ./.github/workflows/ci
 
       - name: Upload code coverage for ref branch
         uses: actions/upload-artifact@v4
@@ -36,8 +36,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run CI on the PR merge branch
-        uses: ./.github/actions/ci
+      - name: Run ci pipeline on the PR merge branch
+        uses: ./.github/workflows/ci
 
       - name: Download code coverage report from base branch
         uses: actions/download-artifact@v4
