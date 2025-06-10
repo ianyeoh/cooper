@@ -17,13 +17,17 @@ runs:
         cache: "pnpm"
 
     - name: Install dependencies
+      shell: bash
       run: pnpm install
 
     - name: Run linter
+      shell: bash
       run: pnpm run lint
 
     - name: Build and compile
+      shell: bash
       run: pnpm run build
 
     - name: Run tests and coverage
+      shell: bash
       run: pnpm run ci
