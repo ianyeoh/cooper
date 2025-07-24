@@ -1,12 +1,15 @@
-import morgan from "morgan";
-import winston from "winston";
-import pc from "picocolors";
-import config from "@cooper/backend/serverConfig.json";
+import morgan from 'morgan';
+import winston from 'winston';
+import pc from 'picocolors';
+import config from '@cooper/backend/serverConfig.json';
 
-const logFolder = config.logFolder ?? "./logs";
+const logFolder = config.logFolder ?? './logs';
 const logger = winston.createLogger({
-  level: "info",
-  format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
+  level: 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json(),
+  ),
   transports: [
     /**
      * Write all logs with importance level of error or higher to error.log
@@ -14,7 +17,7 @@ const logger = winston.createLogger({
      */
     new winston.transports.File({
       filename: `${logFolder}/error.log`,
-      level: "error",
+      level: 'error',
     }),
     /**
      * Write all logs with importance level of info or higher to combined.log
@@ -22,7 +25,7 @@ const logger = winston.createLogger({
      */
     new winston.transports.File({
       filename: `${logFolder}/activity.log`,
-      level: "info",
+      level: 'info',
     }),
   ],
 });
@@ -46,19 +49,19 @@ const consoleLogger = morgan(
     }
 
     return [
-      "[server]:",
+      '[server]:',
       pc.yellow(tokens.method(req, res)),
       statusCode,
       pc.white(tokens.url(req, res)),
-      pc.yellow(tokens["response-time"](req, res) + " ms"),
-    ].join(" ");
+      pc.yellow(tokens['response-time'](req, res) + ' ms'),
+    ].join(' ');
   },
 );
 
 /**
  * Logger that logs to file activity.log on disk in timestamped json format
  */
-const activityLogger = morgan("tiny", {
+const activityLogger = morgan('tiny', {
   stream: { write: (message) => logger.info(message) },
 });
 

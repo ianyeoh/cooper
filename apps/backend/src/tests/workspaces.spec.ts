@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import { expect } from 'chai';
 import {
   request,
   authenticate,
@@ -7,22 +7,23 @@ import {
   testProtected,
   createWorkspace,
   getUsersWorkspaces,
-} from "@cooper/backend/src/tests/utils";
-import { generateMock } from "@anatine/zod-mock";
-import { Auth$UserSchema } from "@cooper/ts-rest/src/types";
-import { seed } from "@cooper/backend/src/tests/mocking";
-import { contract } from "@cooper/ts-rest/src/contract";
+} from '@cooper/backend/src/tests/utils';
+import { generateMock } from '@anatine/zod-mock';
+import { Auth$UserSchema } from '@cooper/ts-rest/src/types';
+import { seed } from '@cooper/backend/src/tests/mocking';
+import { contract } from '@cooper/ts-rest/src/contract';
 
 const { signup } = contract.public.auth;
 const { newWorkspace, getWorkspaces } = contract.protected.budgeting.workspaces;
-const { updateWorkspace, deleteWorkspace } = contract.protected.budgeting.workspaces.byId;
+const { updateWorkspace, deleteWorkspace } =
+  contract.protected.budgeting.workspaces.byId;
 
 const existingUser = generateMock(Auth$UserSchema, { seed });
 
 describe(testFor(newWorkspace), () => {
   testProtected(newWorkspace);
 
-  it("should create a workspace successfully", async function () {
+  it('should create a workspace successfully', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -30,7 +31,7 @@ describe(testFor(newWorkspace), () => {
     });
 
     await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
   });
 });
@@ -38,7 +39,7 @@ describe(testFor(newWorkspace), () => {
 describe(testFor(getWorkspaces), () => {
   testProtected(getWorkspaces);
 
-  it("should successfully return no workspaces", async function () {
+  it('should successfully return no workspaces', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -50,7 +51,7 @@ describe(testFor(getWorkspaces), () => {
     });
   });
 
-  it("should return newly created workspace", async function () {
+  it('should return newly created workspace', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -59,7 +60,7 @@ describe(testFor(getWorkspaces), () => {
 
     // Create a new workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Get workspaces, should contain the new workspace
@@ -68,7 +69,7 @@ describe(testFor(getWorkspaces), () => {
     });
   });
 
-  it("should only return workspaces you own", async function () {
+  it('should only return workspaces you own', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -77,7 +78,7 @@ describe(testFor(getWorkspaces), () => {
 
     // Create a new workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Get workspaces, should contain the new workspace
@@ -97,7 +98,7 @@ describe(testFor(getWorkspaces), () => {
 
     // Create a new workspace
     const otherWorkspace = await createWorkspace(otherAuthedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Get workspaces, should contain the new workspace
@@ -110,7 +111,7 @@ describe(testFor(getWorkspaces), () => {
 describe(testFor(updateWorkspace), () => {
   testProtected(deleteWorkspace);
 
-  it("should fail because workspace not found", async function () {
+  it('should fail because workspace not found', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -119,27 +120,27 @@ describe(testFor(updateWorkspace), () => {
 
     // Create a new workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     await testRoute(authedRequest, updateWorkspace, {
       workspaceId: createdWorkspace.workspaceId + 1,
     })
       .send({
-        name: "Workspace",
+        name: 'Workspace',
       })
       .expect(404);
   });
 
-  it("should update workspace successfully", async function () {
+  it('should update workspace successfully', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
       password: existingUser.password,
     });
 
-    const oldWorkspaceName = "Workspace";
-    const newWorkspaceName = "Updated Workspace Name";
+    const oldWorkspaceName = 'Workspace';
+    const newWorkspaceName = 'Updated Workspace Name';
 
     expect(oldWorkspaceName).to.not.equal(newWorkspaceName);
 
@@ -165,20 +166,23 @@ describe(testFor(updateWorkspace), () => {
     // Check that workspace name has been changed
     expect(
       workspaceList.some((workspace: { workspaceId: number; name: string }) => {
-        return workspace.workspaceId === createdWorkspace.workspaceId && workspace.name === newWorkspaceName;
+        return (
+          workspace.workspaceId === createdWorkspace.workspaceId &&
+          workspace.name === newWorkspaceName
+        );
       }),
     ).to.equal(true);
   });
 
-  it("should fail to update for user without access to workspace", async function () {
+  it('should fail to update for user without access to workspace', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
       password: existingUser.password,
     });
 
-    const oldWorkspaceName = "Workspace";
-    const newWorkspaceName = "Updated Workspace Name";
+    const oldWorkspaceName = 'Workspace';
+    const newWorkspaceName = 'Updated Workspace Name';
 
     expect(oldWorkspaceName).to.not.equal(newWorkspaceName);
 
@@ -211,7 +215,7 @@ describe(testFor(updateWorkspace), () => {
 describe(testFor(deleteWorkspace), () => {
   testProtected(deleteWorkspace);
 
-  it("should fail because workspace not found", async function () {
+  it('should fail because workspace not found', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -220,7 +224,7 @@ describe(testFor(deleteWorkspace), () => {
 
     // Create a new workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     await testRoute(authedRequest, deleteWorkspace, {
@@ -228,7 +232,7 @@ describe(testFor(deleteWorkspace), () => {
     }).expect(404);
   });
 
-  it("should delete workspace successfully", async function () {
+  it('should delete workspace successfully', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -237,7 +241,7 @@ describe(testFor(deleteWorkspace), () => {
 
     // Create a new workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Delete workspace
@@ -251,7 +255,7 @@ describe(testFor(deleteWorkspace), () => {
     });
   });
 
-  it("should fail to delete for user without access to workspace", async function () {
+  it('should fail to delete for user without access to workspace', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -260,7 +264,7 @@ describe(testFor(deleteWorkspace), () => {
 
     // Create a new workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create other user

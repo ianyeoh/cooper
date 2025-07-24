@@ -1,6 +1,10 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
-export async function authenticate(req: Request, res: Response, next: NextFunction) {
+export async function authenticate(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   const db = req.app.locals.database;
 
   // parseInt because we don't want to include "truthy" numbers
@@ -10,7 +14,7 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
   const session = db.auth.sessions.getSession(sessionId);
   if (session == null) {
     return res.status(401).json({
-      error: "Unauthorised",
+      error: 'Unauthorised',
     });
   }
 

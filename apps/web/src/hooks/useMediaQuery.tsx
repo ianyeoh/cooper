@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react';
 
 /**
  * React hook as an escape hatch to execute media queries
@@ -15,10 +15,10 @@ export function useMediaQuery(query: string): boolean {
     }
 
     const result = matchMedia(query);
-    result.addEventListener("change", onChange);
+    result.addEventListener('change', onChange);
     setValue(result.matches);
 
-    return () => result.removeEventListener("change", onChange);
+    return () => result.removeEventListener('change', onChange);
   }, [query]);
 
   return value;

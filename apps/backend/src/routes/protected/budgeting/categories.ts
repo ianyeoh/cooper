@@ -1,9 +1,9 @@
-import { AppRouteImplementation } from "@ts-rest/express";
-import { contract } from "@cooper/ts-rest/src/contract";
-import { authenticate } from "@cooper/backend/src/middleware/authenticate";
-import { validateWorkspace } from "@cooper/backend/src/middleware/validateWorkspace";
-import { validateCategory } from "@cooper/backend/src/middleware/validateCategory";
-import guard from "@cooper/backend/src/middleware/guard";
+import { AppRouteImplementation } from '@ts-rest/express';
+import { contract } from '@cooper/ts-rest/src/contract';
+import { authenticate } from '@cooper/backend/src/middleware/authenticate';
+import { validateWorkspace } from '@cooper/backend/src/middleware/validateWorkspace';
+import { validateCategory } from '@cooper/backend/src/middleware/validateCategory';
+import guard from '@cooper/backend/src/middleware/guard';
 
 const getCategoriesHandler: AppRouteImplementation<
   typeof contract.protected.budgeting.workspaces.byId.categories.getCategories
@@ -12,7 +12,8 @@ const getCategoriesHandler: AppRouteImplementation<
 
   const workspaceId = guard(res.workspace).workspaceId;
 
-  const categories = db.budgeting.categories.getWorkspaceCategories(workspaceId);
+  const categories =
+    db.budgeting.categories.getWorkspaceCategories(workspaceId);
 
   return {
     status: 200,
@@ -35,7 +36,11 @@ const newCategoryHandler: AppRouteImplementation<
   const createdBy = guard(res.session).username;
   const { name } = body;
 
-  const newCategory = db.budgeting.categories.createCategory(name, createdBy, workspaceId);
+  const newCategory = db.budgeting.categories.createCategory(
+    name,
+    createdBy,
+    workspaceId,
+  );
 
   if (newCategory instanceof Error) {
     throw newCategory;
@@ -44,7 +49,7 @@ const newCategoryHandler: AppRouteImplementation<
   return {
     status: 200,
     body: {
-      message: "Category created successfully",
+      message: 'Category created successfully',
       category: newCategory,
     },
   };
@@ -63,7 +68,12 @@ const updateCategoryHandler: AppRouteImplementation<
   const { categoryId, createdBy } = guard(res.category);
   const { name } = body;
 
-  const updatedCategory = db.budgeting.categories.updateCategory(categoryId, workspaceId, name, createdBy);
+  const updatedCategory = db.budgeting.categories.updateCategory(
+    categoryId,
+    workspaceId,
+    name,
+    createdBy,
+  );
 
   if (updatedCategory instanceof Error) {
     throw updatedCategory;
@@ -72,7 +82,7 @@ const updateCategoryHandler: AppRouteImplementation<
   return {
     status: 200,
     body: {
-      message: "Category updated successfully",
+      message: 'Category updated successfully',
     },
   };
 };
@@ -93,7 +103,7 @@ const deleteCategoryHandler: AppRouteImplementation<
   return {
     status: 200,
     body: {
-      message: "Category deleted successfully",
+      message: 'Category deleted successfully',
     },
   };
 };

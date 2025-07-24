@@ -1,9 +1,11 @@
-import { AppRouteImplementation } from "@ts-rest/express";
-import { contract } from "@cooper/ts-rest/src/contract";
-import { authenticate } from "@cooper/backend/src/middleware/authenticate";
-import guard from "@cooper/backend/src/middleware/guard";
+import { AppRouteImplementation } from '@ts-rest/express';
+import { contract } from '@cooper/ts-rest/src/contract';
+import { authenticate } from '@cooper/backend/src/middleware/authenticate';
+import guard from '@cooper/backend/src/middleware/guard';
 
-const getSelfHandler: AppRouteImplementation<typeof contract.protected.users.getSelf> = async function ({ req, res }) {
+const getSelfHandler: AppRouteImplementation<
+  typeof contract.protected.users.getSelf
+> = async function ({ req, res }) {
   const db = req.app.locals.database;
   const user = db.auth.users.getUser(guard(res.session).username);
 
@@ -25,7 +27,9 @@ export const getSelf = {
   handler: getSelfHandler,
 };
 
-const getUserHandler: AppRouteImplementation<typeof contract.protected.users.getUser> = async function ({ req }) {
+const getUserHandler: AppRouteImplementation<
+  typeof contract.protected.users.getUser
+> = async function ({ req }) {
   const db = req.app.locals.database;
 
   const user = db.auth.users.getUser(req.params.username);
@@ -34,7 +38,7 @@ const getUserHandler: AppRouteImplementation<typeof contract.protected.users.get
     return {
       status: 400,
       body: {
-        error: "Invalid username",
+        error: 'Invalid username',
       },
     };
   }

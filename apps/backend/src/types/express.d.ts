@@ -4,8 +4,8 @@ import {
   Budgeting$Category,
   Budgeting$Transaction,
   Budgeting$Workspace,
-} from "@cooper/ts-rest/src/types";
-import DatabaseInterface from "@cooper/backend/src/database/interface";
+} from '@cooper/ts-rest/src/types';
+import DatabaseInterface from '@cooper/backend/src/database/interface';
 
 declare global {
   namespace Express {

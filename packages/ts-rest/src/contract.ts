@@ -1,7 +1,7 @@
-import { initContract } from "@ts-rest/core";
-import z from "zod";
-import protectedContract from "@cooper/ts-rest/src/routes/protected/protectedContract";
-import authContract from "@cooper/ts-rest/src/routes/public/authContract";
+import { initContract } from '@ts-rest/core';
+import z from 'zod';
+import protectedContract from '@cooper/ts-rest/src/routes/protected/protectedContract';
+import authContract from '@cooper/ts-rest/src/routes/public/authContract';
 
 const c = initContract();
 
@@ -22,7 +22,7 @@ export const contract = c.router(
     },
   },
   {
-    pathPrefix: "/api",
+    pathPrefix: '/api',
     commonResponses: {
       500: z.object({
         error: z.string().nonempty(),

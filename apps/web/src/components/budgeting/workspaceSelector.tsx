@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Dispatch, SetStateAction, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Dispatch, SetStateAction, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,17 +11,17 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuTrigger,
   DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { tsr } from "@/lib/tsrQuery";
-import { Skeleton } from "@/components/ui/skeleton";
-import { showConnectionError, showErrorToast } from "@/lib/errorToast";
-import { isFetchError } from "@ts-rest/react-query/v5";
-import { ChevronDown, UserRoundPlus, Settings } from "lucide-react";
-import { cn } from "@/lib/utils";
-import NewWorkspace from "@/components/budgeting/newWorkspace";
-import EditWorkspace from "@/components/budgeting/editWorkspace";
+} from '@/components/ui/dropdown-menu';
+import { tsr } from '@/lib/tsrQuery';
+import { Skeleton } from '@/components/ui/skeleton';
+import { showConnectionError, showErrorToast } from '@/lib/errorToast';
+import { isFetchError } from '@ts-rest/react-query/v5';
+import { ChevronDown, UserRoundPlus, Settings } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import NewWorkspace from '@/components/budgeting/newWorkspace';
+import EditWorkspace from '@/components/budgeting/editWorkspace';
 
-type DialogOptions = "create" | "edit" | null;
+type DialogOptions = 'create' | 'edit' | null;
 
 export default function WorkspaceSelector({
   redirectOnSelect = true,
@@ -35,49 +35,64 @@ export default function WorkspaceSelector({
   defaultValue?: string;
 }) {
   const router = useRouter();
-  const { isPending, data, error } = tsr.protected.budgeting.workspaces.getWorkspaces.useQuery({
-    queryKey: ["workspaces"],
-  });
+  const { isPending, data, error } =
+    tsr.protected.budgeting.workspaces.getWorkspaces.useQuery({
+      queryKey: ['workspaces'],
+    });
 
-  const [internalState, setInternalState] = useState<string>(defaultValue ?? "");
+  const [internalState, setInternalState] = useState<string>(
+    defaultValue ?? '',
+  );
   const [dialogState, setDialogState] = useState<DialogOptions>(null);
 
   /* Optionally controlled component logic */
   const isControlled = value !== undefined && onValueChange !== undefined;
   const selectedWorkspace = isControlled ? value : internalState;
-  const onSelectedWorkspaceChange = isControlled ? onValueChange : setInternalState;
+  const onSelectedWorkspaceChange = isControlled
+    ? onValueChange
+    : setInternalState;
 
   /* Handle loading and error states while data in-transit */
   if (isPending) {
-    return <Skeleton className="h-10 w-10 rounded-full" />;
+    return <Skeleton className='h-10 w-10 rounded-full' />;
   }
 
   if (error) {
     if (isFetchError(error)) {
       showConnectionError();
     } else if (error.status === 401) {
-      showErrorToast("user", 401, error.body);
-      router.push("/login");
+      showErrorToast('user', 401, error.body);
+      router.push('/login');
     } else {
-      showErrorToast("user", error.status, error.body);
+      showErrorToast('user', error.status, error.body);
     }
 
-    return <Skeleton className="h-10 w-10 rounded-full" />;
+    return <Skeleton className='h-10 w-10 rounded-full' />;
   }
 
   const workspaces = data.body.workspaces;
-  const workspace = workspaces.find(({ workspaceId }) => selectedWorkspace === String(workspaceId));
+  const workspace = workspaces.find(
+    ({ workspaceId }) => selectedWorkspace === String(workspaceId),
+  );
   const workspaceName = workspace?.name;
 
   /*
    * If somehow our selected value is a value that isn't a valid workspace, deselect it.
    * Could happen if the user accesses an invalid workspace via the url.
    */
-  if (internalState !== "" && !workspaces.some((workspace) => workspace.workspaceId === parseInt(internalState))) {
-    onSelectedWorkspaceChange("");
+  if (
+    internalState !== '' &&
+    !workspaces.some(
+      (workspace) => workspace.workspaceId === parseInt(internalState),
+    )
+  ) {
+    onSelectedWorkspaceChange('');
   }
 
-  function toggleDialog(type: DialogOptions, open: boolean | ((b: boolean) => boolean)) {
+  function toggleDialog(
+    type: DialogOptions,
+    open: boolean | ((b: boolean) => boolean),
+  ) {
     if (!open || (open && dialogState === type)) setDialogState(null);
     else setDialogState(type);
   }
@@ -86,44 +101,53 @@ export default function WorkspaceSelector({
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="w-[180px] p-0">
+          <Button variant='outline' className='w-[180px] p-0'>
             <div
               className={cn(
-                "flex w-full h-full items-center px-3",
-                selectedWorkspace === "" ? "text-muted-foreground" : "text-foreground",
+                'flex w-full h-full items-center px-3',
+                selectedWorkspace === ''
+                  ? 'text-muted-foreground'
+                  : 'text-foreground',
               )}
             >
-              <span className="truncate">{workspaceName ?? "Select workspace"}</span>
-              <div className="grow"></div>
+              <span className='truncate'>
+                {workspaceName ?? 'Select workspace'}
+              </span>
+              <div className='grow'></div>
               <ChevronDown />
             </div>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-[300px] p-0" align="start">
-          <div className="p-3 border-b border-border flex flex-col">
-            <DropdownMenuLabel className="font-semibold p-0">
-              {workspaces.length === 0 ? "No workspaces found" : (workspaceName ?? "Select a workspace")}
+        <DropdownMenuContent className='w-[300px] p-0' align='start'>
+          <div className='p-3 border-b border-border flex flex-col'>
+            <DropdownMenuLabel className='font-semibold p-0'>
+              {workspaces.length === 0
+                ? 'No workspaces found'
+                : (workspaceName ?? 'Select a workspace')}
             </DropdownMenuLabel>
             {workspace && (
               <>
-                <DropdownMenuLabel className="p-0 text-muted-foreground text-xs">
-                  {`Your workspace • ${workspace.users.length} member${workspace.users.length > 1 ? "s" : ""}`}
+                <DropdownMenuLabel className='p-0 text-muted-foreground text-xs'>
+                  {`Your workspace • ${workspace.users.length} member${workspace.users.length > 1 ? 's' : ''}`}
                 </DropdownMenuLabel>
-                <div className="flex mt-2 gap-1">
+                <div className='flex mt-2 gap-1'>
                   <Button
-                    variant="outline"
-                    className="text-xs p-0 h-fit text-muted-foreground"
+                    variant='outline'
+                    className='text-xs p-0 h-fit text-muted-foreground'
                     onClick={() => {
-                      toggleDialog("edit", true);
+                      toggleDialog('edit', true);
                     }}
                   >
-                    <div className="flex gap-1 px-2 py-1 items-center">
+                    <div className='flex gap-1 px-2 py-1 items-center'>
                       <Settings />
                       Settings
                     </div>
                   </Button>
-                  <Button variant="outline" className="text-xs p-0 h-fit text-muted-foreground">
-                    <div className="flex gap-1 px-2 py-1 items-center">
+                  <Button
+                    variant='outline'
+                    className='text-xs p-0 h-fit text-muted-foreground'
+                  >
+                    <div className='flex gap-1 px-2 py-1 items-center'>
                       <UserRoundPlus />
                       Invite members
                     </div>
@@ -133,7 +157,7 @@ export default function WorkspaceSelector({
             )}
           </div>
           {workspaces.length !== 0 && (
-            <div className="border-b border-border p-1 gap-1">
+            <div className='border-b border-border p-1 gap-1'>
               <>
                 <DropdownMenuGroup>
                   {workspaces.map(({ name, workspaceId }) => {
@@ -157,12 +181,12 @@ export default function WorkspaceSelector({
               </>
             </div>
           )}
-          <div className="p-1 gap-1">
+          <div className='p-1 gap-1'>
             <DropdownMenuItem
               onClick={() => {
-                toggleDialog("create", true);
+                toggleDialog('create', true);
               }}
-              className="text-xs font-semibold text-muted-foreground"
+              className='text-xs font-semibold text-muted-foreground'
             >
               Create a new workspace
             </DropdownMenuItem>
@@ -171,18 +195,18 @@ export default function WorkspaceSelector({
       </DropdownMenu>
 
       <NewWorkspace
-        as="no-trigger"
-        open={dialogState === "create"}
+        as='no-trigger'
+        open={dialogState === 'create'}
         setOpen={(open) => {
-          toggleDialog("create", open);
+          toggleDialog('create', open);
         }}
       />
       <EditWorkspace
-        as="no-trigger"
+        as='no-trigger'
         workspaceId={internalState}
-        open={dialogState === "edit"}
+        open={dialogState === 'edit'}
         setOpen={(open) => {
-          toggleDialog("edit", open);
+          toggleDialog('edit', open);
         }}
       />
     </>

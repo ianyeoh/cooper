@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from 'bcrypt';
 
 /**
  * Synchronously hashes given password using bcrypt algorithm
@@ -17,6 +17,9 @@ export function saltedHash(password: string): string {
  * @param saltedHash Hash to be compared with password
  * @returns {boolean} If password matches hash
  */
-export function compareSaltedHash(password: string, saltedHash: string): boolean {
+export function compareSaltedHash(
+  password: string,
+  saltedHash: string,
+): boolean {
   return bcrypt.compareSync(password, saltedHash);
 }

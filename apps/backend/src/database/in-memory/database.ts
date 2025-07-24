@@ -1,5 +1,5 @@
-import DatabaseInterface from "@cooper/backend/src/database/in-memory/database";
-import { z } from "zod";
+import DatabaseInterface from '@cooper/backend/src/database/in-memory/database';
+import { z } from 'zod';
 import {
   Auth$Session,
   Auth$SessionSchema,
@@ -13,7 +13,7 @@ import {
   Budgeting$TransactionSchema,
   Budgeting$Workspace,
   Budgeting$WorkspaceSchema,
-} from "@cooper/ts-rest/src/types";
+} from '@cooper/ts-rest/src/types';
 
 /*
  * An simple implementation of an in-memory database. Only for use in testing or demonstration,
@@ -96,7 +96,8 @@ export default class InMemoryDatabase implements DatabaseInterface {
     data: unknown,
     overwrite: boolean = false,
   ): z.infer<DataType> {
-    if (!overwrite && map.get(key) != null) return new Error("Record with key already exists");
+    if (!overwrite && map.get(key) != null)
+      return new Error('Record with key already exists');
 
     const result = schema.safeParse(data) as z.infer<DataType>;
     if (!result.success) return result.error;
@@ -104,7 +105,7 @@ export default class InMemoryDatabase implements DatabaseInterface {
     map.set(key, result.data);
 
     const newRecord = map.get(key);
-    if (!newRecord) return new Error("Failed to create record");
+    if (!newRecord) return new Error('Failed to create record');
     return newRecord;
   }
 
@@ -113,7 +114,10 @@ export default class InMemoryDatabase implements DatabaseInterface {
    * @param map Map from which record should be deleted
    * @param key Key of record to be deleted
    */
-  _genericDelete<KeyType, ValueType>(map: Map<KeyType, ValueType>, key: KeyType) {
+  _genericDelete<KeyType, ValueType>(
+    map: Map<KeyType, ValueType>,
+    key: KeyType,
+  ) {
     map.delete(key);
   }
 
@@ -135,7 +139,7 @@ export default class InMemoryDatabase implements DatabaseInterface {
   ) {
     // Check an existing record exists
     const existingRecord = map.get(key);
-    if (!existingRecord) return new Error("Record with key does not exist");
+    if (!existingRecord) return new Error('Record with key does not exist');
 
     // Derive a new object schema where all key/values are optional (the caller can
     // change only the fields they want to)
@@ -166,7 +170,11 @@ export default class InMemoryDatabase implements DatabaseInterface {
    */
   _genericMapFilter<KeyType, DataType>(
     map: Map<KeyType, DataType>,
-    predicate: (value: DataType, key: KeyType, map: Map<KeyType, DataType>) => boolean,
+    predicate: (
+      value: DataType,
+      key: KeyType,
+      map: Map<KeyType, DataType>,
+    ) => boolean,
   ): DataType[] {
     const filterItems: DataType[] = [];
     map.forEach((value, key, map) => {
@@ -191,14 +199,29 @@ export default class InMemoryDatabase implements DatabaseInterface {
         return this._genericGet(this.authUsers, username.toLowerCase());
       },
       createUser: (user: Auth$User) => {
-        return this._genericCreate(this.authUsers, Auth$UserSchema, user.username.toLowerCase(), user);
+        return this._genericCreate(
+          this.authUsers,
+          Auth$UserSchema,
+          user.username.toLowerCase(),
+          user,
+        );
       },
-      updateUser: (username: string, firstName?: string, lastName?: string, password?: string) => {
-        return this._genericUpdate(this.authUsers, Auth$UserSchema, username.toLowerCase(), {
-          firstName,
-          lastName,
-          password,
-        });
+      updateUser: (
+        username: string,
+        firstName?: string,
+        lastName?: string,
+        password?: string,
+      ) => {
+        return this._genericUpdate(
+          this.authUsers,
+          Auth$UserSchema,
+          username.toLowerCase(),
+          {
+            firstName,
+            lastName,
+            password,
+          },
+        );
       },
       deleteUser: (username: string) => {
         this._genericDelete(this.authUsers, username.toLowerCase());
@@ -222,28 +245,50 @@ export default class InMemoryDatabase implements DatabaseInterface {
           return value.username.toLowerCase() === username.toLowerCase();
         });
       },
-      createSession: (username: string, ip: string, userAgent: string, started: Date, expires: Date) => {
+      createSession: (
+        username: string,
+        ip: string,
+        userAgent: string,
+        started: Date,
+        expires: Date,
+      ) => {
         const newKey = this._keyGen(this.authSessions);
-        return this._genericCreate(this.authSessions, Auth$SessionSchema, newKey, {
-          sessionId: newKey,
-          username,
-          ip,
-          userAgent,
-          started,
-          expires,
-        });
+        return this._genericCreate(
+          this.authSessions,
+          Auth$SessionSchema,
+          newKey,
+          {
+            sessionId: newKey,
+            username,
+            ip,
+            userAgent,
+            started,
+            expires,
+          },
+        );
       },
       deleteSession: (sessionId: number) => {
         this._genericDelete(this.authSessions, sessionId);
       },
-      updateSession: (sessionId: number, ip?: string, userAgent?: string, started?: Date, expires?: Date) => {
-        return this._genericUpdate(this.authSessions, Auth$SessionSchema, sessionId, {
+      updateSession: (
+        sessionId: number,
+        ip?: string,
+        userAgent?: string,
+        started?: Date,
+        expires?: Date,
+      ) => {
+        return this._genericUpdate(
+          this.authSessions,
+          Auth$SessionSchema,
           sessionId,
-          ip,
-          userAgent,
-          started,
-          expires,
-        });
+          {
+            sessionId,
+            ip,
+            userAgent,
+            started,
+            expires,
+          },
+        );
       },
     },
   };
@@ -265,20 +310,30 @@ export default class InMemoryDatabase implements DatabaseInterface {
       },
       createWorkspace: (username: string, workspaceName: string) => {
         const newKey = this._keyGen(this.budgetingWorkspaces);
-        return this._genericCreate(this.budgetingWorkspaces, Budgeting$WorkspaceSchema, newKey, {
-          workspaceId: newKey,
-          name: workspaceName,
-          users: [username],
-        });
+        return this._genericCreate(
+          this.budgetingWorkspaces,
+          Budgeting$WorkspaceSchema,
+          newKey,
+          {
+            workspaceId: newKey,
+            name: workspaceName,
+            users: [username],
+          },
+        );
       },
       deleteWorkspace: (workspaceId: number) => {
         this._genericDelete(this.budgetingWorkspaces, workspaceId);
       },
       updateWorkspace: (workspaceId: number, name: string, users: string[]) => {
-        return this._genericUpdate(this.budgetingWorkspaces, Budgeting$WorkspaceSchema, workspaceId, {
-          name,
-          users,
-        });
+        return this._genericUpdate(
+          this.budgetingWorkspaces,
+          Budgeting$WorkspaceSchema,
+          workspaceId,
+          {
+            name,
+            users,
+          },
+        );
       },
     },
     /*
@@ -295,27 +350,49 @@ export default class InMemoryDatabase implements DatabaseInterface {
           return value.workspace === workspace;
         });
       },
-      createAccount: (name: string, bank: string, description: string, workspace: number, createdBy: string) => {
+      createAccount: (
+        name: string,
+        bank: string,
+        description: string,
+        workspace: number,
+        createdBy: string,
+      ) => {
         const newKey = this._keyGen(this.budgetingAccounts);
-        return this._genericCreate(this.budgetingAccounts, Budgeting$AccountSchema, newKey, {
-          accountId: newKey,
-          name,
-          bank,
-          description,
-          workspace,
-          createdBy,
-        });
+        return this._genericCreate(
+          this.budgetingAccounts,
+          Budgeting$AccountSchema,
+          newKey,
+          {
+            accountId: newKey,
+            name,
+            bank,
+            description,
+            workspace,
+            createdBy,
+          },
+        );
       },
       deleteAccount: (accountId: number) => {
         this._genericDelete(this.budgetingAccounts, accountId);
       },
-      updateAccount: (accountId: number, name?: string, bank?: string, description?: string, createdBy?: string) => {
-        return this._genericUpdate(this.budgetingAccounts, Budgeting$AccountSchema, accountId, {
-          name,
-          bank,
-          description,
-          createdBy,
-        });
+      updateAccount: (
+        accountId: number,
+        name?: string,
+        bank?: string,
+        description?: string,
+        createdBy?: string,
+      ) => {
+        return this._genericUpdate(
+          this.budgetingAccounts,
+          Budgeting$AccountSchema,
+          accountId,
+          {
+            name,
+            bank,
+            description,
+            createdBy,
+          },
+        );
       },
     },
     /*
@@ -334,22 +411,37 @@ export default class InMemoryDatabase implements DatabaseInterface {
       },
       createCategory: (name: string, createdBy: string, workspace: number) => {
         const newKey = this._keyGen(this.budgetingCategories);
-        return this._genericCreate(this.budgetingCategories, Budgeting$CategorySchema, newKey, {
-          categoryId: newKey,
-          name,
-          createdBy,
-          workspace,
-        });
+        return this._genericCreate(
+          this.budgetingCategories,
+          Budgeting$CategorySchema,
+          newKey,
+          {
+            categoryId: newKey,
+            name,
+            createdBy,
+            workspace,
+          },
+        );
       },
       deleteCategory: (categoryId: number) => {
         this._genericDelete(this.budgetingCategories, categoryId);
       },
-      updateCategory: (categoryId: number, workspace: number, name?: string, createdBy?: string) => {
-        return this._genericUpdate(this.budgetingCategories, Budgeting$CategorySchema, categoryId, {
-          name,
-          createdBy,
-          workspace,
-        });
+      updateCategory: (
+        categoryId: number,
+        workspace: number,
+        name?: string,
+        createdBy?: string,
+      ) => {
+        return this._genericUpdate(
+          this.budgetingCategories,
+          Budgeting$CategorySchema,
+          categoryId,
+          {
+            name,
+            createdBy,
+            workspace,
+          },
+        );
       },
     },
     /*
@@ -362,9 +454,12 @@ export default class InMemoryDatabase implements DatabaseInterface {
         return this._genericGet(this.budgetingTransactions, transactionId);
       },
       getWorkspaceTransactions: (workspace: number) => {
-        return this._genericMapFilter(this.budgetingTransactions, (transaction) => {
-          return transaction.workspace === workspace;
-        });
+        return this._genericMapFilter(
+          this.budgetingTransactions,
+          (transaction) => {
+            return transaction.workspace === workspace;
+          },
+        );
       },
       createTransaction: (
         date: Date,
@@ -377,17 +472,22 @@ export default class InMemoryDatabase implements DatabaseInterface {
         workspace: number,
       ) => {
         const newKey = this._keyGen(this.budgetingTransactions);
-        return this._genericCreate(this.budgetingTransactions, Budgeting$TransactionSchema, newKey, {
-          transactionId: newKey,
-          date,
-          description,
-          createdBy,
-          account,
-          category,
-          amount,
-          comments,
-          workspace,
-        });
+        return this._genericCreate(
+          this.budgetingTransactions,
+          Budgeting$TransactionSchema,
+          newKey,
+          {
+            transactionId: newKey,
+            date,
+            description,
+            createdBy,
+            account,
+            category,
+            amount,
+            comments,
+            workspace,
+          },
+        );
       },
       deleteTransaction: (transactionId: number) => {
         return this._genericDelete(this.budgetingTransactions, transactionId);
@@ -403,16 +503,21 @@ export default class InMemoryDatabase implements DatabaseInterface {
         amount?: number,
         comments?: string | null,
       ) => {
-        return this._genericUpdate(this.budgetingTransactions, Budgeting$TransactionSchema, transactionId, {
-          date,
-          description,
-          createdBy,
-          account,
-          category,
-          amount,
-          comments,
-          workspace,
-        });
+        return this._genericUpdate(
+          this.budgetingTransactions,
+          Budgeting$TransactionSchema,
+          transactionId,
+          {
+            date,
+            description,
+            createdBy,
+            account,
+            category,
+            amount,
+            comments,
+            workspace,
+          },
+        );
       },
     },
   };

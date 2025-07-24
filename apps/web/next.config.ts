@@ -1,6 +1,6 @@
-import { NextConfig } from "next";
-import { withSentryConfig } from "@sentry/nextjs";
-import config from "../backend/serverConfig.json" with { type: "json" };
+import { NextConfig } from 'next';
+import { withSentryConfig } from '@sentry/nextjs';
+import config from '../backend/serverConfig.json' with { type: 'json' };
 
 const nextConfig: NextConfig = {
   // experimental: {
@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/api/:path*",
+        source: '/api/:path*',
         destination: `http://${config.hostname}:${config.port}/api/:path*`,
       },
     ];
@@ -17,8 +17,8 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
-        source: "/app/budgeting",
-        destination: "/app/budgeting/workspaces",
+        source: '/app/budgeting',
+        destination: '/app/budgeting/workspaces',
         permanent: true,
       },
     ];
@@ -30,9 +30,9 @@ export default withSentryConfig(
     // For all available options, see:
     // https://github.com/getsentry/sentry-webpack-plugin#options
 
-    org: "sentry",
-    project: "internal",
-    sentryUrl: "https://sentry.ianyeoh.com/",
+    org: 'sentry',
+    project: 'internal',
+    sentryUrl: 'https://sentry.ianyeoh.com/',
 
     // Only print logs for uploading source maps in CI
     silent: !process.env.CI,
@@ -52,7 +52,7 @@ export default withSentryConfig(
     // This can increase your server load as well as your hosting bill.
     // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
     // side errors will fail.
-    tunnelRoute: "/monitoring",
+    tunnelRoute: '/monitoring',
 
     // Hides source maps from generated client bundles
     hideSourceMaps: true,
@@ -70,9 +70,9 @@ export default withSentryConfig(
     // For all available options, see:
     // https://github.com/getsentry/sentry-webpack-plugin#options
 
-    org: "sentry",
-    project: "budgeting",
-    sentryUrl: "https://sentry.ianyeoh.com/",
+    org: 'sentry',
+    project: 'budgeting',
+    sentryUrl: 'https://sentry.ianyeoh.com/',
 
     // Only print logs for uploading source maps in CI
     silent: !process.env.CI,
@@ -92,7 +92,7 @@ export default withSentryConfig(
     // This can increase your server load as well as your hosting bill.
     // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
     // side errors will fail.
-    tunnelRoute: "/monitoring",
+    tunnelRoute: '/monitoring',
 
     // Hides source maps from generated client bundles
     hideSourceMaps: true,

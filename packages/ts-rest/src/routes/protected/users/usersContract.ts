@@ -1,14 +1,14 @@
-import { initContract } from "@ts-rest/core";
-import { z } from "zod";
-import { Auth$UserSchema } from "@cooper/ts-rest/src/types";
+import { initContract } from '@ts-rest/core';
+import { z } from 'zod';
+import { Auth$UserSchema } from '@cooper/ts-rest/src/types';
 
 const c = initContract();
 
 const usersContract = c.router(
   {
     getSelf: {
-      method: "GET",
-      path: "/self",
+      method: 'GET',
+      path: '/self',
       responses: {
         200: z.object({
           user: Auth$UserSchema.pick({
@@ -18,14 +18,14 @@ const usersContract = c.router(
           }),
         }),
         401: z.object({
-          error: z.literal("Unauthorised"),
+          error: z.literal('Unauthorised'),
         }),
       },
-      summary: "Get self user profile data",
+      summary: 'Get self user profile data',
     },
     getUser: {
-      method: "GET",
-      path: "/:username",
+      method: 'GET',
+      path: '/:username',
       responses: {
         200: z.object({
           user: Auth$UserSchema.pick({
@@ -35,20 +35,20 @@ const usersContract = c.router(
           }),
         }),
         401: z.object({
-          error: z.literal("Unauthorised"),
+          error: z.literal('Unauthorised'),
         }),
       },
-      summary: "Get user profile data",
+      summary: 'Get user profile data',
     },
   },
   {
-    pathPrefix: "/users",
+    pathPrefix: '/users',
     pathParams: z.object({
       username: z.string().min(1).max(50),
     }),
     commonResponses: {
       400: z.object({
-        error: z.literal("Invalid username"),
+        error: z.literal('Invalid username'),
       }),
     },
   },

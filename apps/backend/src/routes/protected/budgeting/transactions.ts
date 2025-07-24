@@ -1,9 +1,9 @@
-import { AppRouteImplementation } from "@ts-rest/express";
-import { contract } from "@cooper/ts-rest/src/contract";
-import { authenticate } from "@cooper/backend/src/middleware/authenticate";
-import { validateWorkspace } from "@cooper/backend/src/middleware/validateWorkspace";
-import { validateTransaction } from "@cooper/backend/src/middleware/validateTransaction";
-import guard from "@cooper/backend/src/middleware/guard";
+import { AppRouteImplementation } from '@ts-rest/express';
+import { contract } from '@cooper/ts-rest/src/contract';
+import { authenticate } from '@cooper/backend/src/middleware/authenticate';
+import { validateWorkspace } from '@cooper/backend/src/middleware/validateWorkspace';
+import { validateTransaction } from '@cooper/backend/src/middleware/validateTransaction';
+import guard from '@cooper/backend/src/middleware/guard';
 
 const getTransactionsHandler: AppRouteImplementation<
   typeof contract.protected.budgeting.workspaces.byId.transactions.getTransactions
@@ -11,7 +11,8 @@ const getTransactionsHandler: AppRouteImplementation<
   const db = req.app.locals.database;
   const workspaceId = guard(res.workspace).workspaceId;
 
-  const transactions = db.budgeting.transactions.getWorkspaceTransactions(workspaceId);
+  const transactions =
+    db.budgeting.transactions.getWorkspaceTransactions(workspaceId);
 
   return {
     status: 200,
@@ -51,7 +52,10 @@ const newTransactionHandler: AppRouteImplementation<
 
   return {
     status: 200,
-    body: { message: "Transaction created successfully", transaction: newTransaction },
+    body: {
+      message: 'Transaction created successfully',
+      transaction: newTransaction,
+    },
   };
 };
 export const newTransaction = {
@@ -86,7 +90,7 @@ const updateTransactionHandler: AppRouteImplementation<
 
   return {
     status: 200,
-    body: { message: "Transaction updated successfully" },
+    body: { message: 'Transaction updated successfully' },
   };
 };
 export const updateTransaction = {
@@ -105,7 +109,7 @@ const deleteTransactionHandler: AppRouteImplementation<
 
   return {
     status: 200,
-    body: { message: "Transaction deleted sucessfully" },
+    body: { message: 'Transaction deleted sucessfully' },
   };
 };
 export const deleteTransaction = {

@@ -1,13 +1,19 @@
-import { toast } from "sonner";
+import { toast } from 'sonner';
 
 const activeToasts: { [key: string]: string | number } = {};
 let connectionErrorToast: string | number | undefined;
 
-export function showErrorToast(errorKey: string, status: number, description?: string | unknown): void {
+export function showErrorToast(
+  errorKey: string,
+  status: number,
+  description?: string | unknown,
+): void {
   if (!(errorKey in activeToasts)) {
     const toastId = toast.error(status, {
       description:
-        typeof description === "string" ? description : `Failed to fetch ${errorKey} data. Please try again later.`,
+        typeof description === 'string'
+          ? description
+          : `Failed to fetch ${errorKey} data. Please try again later.`,
       duration: Infinity,
       closeButton: true,
       dismissible: true,
@@ -24,8 +30,9 @@ export function showErrorToast(errorKey: string, status: number, description?: s
 
 export function showConnectionError(): void {
   if (!connectionErrorToast) {
-    connectionErrorToast = toast.error("Lost connection", {
-      description: "We failed to fetch your data. Please check your internet connection.",
+    connectionErrorToast = toast.error('Lost connection', {
+      description:
+        'We failed to fetch your data. Please check your internet connection.',
       duration: Infinity,
       closeButton: true,
       dismissible: true,

@@ -1,9 +1,9 @@
-import { AppRouteImplementation } from "@ts-rest/express";
-import { contract } from "@cooper/ts-rest/src/contract";
-import { authenticate } from "@cooper/backend/src/middleware/authenticate";
-import { validateWorkspace } from "@cooper/backend/src/middleware/validateWorkspace";
-import { validateAccount } from "@cooper/backend/src/middleware/validateAccount";
-import guard from "@cooper/backend/src/middleware/guard";
+import { AppRouteImplementation } from '@ts-rest/express';
+import { contract } from '@cooper/ts-rest/src/contract';
+import { authenticate } from '@cooper/backend/src/middleware/authenticate';
+import { validateWorkspace } from '@cooper/backend/src/middleware/validateWorkspace';
+import { validateAccount } from '@cooper/backend/src/middleware/validateAccount';
+import guard from '@cooper/backend/src/middleware/guard';
 
 const getAccountsHandler: AppRouteImplementation<
   typeof contract.protected.budgeting.workspaces.byId.accounts.getAccounts
@@ -34,7 +34,13 @@ const newAccountHandler: AppRouteImplementation<
 
   const { description, name, bank } = body;
 
-  const newAccount = db.budgeting.accounts.createAccount(name, bank, description, workspaceId, createdBy);
+  const newAccount = db.budgeting.accounts.createAccount(
+    name,
+    bank,
+    description,
+    workspaceId,
+    createdBy,
+  );
 
   if (newAccount instanceof Error) {
     throw newAccount;
@@ -43,7 +49,7 @@ const newAccountHandler: AppRouteImplementation<
   return {
     status: 200,
     body: {
-      message: "Account created successfully",
+      message: 'Account created successfully',
       account: newAccount,
     },
   };
@@ -62,7 +68,13 @@ const updateAccountHandler: AppRouteImplementation<
   const createdBy = guard(res.session).username;
   const { description, name, bank } = body;
 
-  const updatedAccount = db.budgeting.accounts.updateAccount(accountId, name, bank, description, createdBy);
+  const updatedAccount = db.budgeting.accounts.updateAccount(
+    accountId,
+    name,
+    bank,
+    description,
+    createdBy,
+  );
 
   if (updatedAccount instanceof Error) {
     throw updatedAccount;
@@ -71,7 +83,7 @@ const updateAccountHandler: AppRouteImplementation<
   return {
     status: 200,
     body: {
-      message: "Account updated successfully",
+      message: 'Account updated successfully',
     },
   };
 };
@@ -92,7 +104,7 @@ const deleteAccountHandler: AppRouteImplementation<
   return {
     status: 200,
     body: {
-      message: "Account deleted successfully",
+      message: 'Account deleted successfully',
     },
   };
 };

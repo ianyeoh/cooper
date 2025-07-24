@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import { expect } from 'chai';
 import {
   request,
   authenticate,
@@ -7,11 +7,14 @@ import {
   testProtected,
   createWorkspace,
   createCategory,
-} from "@cooper/backend/src/tests/utils";
-import { generateMock } from "@anatine/zod-mock";
-import { Auth$UserSchema, Budgeting$CategorySchema } from "@cooper/ts-rest/src/types";
-import { seed } from "@cooper/backend/src/tests/mocking";
-import { contract } from "@cooper/ts-rest/src/contract";
+} from '@cooper/backend/src/tests/utils';
+import { generateMock } from '@anatine/zod-mock';
+import {
+  Auth$UserSchema,
+  Budgeting$CategorySchema,
+} from '@cooper/ts-rest/src/types';
+import { seed } from '@cooper/backend/src/tests/mocking';
+import { contract } from '@cooper/ts-rest/src/contract';
 
 const { signup } = contract.public.auth;
 const { byId: workspaceById } = contract.protected.budgeting.workspaces;
@@ -23,7 +26,7 @@ const existingUser = generateMock(Auth$UserSchema, { seed });
 describe(testFor(getCategories), () => {
   testProtected(getCategories);
 
-  it("should return list of categories successfully", async function () {
+  it('should return list of categories successfully', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -32,18 +35,24 @@ describe(testFor(getCategories), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Get categories list, should be empty
-    const getCategoriesResponse = await testRoute(authedRequest, getCategories, {
-      workspaceId: createdWorkspace.workspaceId,
-    }).expect(200);
+    const getCategoriesResponse = await testRoute(
+      authedRequest,
+      getCategories,
+      {
+        workspaceId: createdWorkspace.workspaceId,
+      },
+    ).expect(200);
 
-    expect(getCategoriesResponse.body.categories).to.be.an("array").with.lengthOf(0);
+    expect(getCategoriesResponse.body.categories)
+      .to.be.an('array')
+      .with.lengthOf(0);
   });
 
-  it("should fail when called by another user who not in workspace", async function () {
+  it('should fail when called by another user who not in workspace', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -52,7 +61,7 @@ describe(testFor(getCategories), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create other user
@@ -75,7 +84,7 @@ describe(testFor(getCategories), () => {
 describe(testFor(newCategory), () => {
   testProtected(newCategory);
 
-  it("should create a category successfully", async function () {
+  it('should create a category successfully', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -84,7 +93,7 @@ describe(testFor(newCategory), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create a new category
@@ -95,20 +104,28 @@ describe(testFor(newCategory), () => {
     );
 
     // Get categories list, should contain our new category
-    const getCategoriesResponse = await testRoute(authedRequest, getCategories, {
-      workspaceId: createdWorkspace.workspaceId,
-    }).expect(200);
+    const getCategoriesResponse = await testRoute(
+      authedRequest,
+      getCategories,
+      {
+        workspaceId: createdWorkspace.workspaceId,
+      },
+    ).expect(200);
 
-    expect(getCategoriesResponse.body.categories).to.be.an("array").with.lengthOf(1);
+    expect(getCategoriesResponse.body.categories)
+      .to.be.an('array')
+      .with.lengthOf(1);
     expect(
       // That the array contains our new category
-      getCategoriesResponse.body.categories.some((category: { categoryId: number }) => {
-        return category.categoryId === createdCategory.categoryId;
-      }),
+      getCategoriesResponse.body.categories.some(
+        (category: { categoryId: number }) => {
+          return category.categoryId === createdCategory.categoryId;
+        },
+      ),
     ).to.equal(true);
   });
 
-  it("should fail for user without access to workspace", async function () {
+  it('should fail for user without access to workspace', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -117,7 +134,7 @@ describe(testFor(newCategory), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create other user
@@ -143,7 +160,7 @@ describe(testFor(newCategory), () => {
 describe(testFor(updateCategory), () => {
   testProtected(updateCategory);
 
-  it("should fail when category invalid", async function () {
+  it('should fail when category invalid', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -152,7 +169,7 @@ describe(testFor(updateCategory), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create category
@@ -169,7 +186,7 @@ describe(testFor(updateCategory), () => {
     }).expect(404);
   });
 
-  it("should succeed in updating category details", async function () {
+  it('should succeed in updating category details', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -178,7 +195,7 @@ describe(testFor(updateCategory), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create category
@@ -188,7 +205,9 @@ describe(testFor(updateCategory), () => {
       generateMock(Budgeting$CategorySchema, { seed }),
     );
 
-    const updatedCategory = generateMock(Budgeting$CategorySchema, { seed: seed + 1 });
+    const updatedCategory = generateMock(Budgeting$CategorySchema, {
+      seed: seed + 1,
+    });
 
     // Update category
     await testRoute(authedRequest, updateCategory, {
@@ -199,20 +218,31 @@ describe(testFor(updateCategory), () => {
       .expect(200);
 
     // Get categories list, should show updated category
-    const getCategoriesResponse = await testRoute(authedRequest, getCategories, {
-      workspaceId: createdWorkspace.workspaceId,
-    }).expect(200);
+    const getCategoriesResponse = await testRoute(
+      authedRequest,
+      getCategories,
+      {
+        workspaceId: createdWorkspace.workspaceId,
+      },
+    ).expect(200);
 
-    expect(getCategoriesResponse.body.categories).to.be.an("array").with.lengthOf(1);
+    expect(getCategoriesResponse.body.categories)
+      .to.be.an('array')
+      .with.lengthOf(1);
     expect(
       // That the array contains the updated category
-      getCategoriesResponse.body.categories.some((category: { categoryId: number; name: string }) => {
-        return category.categoryId === createdCategory.categoryId && category.name === updatedCategory.name;
-      }),
+      getCategoriesResponse.body.categories.some(
+        (category: { categoryId: number; name: string }) => {
+          return (
+            category.categoryId === createdCategory.categoryId &&
+            category.name === updatedCategory.name
+          );
+        },
+      ),
     ).to.equal(true);
   });
 
-  it("should not be accessible by another user without access to workspace", async function () {
+  it('should not be accessible by another user without access to workspace', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -221,7 +251,7 @@ describe(testFor(updateCategory), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create category
@@ -241,7 +271,9 @@ describe(testFor(updateCategory), () => {
       password: otherUser.password,
     });
 
-    const updatedCategory = generateMock(Budgeting$CategorySchema, { seed: seed + 1 });
+    const updatedCategory = generateMock(Budgeting$CategorySchema, {
+      seed: seed + 1,
+    });
 
     // Try to update category with other user
     await testRoute(otherAuthedRequest, updateCategory, {
@@ -256,7 +288,7 @@ describe(testFor(updateCategory), () => {
 describe(testFor(deleteCategory), () => {
   testProtected(deleteCategory);
 
-  it("should fail when category invalid", async function () {
+  it('should fail when category invalid', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -265,7 +297,7 @@ describe(testFor(deleteCategory), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create category
@@ -282,7 +314,7 @@ describe(testFor(deleteCategory), () => {
     }).expect(404);
   });
 
-  it("should succeed in deleting category", async function () {
+  it('should succeed in deleting category', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -291,7 +323,7 @@ describe(testFor(deleteCategory), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create category
@@ -308,14 +340,20 @@ describe(testFor(deleteCategory), () => {
     }).expect(200);
 
     // Get categories list, should show no categories
-    const getCategoriesResponse = await testRoute(authedRequest, getCategories, {
-      workspaceId: createdWorkspace.workspaceId,
-    }).expect(200);
+    const getCategoriesResponse = await testRoute(
+      authedRequest,
+      getCategories,
+      {
+        workspaceId: createdWorkspace.workspaceId,
+      },
+    ).expect(200);
 
-    expect(getCategoriesResponse.body.categories).to.be.an("array").with.lengthOf(0);
+    expect(getCategoriesResponse.body.categories)
+      .to.be.an('array')
+      .with.lengthOf(0);
   });
 
-  it("should not be accessible by another user without workspace permissions", async function () {
+  it('should not be accessible by another user without workspace permissions', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -324,7 +362,7 @@ describe(testFor(deleteCategory), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create category

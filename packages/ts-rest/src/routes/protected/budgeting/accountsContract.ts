@@ -1,24 +1,24 @@
-import { initContract } from "@ts-rest/core";
-import { z } from "zod";
-import { Budgeting$AccountSchema } from "@cooper/ts-rest/src/types";
+import { initContract } from '@ts-rest/core';
+import { z } from 'zod';
+import { Budgeting$AccountSchema } from '@cooper/ts-rest/src/types';
 
 const c = initContract();
 
 const accountsContract = c.router(
   {
     getAccounts: {
-      method: "GET",
-      path: "/",
+      method: 'GET',
+      path: '/',
       responses: {
         200: z.object({
           accounts: z.array(Budgeting$AccountSchema),
         }),
       },
-      summary: "Get list of accounts",
+      summary: 'Get list of accounts',
     },
     newAccount: {
-      method: "POST",
-      path: "/",
+      method: 'POST',
+      path: '/',
       body: Budgeting$AccountSchema.omit({
         accountId: true,
         workspace: true,
@@ -26,15 +26,15 @@ const accountsContract = c.router(
       }),
       responses: {
         200: z.object({
-          message: z.literal("Account created successfully"),
+          message: z.literal('Account created successfully'),
           account: Budgeting$AccountSchema,
         }),
         400: z.object({
-          error: z.literal("Invalid input"),
+          error: z.literal('Invalid input'),
           reason: z.string().min(1),
         }),
       },
-      summary: "Create a new account",
+      summary: 'Create a new account',
     },
     /*
      * These routes are separated and restricted by accountId
@@ -42,51 +42,51 @@ const accountsContract = c.router(
     byId: c.router(
       {
         updateAccount: {
-          method: "POST",
-          path: "/",
+          method: 'POST',
+          path: '/',
           body: Budgeting$AccountSchema.omit({
             accountId: true,
             workspace: true,
           }).partial(),
           responses: {
             200: z.object({
-              message: z.literal("Account updated successfully"),
+              message: z.literal('Account updated successfully'),
             }),
             400: z.object({
-              error: z.literal("Invalid input"),
+              error: z.literal('Invalid input'),
               reason: z.string().min(1),
             }),
           },
-          summary: "Update details for an existing account",
+          summary: 'Update details for an existing account',
         },
         deleteAccount: {
-          method: "POST",
-          path: "/delete",
+          method: 'POST',
+          path: '/delete',
           body: z.any(),
           responses: {
             200: z.object({
-              message: z.literal("Account deleted successfully"),
+              message: z.literal('Account deleted successfully'),
             }),
           },
-          summary: "Delete an account",
+          summary: 'Delete an account',
         },
       },
       {
-        pathPrefix: "/:accountId",
+        pathPrefix: '/:accountId',
         pathParams: Budgeting$AccountSchema.pick({
           accountId: true,
         }),
         commonResponses: {
           404: z.object({
-            error: z.literal("Account does not exist"),
+            error: z.literal('Account does not exist'),
           }),
         },
-        summary: "Actions taken on existing accounts by account id",
+        summary: 'Actions taken on existing accounts by account id',
       },
     ),
   },
   {
-    pathPrefix: "/accounts",
+    pathPrefix: '/accounts',
   },
 );
 

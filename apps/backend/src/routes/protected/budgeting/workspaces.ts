@@ -1,45 +1,52 @@
-import { AppRouteImplementation } from "@ts-rest/express";
-import { contract } from "@cooper/ts-rest/src/contract";
-import { authenticate } from "@cooper/backend/src/middleware/authenticate";
-import { validateWorkspace } from "@cooper/backend/src/middleware/validateWorkspace";
-import guard from "@cooper/backend/src/middleware/guard";
+import { AppRouteImplementation } from '@ts-rest/express';
+import { contract } from '@cooper/ts-rest/src/contract';
+import { authenticate } from '@cooper/backend/src/middleware/authenticate';
+import { validateWorkspace } from '@cooper/backend/src/middleware/validateWorkspace';
+import guard from '@cooper/backend/src/middleware/guard';
 
-const getWorkspacesHandler: AppRouteImplementation<typeof contract.protected.budgeting.workspaces.getWorkspaces> =
-  async function ({ req, res }) {
-    const db = req.app.locals.database;
+const getWorkspacesHandler: AppRouteImplementation<
+  typeof contract.protected.budgeting.workspaces.getWorkspaces
+> = async function ({ req, res }) {
+  const db = req.app.locals.database;
 
-    const workspaces = db.budgeting.workspaces.getUserWorkspaces(guard(res.session).username);
+  const workspaces = db.budgeting.workspaces.getUserWorkspaces(
+    guard(res.session).username,
+  );
 
-    return {
-      status: 200,
-      body: {
-        workspaces,
-      },
-    };
+  return {
+    status: 200,
+    body: {
+      workspaces,
+    },
   };
+};
 export const getWorkspaces = {
   middleware: [authenticate],
   handler: getWorkspacesHandler,
 };
 
-const newWorkspaceHandler: AppRouteImplementation<typeof contract.protected.budgeting.workspaces.newWorkspace> =
-  async function ({ req, res, body }) {
-    const db = req.app.locals.database;
+const newWorkspaceHandler: AppRouteImplementation<
+  typeof contract.protected.budgeting.workspaces.newWorkspace
+> = async function ({ req, res, body }) {
+  const db = req.app.locals.database;
 
-    const workspace = db.budgeting.workspaces.createWorkspace(guard(res.session).username, body.name);
+  const workspace = db.budgeting.workspaces.createWorkspace(
+    guard(res.session).username,
+    body.name,
+  );
 
-    if (workspace instanceof Error) {
-      throw workspace;
-    }
+  if (workspace instanceof Error) {
+    throw workspace;
+  }
 
-    return {
-      status: 200,
-      body: {
-        message: "Workspace created successfully",
-        workspace: workspace,
-      },
-    };
+  return {
+    status: 200,
+    body: {
+      message: 'Workspace created successfully',
+      workspace: workspace,
+    },
   };
+};
 export const newWorkspace = {
   middleware: [authenticate],
   handler: newWorkspaceHandler,
@@ -52,7 +59,11 @@ const updateWorkspaceHandler: AppRouteImplementation<
 
   const { workspaceId, users } = guard(res.workspace);
 
-  const updatedWorkspace = db.budgeting.workspaces.updateWorkspace(workspaceId, body.name, users);
+  const updatedWorkspace = db.budgeting.workspaces.updateWorkspace(
+    workspaceId,
+    body.name,
+    users,
+  );
 
   if (updatedWorkspace instanceof Error) {
     throw updatedWorkspace;
@@ -61,7 +72,7 @@ const updateWorkspaceHandler: AppRouteImplementation<
   return {
     status: 200,
     body: {
-      message: "Workspace updated successfully",
+      message: 'Workspace updated successfully',
     },
   };
 };
@@ -81,7 +92,7 @@ const deleteWorkspaceHandler: AppRouteImplementation<
   return {
     status: 200,
     body: {
-      message: "Workspace deleted successfully",
+      message: 'Workspace deleted successfully',
     },
   };
 };

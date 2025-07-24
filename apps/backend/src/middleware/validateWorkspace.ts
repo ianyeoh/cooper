@@ -1,7 +1,11 @@
-import { Request, Response, NextFunction } from "express";
-import guard from "@cooper/backend/src/middleware/guard";
+import { Request, Response, NextFunction } from 'express';
+import guard from '@cooper/backend/src/middleware/guard';
 
-export async function validateWorkspace(req: Request, res: Response, next: NextFunction) {
+export async function validateWorkspace(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   const db = req.app.locals.database;
 
   // parseInt because we don't want to include "truthy" numbers
@@ -10,7 +14,7 @@ export async function validateWorkspace(req: Request, res: Response, next: NextF
 
   // workspaceId is wildly invalid
   if (Number.isNaN(workspaceId)) {
-    return res.status(401).json({ error: "Unauthorised" });
+    return res.status(401).json({ error: 'Unauthorised' });
   }
 
   const workspace = db.budgeting.workspaces.getWorkspace(workspaceId);
@@ -18,7 +22,7 @@ export async function validateWorkspace(req: Request, res: Response, next: NextF
   // Workspace does not exist
   if (workspace == null) {
     return res.status(404).json({
-      error: "Workspace does not exist",
+      error: 'Workspace does not exist',
     });
   }
 
@@ -26,7 +30,7 @@ export async function validateWorkspace(req: Request, res: Response, next: NextF
   // User does not have access to workspace
   if (!workspace.users.includes(username)) {
     return res.status(401).json({
-      error: "Unauthorised",
+      error: 'Unauthorised',
     });
   }
 

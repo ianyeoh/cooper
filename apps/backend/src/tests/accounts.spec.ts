@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import { expect } from 'chai';
 import {
   request,
   authenticate,
@@ -7,11 +7,14 @@ import {
   testProtected,
   createWorkspace,
   createAccount,
-} from "@cooper/backend/src/tests/utils";
-import { generateMock } from "@anatine/zod-mock";
-import { Auth$UserSchema, Budgeting$AccountSchema } from "@cooper/ts-rest/src/types";
-import { seed } from "@cooper/backend/src/tests/mocking";
-import { contract } from "@cooper/ts-rest/src/contract";
+} from '@cooper/backend/src/tests/utils';
+import { generateMock } from '@anatine/zod-mock';
+import {
+  Auth$UserSchema,
+  Budgeting$AccountSchema,
+} from '@cooper/ts-rest/src/types';
+import { seed } from '@cooper/backend/src/tests/mocking';
+import { contract } from '@cooper/ts-rest/src/contract';
 
 const { signup } = contract.public.auth;
 const { byId: workspaceById } = contract.protected.budgeting.workspaces;
@@ -23,7 +26,7 @@ const existingUser = generateMock(Auth$UserSchema, { seed });
 describe(testFor(getAccounts), () => {
   testProtected(getAccounts);
 
-  it("should return list of accounts successfully", async function () {
+  it('should return list of accounts successfully', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -32,7 +35,7 @@ describe(testFor(getAccounts), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Get accounts list, should be empty
@@ -40,10 +43,12 @@ describe(testFor(getAccounts), () => {
       workspaceId: createdWorkspace.workspaceId,
     }).expect(200);
 
-    expect(getAccountsResponse.body.accounts).to.be.an("array").with.lengthOf(0);
+    expect(getAccountsResponse.body.accounts)
+      .to.be.an('array')
+      .with.lengthOf(0);
   });
 
-  it("should fail when called by another user who not in workspace", async function () {
+  it('should fail when called by another user who not in workspace', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -52,7 +57,7 @@ describe(testFor(getAccounts), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create other user
@@ -75,7 +80,7 @@ describe(testFor(getAccounts), () => {
 describe(testFor(newAccount), () => {
   testProtected(newAccount);
 
-  it("should create an account successfully", async function () {
+  it('should create an account successfully', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -84,7 +89,7 @@ describe(testFor(newAccount), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create a new account
@@ -99,16 +104,20 @@ describe(testFor(newAccount), () => {
       workspaceId: createdWorkspace.workspaceId,
     }).expect(200);
 
-    expect(getAccountsResponse.body.accounts).to.be.an("array").with.lengthOf(1);
+    expect(getAccountsResponse.body.accounts)
+      .to.be.an('array')
+      .with.lengthOf(1);
     expect(
       // That the array contains our new account
-      getAccountsResponse.body.accounts.some((account: { accountId: number }) => {
-        return account.accountId === createdAccount.accountId;
-      }),
+      getAccountsResponse.body.accounts.some(
+        (account: { accountId: number }) => {
+          return account.accountId === createdAccount.accountId;
+        },
+      ),
     ).to.equal(true);
   });
 
-  it("should fail for user without access to workspace", async function () {
+  it('should fail for user without access to workspace', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -117,7 +126,7 @@ describe(testFor(newAccount), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create other user
@@ -135,7 +144,11 @@ describe(testFor(newAccount), () => {
     await testRoute(otherAuthedRequest, newAccount, {
       workspaceId: createdWorkspace.workspaceId,
     })
-      .send({ description: createdAccount.description, name: createdAccount.name, bank: createdAccount.bank })
+      .send({
+        description: createdAccount.description,
+        name: createdAccount.name,
+        bank: createdAccount.bank,
+      })
       .expect(401);
   });
 });
@@ -143,7 +156,7 @@ describe(testFor(newAccount), () => {
 describe(testFor(updateAccount), () => {
   testProtected(updateAccount);
 
-  it("should fail when account invalid", async function () {
+  it('should fail when account invalid', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -152,7 +165,7 @@ describe(testFor(updateAccount), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create account
@@ -169,7 +182,7 @@ describe(testFor(updateAccount), () => {
     }).expect(404);
   });
 
-  it("should succeed in updating account details", async function () {
+  it('should succeed in updating account details', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -178,7 +191,7 @@ describe(testFor(updateAccount), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create account
@@ -188,14 +201,20 @@ describe(testFor(updateAccount), () => {
       generateMock(Budgeting$AccountSchema, { seed }),
     );
 
-    const updatedAccount = generateMock(Budgeting$AccountSchema, { seed: seed + 1 });
+    const updatedAccount = generateMock(Budgeting$AccountSchema, {
+      seed: seed + 1,
+    });
 
     // Update account
     await testRoute(authedRequest, updateAccount, {
       workspaceId: createdWorkspace.workspaceId,
       accountId: createdAccount.accountId,
     })
-      .send({ description: updatedAccount.description, name: updatedAccount.name, bank: updatedAccount.bank })
+      .send({
+        description: updatedAccount.description,
+        name: updatedAccount.name,
+        bank: updatedAccount.bank,
+      })
       .expect(200);
 
     // Get accounts list, should show updated account
@@ -203,11 +222,18 @@ describe(testFor(updateAccount), () => {
       workspaceId: createdWorkspace.workspaceId,
     }).expect(200);
 
-    expect(getAccountsResponse.body.accounts).to.be.an("array").with.lengthOf(1);
+    expect(getAccountsResponse.body.accounts)
+      .to.be.an('array')
+      .with.lengthOf(1);
     expect(
       // That the array contains the updated account
       getAccountsResponse.body.accounts.some(
-        (account: { accountId: number; description: string; name: string; bank: string }) => {
+        (account: {
+          accountId: number;
+          description: string;
+          name: string;
+          bank: string;
+        }) => {
           return (
             account.accountId === createdAccount.accountId &&
             account.name === updatedAccount.name &&
@@ -218,7 +244,7 @@ describe(testFor(updateAccount), () => {
     ).to.equal(true);
   });
 
-  it("should not be accessible by another user without access to workspace", async function () {
+  it('should not be accessible by another user without access to workspace', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -227,7 +253,7 @@ describe(testFor(updateAccount), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create account
@@ -247,14 +273,20 @@ describe(testFor(updateAccount), () => {
       password: otherUser.password,
     });
 
-    const updatedAccount = generateMock(Budgeting$AccountSchema, { seed: seed + 1 });
+    const updatedAccount = generateMock(Budgeting$AccountSchema, {
+      seed: seed + 1,
+    });
 
     // Try to update account with other user
     await testRoute(otherAuthedRequest, updateAccount, {
       workspaceId: createdWorkspace.workspaceId,
       accountId: createdAccount.accountId,
     })
-      .send({ description: updatedAccount.description, name: updatedAccount.name, bank: updatedAccount.bank })
+      .send({
+        description: updatedAccount.description,
+        name: updatedAccount.name,
+        bank: updatedAccount.bank,
+      })
       .expect(401);
   });
 });
@@ -262,7 +294,7 @@ describe(testFor(updateAccount), () => {
 describe(testFor(deleteAccount), () => {
   testProtected(deleteAccount);
 
-  it("should fail when account invalid", async function () {
+  it('should fail when account invalid', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -271,7 +303,7 @@ describe(testFor(deleteAccount), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create account
@@ -288,7 +320,7 @@ describe(testFor(deleteAccount), () => {
     }).expect(404);
   });
 
-  it("should succeed in deleting account", async function () {
+  it('should succeed in deleting account', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -297,7 +329,7 @@ describe(testFor(deleteAccount), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create account
@@ -318,10 +350,12 @@ describe(testFor(deleteAccount), () => {
       workspaceId: createdWorkspace.workspaceId,
     }).expect(200);
 
-    expect(getAccountsResponse.body.accounts).to.be.an("array").with.lengthOf(0);
+    expect(getAccountsResponse.body.accounts)
+      .to.be.an('array')
+      .with.lengthOf(0);
   });
 
-  it("should not be accessible by another user without workspace permissions", async function () {
+  it('should not be accessible by another user without workspace permissions', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -330,7 +364,7 @@ describe(testFor(deleteAccount), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create account

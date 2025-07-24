@@ -5,7 +5,7 @@ import {
   Budgeting$Category,
   Budgeting$Transaction,
   Budgeting$Workspace,
-} from "@cooper/ts-rest/src/types";
+} from '@cooper/ts-rest/src/types';
 
 export default interface DatabaseInterface {
   auth: {
@@ -13,7 +13,12 @@ export default interface DatabaseInterface {
       isValidLogin: (username: string, password: string) => boolean;
       getUser: (username: string) => Auth$User | undefined;
       createUser: (user: Auth$User) => Auth$User | Error;
-      updateUser: (username: string, firstName?: string, lastName?: string, password?: string) => Auth$User | Error;
+      updateUser: (
+        username: string,
+        firstName?: string,
+        lastName?: string,
+        password?: string,
+      ) => Auth$User | Error;
       deleteUser: (username: string) => void;
     };
 
@@ -42,9 +47,16 @@ export default interface DatabaseInterface {
     workspaces: {
       getWorkspace: (workspaceId: number) => Budgeting$Workspace | undefined;
       getUserWorkspaces: (username: string) => Budgeting$Workspace[];
-      createWorkspace: (username: string, workspaceName: string) => Budgeting$Workspace | Error;
+      createWorkspace: (
+        username: string,
+        workspaceName: string,
+      ) => Budgeting$Workspace | Error;
       deleteWorkspace: (workspaceId: number) => void;
-      updateWorkspace: (workspaceId: number, name: string, users: string[]) => Budgeting$Workspace | Error;
+      updateWorkspace: (
+        workspaceId: number,
+        name: string,
+        users: string[],
+      ) => Budgeting$Workspace | Error;
     };
 
     accounts: {
@@ -70,7 +82,11 @@ export default interface DatabaseInterface {
     categories: {
       getCategory: (categoryId: number) => Budgeting$Category | undefined;
       getWorkspaceCategories: (workspace: number) => Budgeting$Category[];
-      createCategory: (name: string, createdBy: string, workspace: number) => Budgeting$Category | Error;
+      createCategory: (
+        name: string,
+        createdBy: string,
+        workspace: number,
+      ) => Budgeting$Category | Error;
       deleteCategory: (categoryId: number) => void;
       updateCategory: (
         categoryId: number,
@@ -81,7 +97,9 @@ export default interface DatabaseInterface {
     };
 
     transactions: {
-      getTransaction: (transactionId: number) => Budgeting$Transaction | undefined;
+      getTransaction: (
+        transactionId: number,
+      ) => Budgeting$Transaction | undefined;
       getWorkspaceTransactions: (workspace: number) => Budgeting$Transaction[];
       createTransaction: (
         date: Date,

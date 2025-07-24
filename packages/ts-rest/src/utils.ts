@@ -11,13 +11,13 @@ export function parseError(error: unknown):
     }
   | { isKnownError: true; errMsg: string } {
   if (
-    typeof error === "object" &&
+    typeof error === 'object' &&
     error !== null &&
-    "body" in error &&
-    typeof error.body === "object" &&
+    'body' in error &&
+    typeof error.body === 'object' &&
     error.body !== null &&
-    "error" in error.body &&
-    typeof error.body.error === "string"
+    'error' in error.body &&
+    typeof error.body.error === 'string'
   ) {
     return {
       isKnownError: true,

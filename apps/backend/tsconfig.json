@@ -14,7 +14,11 @@
     "composite": true,
     "resolveJsonModule": true,
     "noImplicitAny": false,
-    "typeRoots": ["./src/types", "./node_modules/@types", "../../node_modules/@types"]
+    "typeRoots": [
+      "./src/types",
+      "./node_modules/@types",
+      "../../node_modules/@types"
+    ]
   },
   "include": ["src/**/*"],
   "paths": {

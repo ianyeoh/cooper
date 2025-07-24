@@ -1,39 +1,39 @@
-import { z } from "zod";
-import { initContract } from "@ts-rest/core";
-import transactionsContract from "@cooper/ts-rest/src/routes/protected/budgeting/transactionsContract";
-import accountsContract from "@cooper/ts-rest/src/routes/protected/budgeting/accountsContract";
-import categoriesContract from "@cooper/ts-rest/src/routes/protected/budgeting/categoriesContract";
-import { Budgeting$WorkspaceSchema } from "@cooper/ts-rest/src/types";
+import { z } from 'zod';
+import { initContract } from '@ts-rest/core';
+import transactionsContract from '@cooper/ts-rest/src/routes/protected/budgeting/transactionsContract';
+import accountsContract from '@cooper/ts-rest/src/routes/protected/budgeting/accountsContract';
+import categoriesContract from '@cooper/ts-rest/src/routes/protected/budgeting/categoriesContract';
+import { Budgeting$WorkspaceSchema } from '@cooper/ts-rest/src/types';
 
 const c = initContract();
 
 const workspacesContract = c.router(
   {
     getWorkspaces: {
-      method: "GET",
-      path: "/",
+      method: 'GET',
+      path: '/',
       responses: {
         200: z.object({
           workspaces: z.array(Budgeting$WorkspaceSchema),
         }),
       },
-      summary: "Get a list of workspaces",
+      summary: 'Get a list of workspaces',
     },
     newWorkspace: {
-      method: "POST",
-      path: "/",
+      method: 'POST',
+      path: '/',
       body: Budgeting$WorkspaceSchema.omit({ workspaceId: true, users: true }),
       responses: {
         200: z.object({
-          message: z.literal("Workspace created successfully"),
+          message: z.literal('Workspace created successfully'),
           workspace: Budgeting$WorkspaceSchema,
         }),
         400: z.object({
-          error: z.literal("Invalid input"),
+          error: z.literal('Invalid input'),
           reason: z.string().min(1),
         }),
       },
-      summary: "Create a new workspace",
+      summary: 'Create a new workspace',
     },
 
     /*
@@ -42,50 +42,53 @@ const workspacesContract = c.router(
     byId: c.router(
       {
         updateWorkspace: {
-          method: "POST",
-          path: "/",
-          body: Budgeting$WorkspaceSchema.omit({ workspaceId: true, users: true }),
+          method: 'POST',
+          path: '/',
+          body: Budgeting$WorkspaceSchema.omit({
+            workspaceId: true,
+            users: true,
+          }),
           responses: {
             200: z.object({
-              message: z.literal("Workspace updated successfully"),
+              message: z.literal('Workspace updated successfully'),
             }),
             400: z.object({
-              error: z.literal("Invalid input"),
+              error: z.literal('Invalid input'),
               reason: z.string().min(1),
             }),
           },
-          summary: "Update a workspace by id",
+          summary: 'Update a workspace by id',
         },
         deleteWorkspace: {
-          method: "POST",
-          path: "/delete",
+          method: 'POST',
+          path: '/delete',
           body: z.any(),
           responses: {
             200: z.object({
-              message: z.literal("Workspace deleted successfully"),
+              message: z.literal('Workspace deleted successfully'),
             }),
           },
-          summary: "Delete a workspace by id",
+          summary: 'Delete a workspace by id',
         },
         accounts: accountsContract,
         categories: categoriesContract,
         transactions: transactionsContract,
       },
       {
-        pathPrefix: "/:workspaceId",
+        pathPrefix: '/:workspaceId',
         pathParams: Budgeting$WorkspaceSchema.pick({
           workspaceId: true,
         }),
         commonResponses: {
           404: z.object({
-            error: z.literal("Workspace does not exist"),
+            error: z.literal('Workspace does not exist'),
           }),
         },
       },
     ),
   },
   {
-    pathPrefix: "/workspaces",
+    pathPrefix: '/workspaces',
   },
 );
 

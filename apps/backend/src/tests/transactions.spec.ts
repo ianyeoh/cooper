@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import { expect } from 'chai';
 import {
   request,
   authenticate,
@@ -8,23 +8,28 @@ import {
   createWorkspace,
   createTransaction,
   createAccount,
-} from "@cooper/backend/src/tests/utils";
-import { generateMock } from "@anatine/zod-mock";
-import { Auth$UserSchema, Budgeting$AccountSchema, Budgeting$TransactionSchema } from "@cooper/ts-rest/src/types";
-import { seed } from "@cooper/backend/src/tests/mocking";
-import { contract } from "@cooper/ts-rest/src/contract";
+} from '@cooper/backend/src/tests/utils';
+import { generateMock } from '@anatine/zod-mock';
+import {
+  Auth$UserSchema,
+  Budgeting$AccountSchema,
+  Budgeting$TransactionSchema,
+} from '@cooper/ts-rest/src/types';
+import { seed } from '@cooper/backend/src/tests/mocking';
+import { contract } from '@cooper/ts-rest/src/contract';
 
 const { signup } = contract.public.auth;
 const { byId: workspaceById } = contract.protected.budgeting.workspaces;
 const { getTransactions, newTransaction } = workspaceById.transactions;
-const { updateTransaction, deleteTransaction } = workspaceById.transactions.byId;
+const { updateTransaction, deleteTransaction } =
+  workspaceById.transactions.byId;
 
 const existingUser = generateMock(Auth$UserSchema, { seed });
 
 describe(testFor(getTransactions), () => {
   testProtected(getTransactions);
 
-  it("should return list of transactions successfully", async function () {
+  it('should return list of transactions successfully', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -33,18 +38,24 @@ describe(testFor(getTransactions), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Get transactions list, should be empty
-    const getTransactionsResponse = await testRoute(authedRequest, getTransactions, {
-      workspaceId: createdWorkspace.workspaceId,
-    }).expect(200);
+    const getTransactionsResponse = await testRoute(
+      authedRequest,
+      getTransactions,
+      {
+        workspaceId: createdWorkspace.workspaceId,
+      },
+    ).expect(200);
 
-    expect(getTransactionsResponse.body.transactions).to.be.an("array").with.lengthOf(0);
+    expect(getTransactionsResponse.body.transactions)
+      .to.be.an('array')
+      .with.lengthOf(0);
   });
 
-  it("should fail when called by another user who not in workspace", async function () {
+  it('should fail when called by another user who not in workspace', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -53,7 +64,7 @@ describe(testFor(getTransactions), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create other user
@@ -76,7 +87,7 @@ describe(testFor(getTransactions), () => {
 describe(testFor(newTransaction), () => {
   testProtected(newTransaction);
 
-  it("should create a transaction successfully", async function () {
+  it('should create a transaction successfully', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -85,7 +96,7 @@ describe(testFor(newTransaction), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create account
@@ -104,20 +115,28 @@ describe(testFor(newTransaction), () => {
     );
 
     // Get transactions list, should contain our new transaction
-    const getTransactionsResponse = await testRoute(authedRequest, getTransactions, {
-      workspaceId: createdWorkspace.workspaceId,
-    }).expect(200);
+    const getTransactionsResponse = await testRoute(
+      authedRequest,
+      getTransactions,
+      {
+        workspaceId: createdWorkspace.workspaceId,
+      },
+    ).expect(200);
 
-    expect(getTransactionsResponse.body.transactions).to.be.an("array").with.lengthOf(1);
+    expect(getTransactionsResponse.body.transactions)
+      .to.be.an('array')
+      .with.lengthOf(1);
     expect(
       // That the array contains our new transaction
-      getTransactionsResponse.body.transactions.some((transaction: { transactionId: number }) => {
-        return transaction.transactionId === createdTransaction.transactionId;
-      }),
+      getTransactionsResponse.body.transactions.some(
+        (transaction: { transactionId: number }) => {
+          return transaction.transactionId === createdTransaction.transactionId;
+        },
+      ),
     ).to.equal(true);
   });
 
-  it("should fail for user without access to workspace", async function () {
+  it('should fail for user without access to workspace', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -126,7 +145,7 @@ describe(testFor(newTransaction), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create account
@@ -147,7 +166,9 @@ describe(testFor(newTransaction), () => {
     });
 
     // Try to create new transaction, should fail
-    const createdTransaction = generateMock(Budgeting$TransactionSchema, { seed });
+    const createdTransaction = generateMock(Budgeting$TransactionSchema, {
+      seed,
+    });
     await testRoute(otherAuthedRequest, newTransaction, {
       workspaceId: createdWorkspace.workspaceId,
     })
@@ -166,7 +187,7 @@ describe(testFor(newTransaction), () => {
 describe(testFor(updateTransaction), () => {
   testProtected(updateTransaction);
 
-  it("should fail when transaction invalid", async function () {
+  it('should fail when transaction invalid', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -175,7 +196,7 @@ describe(testFor(updateTransaction), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create account
@@ -200,7 +221,7 @@ describe(testFor(updateTransaction), () => {
     }).expect(404);
   });
 
-  it("should succeed in updating transaction details", async function () {
+  it('should succeed in updating transaction details', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -209,7 +230,7 @@ describe(testFor(updateTransaction), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create account
@@ -234,7 +255,9 @@ describe(testFor(updateTransaction), () => {
       generateMock(Budgeting$AccountSchema, { seed }),
     );
 
-    const updatedTransaction = generateMock(Budgeting$TransactionSchema, { seed: seed + 1 });
+    const updatedTransaction = generateMock(Budgeting$TransactionSchema, {
+      seed: seed + 1,
+    });
 
     // Update transaction
     await testRoute(authedRequest, updateTransaction, {
@@ -252,11 +275,17 @@ describe(testFor(updateTransaction), () => {
       .expect(200);
 
     // Get transactions list, should show updated transaction
-    const getTransactionsResponse = await testRoute(authedRequest, getTransactions, {
-      workspaceId: createdWorkspace.workspaceId,
-    }).expect(200);
+    const getTransactionsResponse = await testRoute(
+      authedRequest,
+      getTransactions,
+      {
+        workspaceId: createdWorkspace.workspaceId,
+      },
+    ).expect(200);
 
-    expect(getTransactionsResponse.body.transactions).to.be.an("array").with.lengthOf(1);
+    expect(getTransactionsResponse.body.transactions)
+      .to.be.an('array')
+      .with.lengthOf(1);
     expect(
       // That the array contains the updated transaction
       getTransactionsResponse.body.transactions.some(
@@ -272,7 +301,8 @@ describe(testFor(updateTransaction), () => {
           return (
             transaction.transactionId === createdTransaction.transactionId &&
             transaction.account === updatedAccount.accountId &&
-            new Date(transaction.date).getTime() === new Date(updatedTransaction.date).getTime() &&
+            new Date(transaction.date).getTime() ===
+              new Date(updatedTransaction.date).getTime() &&
             transaction.description === updatedTransaction.description &&
             transaction.category === updatedTransaction.category &&
             transaction.amount === updatedTransaction.amount &&
@@ -283,7 +313,7 @@ describe(testFor(updateTransaction), () => {
     ).to.equal(true);
   });
 
-  it("should not be accessible by another user without access to workspace", async function () {
+  it('should not be accessible by another user without access to workspace', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -292,7 +322,7 @@ describe(testFor(updateTransaction), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create account
@@ -320,7 +350,9 @@ describe(testFor(updateTransaction), () => {
       password: otherUser.password,
     });
 
-    const updatedTransaction = generateMock(Budgeting$TransactionSchema, { seed: seed + 1 });
+    const updatedTransaction = generateMock(Budgeting$TransactionSchema, {
+      seed: seed + 1,
+    });
 
     // Try to update transaction with other user
     await testRoute(otherAuthedRequest, updateTransaction, {
@@ -341,7 +373,7 @@ describe(testFor(updateTransaction), () => {
 describe(testFor(deleteTransaction), () => {
   testProtected(deleteTransaction);
 
-  it("should fail when transaction invalid", async function () {
+  it('should fail when transaction invalid', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -350,7 +382,7 @@ describe(testFor(deleteTransaction), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create account
@@ -375,7 +407,7 @@ describe(testFor(deleteTransaction), () => {
     }).expect(404);
   });
 
-  it("should succeed in deleting transaction", async function () {
+  it('should succeed in deleting transaction', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -384,7 +416,7 @@ describe(testFor(deleteTransaction), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create account
@@ -409,14 +441,20 @@ describe(testFor(deleteTransaction), () => {
     }).expect(200);
 
     // Get transactions list, should show no transactions
-    const getTransactionsResponse = await testRoute(authedRequest, getTransactions, {
-      workspaceId: createdWorkspace.workspaceId,
-    }).expect(200);
+    const getTransactionsResponse = await testRoute(
+      authedRequest,
+      getTransactions,
+      {
+        workspaceId: createdWorkspace.workspaceId,
+      },
+    ).expect(200);
 
-    expect(getTransactionsResponse.body.transactions).to.be.an("array").with.lengthOf(0);
+    expect(getTransactionsResponse.body.transactions)
+      .to.be.an('array')
+      .with.lengthOf(0);
   });
 
-  it("should not be accessible by another user without workspace permissions", async function () {
+  it('should not be accessible by another user without workspace permissions', async function () {
     // Login
     const authedRequest = await authenticate({
       username: existingUser.username,
@@ -425,7 +463,7 @@ describe(testFor(deleteTransaction), () => {
 
     // Create workspace
     const createdWorkspace = await createWorkspace(authedRequest, {
-      name: "Workspace",
+      name: 'Workspace',
     });
 
     // Create account

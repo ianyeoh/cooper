@@ -1,10 +1,14 @@
-import { default as supertestRequest } from "supertest";
-import app from "@cooper/backend/src/server";
-import TestAgent from "supertest/lib/agent";
-import Test from "supertest/lib/test";
-import { expect } from "chai";
-import { contract } from "@cooper/ts-rest/src/contract";
-import { Budgeting$Account, Budgeting$Category, Budgeting$Transaction } from "@cooper/ts-rest/src/types";
+import { default as supertestRequest } from 'supertest';
+import app from '@cooper/backend/src/server';
+import TestAgent from 'supertest/lib/agent';
+import Test from 'supertest/lib/test';
+import { expect } from 'chai';
+import { contract } from '@cooper/ts-rest/src/contract';
+import {
+  Budgeting$Account,
+  Budgeting$Category,
+  Budgeting$Transaction,
+} from '@cooper/ts-rest/src/types';
 
 /**
  * Factory to create supertest object with our backend Express app
@@ -17,18 +21,24 @@ const request = function () {
  * Factory to create an authed supertest object factory,
  * where cookies are persisted with subsequent requests
  */
-const authenticate = async function ({ username, password }: { username: string; password: string }) {
+const authenticate = async function ({
+  username,
+  password,
+}: {
+  username: string;
+  password: string;
+}) {
   const newAuthedRequest = supertestRequest.agent(app);
 
   // Login
-  const response = await newAuthedRequest.post("/api/auth/login").send({
+  const response = await newAuthedRequest.post('/api/auth/login').send({
     username,
     password,
   });
 
   // Put the sessionId cookie in the cookie jar for subsequent requests
   const cookies = extractCookies(response);
-  newAuthedRequest.jar.setCookie(`id=${cookies[0]["id"]}`);
+  newAuthedRequest.jar.setCookie(`id=${cookies[0]['id']}`);
 
   return newAuthedRequest;
 };
@@ -41,15 +51,18 @@ const authenticate = async function ({ username, password }: { username: string;
 function extractCookies(response: { headers: { [key: string]: string } }): {
   [key: string]: string;
 }[] {
-  if (!("set-cookie" in response.headers)) throw new Error("Set-Cookie not in response headers");
+  if (!('set-cookie' in response.headers))
+    throw new Error('Set-Cookie not in response headers');
 
-  const cookies = Object.values(response.headers["set-cookie"]).map((cookieStr: string) => {
-    return cookieStr.split("; ").reduce((obj, item) => {
-      const [key, value] = item.split("=");
-      obj[key] = value;
-      return obj;
-    }, {});
-  });
+  const cookies = Object.values(response.headers['set-cookie']).map(
+    (cookieStr: string) => {
+      return cookieStr.split('; ').reduce((obj, item) => {
+        const [key, value] = item.split('=');
+        obj[key] = value;
+        return obj;
+      }, {});
+    },
+  );
 
   return cookies;
 }
@@ -86,7 +99,7 @@ function testFor(route: { method: string; path: string }): string {
 function testRoute(
   request: TestAgent,
   route: {
-    method: "GET" | "POST" | "DELETE" | "PUT" | "PATCH";
+    method: 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PATCH';
     path: string;
   },
   args?: {
@@ -113,8 +126,11 @@ function testRoute(
  * @param route ts-rest route to be tested
  * @returns Fully configured mocha unit test
  */
-function testProtected(route: { method: "GET" | "POST" | "DELETE" | "PUT" | "PATCH"; path: string }) {
-  return it("should fail because not logged in", function (done) {
+function testProtected(route: {
+  method: 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PATCH';
+  path: string;
+}) {
+  return it('should fail because not logged in', function (done) {
     testRoute(request(), route).expect(401, done);
   });
 }
@@ -128,10 +144,12 @@ async function createWorkspace(
   const { newWorkspace } = contract.protected.budgeting.workspaces;
 
   // Create workspace
-  const response = await testRoute(authedRequest, newWorkspace).send(workspace).expect(200);
+  const response = await testRoute(authedRequest, newWorkspace)
+    .send(workspace)
+    .expect(200);
 
   // Basic generic validation
-  expect(response.body.workspace).to.contain.keys("workspaceId");
+  expect(response.body.workspace).to.contain.keys('workspaceId');
 
   return response.body.workspace;
 }
@@ -149,7 +167,7 @@ async function getUsersWorkspaces(
   const response = await testRoute(authedRequest, getWorkspaces).expect(200);
 
   // Basic generic validation
-  expect(response.body.workspaces).to.be.an("array");
+  expect(response.body.workspaces).to.be.an('array');
 
   if (opts) {
     // That the array contains opts.size number of workspaces
@@ -179,13 +197,22 @@ async function getUsersWorkspaces(
   return response.body.workspaces;
 }
 
-async function createAccount(authedRequest: TestAgent<Test>, workspaceId: string, account: Budgeting$Account) {
-  const newAccount = contract.protected.budgeting.workspaces.byId.accounts.newAccount;
+async function createAccount(
+  authedRequest: TestAgent<Test>,
+  workspaceId: string,
+  account: Budgeting$Account,
+) {
+  const newAccount =
+    contract.protected.budgeting.workspaces.byId.accounts.newAccount;
 
   const request = await testRoute(authedRequest, newAccount, {
     workspaceId,
   })
-    .send({ description: account.description, name: account.name, bank: account.bank })
+    .send({
+      description: account.description,
+      name: account.name,
+      bank: account.bank,
+    })
     .expect(200);
 
   expect(request.body.account).to.deep.include({
@@ -194,13 +221,18 @@ async function createAccount(authedRequest: TestAgent<Test>, workspaceId: string
     bank: account.bank,
     workspace: workspaceId,
   });
-  expect(request.body.account).to.have.own.property("accountId");
+  expect(request.body.account).to.have.own.property('accountId');
 
   return request.body.account;
 }
 
-async function createCategory(authedRequest: TestAgent<Test>, workspaceId: string, category: Budgeting$Category) {
-  const newCategory = contract.protected.budgeting.workspaces.byId.categories.newCategory;
+async function createCategory(
+  authedRequest: TestAgent<Test>,
+  workspaceId: string,
+  category: Budgeting$Category,
+) {
+  const newCategory =
+    contract.protected.budgeting.workspaces.byId.categories.newCategory;
 
   const request = await testRoute(authedRequest, newCategory, {
     workspaceId,
@@ -212,7 +244,7 @@ async function createCategory(authedRequest: TestAgent<Test>, workspaceId: strin
     name: category.name,
     workspace: workspaceId,
   });
-  expect(request.body.category).to.have.own.property("categoryId");
+  expect(request.body.category).to.have.own.property('categoryId');
 
   return request.body.category;
 }
@@ -223,7 +255,8 @@ async function createTransaction(
   accountId: string,
   transaction: Budgeting$Transaction,
 ) {
-  const newTransaction = contract.protected.budgeting.workspaces.byId.transactions.newTransaction;
+  const newTransaction =
+    contract.protected.budgeting.workspaces.byId.transactions.newTransaction;
 
   const request = await testRoute(authedRequest, newTransaction, {
     workspaceId,
@@ -246,7 +279,7 @@ async function createTransaction(
     comments: transaction.comments,
     workspace: workspaceId,
   });
-  expect(request.body.transaction).to.have.own.property("transactionId");
+  expect(request.body.transaction).to.have.own.property('transactionId');
 
   return request.body.transaction;
 }

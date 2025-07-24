@@ -1,7 +1,7 @@
-import { initContract } from "@ts-rest/core";
-import { z } from "zod";
-import usersContract from "@cooper/ts-rest/src/routes/protected/users/usersContract";
-import workspacesContract from "@cooper/ts-rest/src/routes/protected/budgeting/workspacesContract";
+import { initContract } from '@ts-rest/core';
+import { z } from 'zod';
+import usersContract from '@cooper/ts-rest/src/routes/protected/users/usersContract';
+import workspacesContract from '@cooper/ts-rest/src/routes/protected/budgeting/workspacesContract';
 
 const c = initContract();
 
@@ -17,10 +17,10 @@ const protectedContract = c.router(
     },
   },
   {
-    pathPrefix: "",
+    pathPrefix: '',
     commonResponses: {
       401: z.object({
-        error: z.literal("Unauthorised"),
+        error: z.literal('Unauthorised'),
       }),
     },
   },
