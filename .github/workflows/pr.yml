@@ -2,6 +2,9 @@
 # then comment them on the PR. On every subsequent commit to the PR, it will comment the coverage difference between the base
 # branch of the PR.
 name: pr
+permissions:
+  contents: read
+  pull-requests: write
 
 on: pull_request
 
