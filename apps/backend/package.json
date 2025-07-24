@@ -8,11 +8,12 @@
     "coverage": "cross-env NODE_ENV=test nyc --reporter=text --reporter=json-summary --reporter=lcov mocha --timeout 10000 --require mocha-suppress-logs --require src/tests/hooks.ts --import=tsx src/**/*.spec.ts",
     "build": "tsc --build",
     "start": "tsx build/index.js",
-    "dev": "cross-env NODE_ENV=dev ts-node-dev src/index.ts"
+    "dev": "cross-env NODE_ENV=dev ts-node-dev src/index.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@anatine/zod-mock": "^3.14.0",
-    "@cooper/backend": "workspace:*",
     "@cooper/ts-rest": "workspace:*",
     "@sentry/node": "^8.37.1",
     "@ts-rest/express": "^3.51.0",

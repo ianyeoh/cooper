@@ -6,6 +6,9 @@
 build/
 .DS_Store
 
+# Turborepo artifacts
+.turbo
+
 # Below is a copy of https://github.com/github/gitignore/blob/HEAD/Node.gitignore
 
 # Logs

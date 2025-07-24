@@ -97,7 +97,9 @@ if (process.env.NODE_ENV == "test") {
 // Initialise and mount ts-rest router
 const s = initServer();
 
-// @ts-expect-error Ignore type instantiation is excessively deep and possibly infinite error (T2589)
+// Type instantiation is excessively deep and possibly infinite - fixed in TS@5.9 Beta,
+// but has not yet been implemented in VS Code TS Language Server. tsc will compile without
+// errors, but IDEs will still show error until they are aligned.
 const router = s.router(contract, {
   protected: {
     users: {

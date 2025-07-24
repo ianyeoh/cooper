@@ -1,14 +1,15 @@
 {
-  "name": "@cooper/frontend",
+  "name": "@cooper/web",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "test": "start-server-and-test \"pnpm --workspace-root run start\" \"http-get://localhost:3000|http-get://localhost:3001\" \"cypress run\"",
+    "test:open": "cypress open",
     "build": "next build",
     "start": "next start",
+    "dev": "next dev",
     "lint": "next lint",
-    "test:open": "cypress open",
-    "test": "cypress run"
+    "lint:fix": "next lint --fix"
   },
   "dependencies": {
     "@cooper/ts-rest": "workspace:*",
@@ -99,7 +100,7 @@
     "postcss": "^8",
     "swc-plugin-coverage-instrument": "^0.0.27",
     "tailwindcss": "^4.1.4",
-    "typescript": "^5"
+    "typescript": "5.9.0-beta"
   },
   "overrides": {
     "react-is": "^19.1.0"

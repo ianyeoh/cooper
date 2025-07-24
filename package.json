@@ -1,27 +1,18 @@
 {
   "name": "cooper",
   "version": "1.0.0",
-  "description": "A home management system written in TypeScript",
+  "description": "Personal finance/budgeting platform written in TypeScript",
   "private": true,
   "scripts": {
     "prepare": "husky install",
-    "format": "prettier --check \"./**/*.{tsx,ts,json}\"",
-    "format:fix": "prettier --check --write \"./**/*.{tsx,ts,json}\"",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "test:backend": "pnpm --filter @cooper/backend run test",
-    "test:frontend": "pnpm --filter @cooper/frontend run test",
-    "ci": "pnpm run coverage:backend && start-server-and-test \"pnpm run start\" \"http-get://localhost:3000|http-get://localhost:3001\" \"pnpm run test:frontend\"",
-    "coverage:backend": "pnpm --filter @cooper/backend run coverage",
-    "build:ts": "tsc --build --verbose",
-    "build:frontend": "pnpm --filter @cooper/frontend run build",
-    "build": "concurrently \"pnpm run build:ts\" \"pnpm run build:frontend\"",
-    "start:backend": "pnpm --filter @cooper/backend run start",
-    "start:frontend": "pnpm --filter @cooper/frontend run start",
-    "start": "concurrently \"pnpm run start:backend\" \"pnpm run start:frontend\"",
-    "dev:backend": "pnpm --filter @cooper/backend run dev",
-    "dev:frontend": "pnpm --filter @cooper/frontend run dev ",
-    "dev": "concurrently \"pnpm run dev:frontend\" \"pnpm run dev:backend\""
+    "lint": "turbo run lint prettier",
+    "lint:fix": "turbo run lint:fix prettier:fix",
+    "prettier": "prettier --check \"./**/*.{tsx,ts,json}\"",
+    "prettier:fix": "prettier --check --write \"./**/*.{tsx,ts,json}\"",
+    "test": "turbo run test",
+    "build": "turbo run build",
+    "start": "turbo run start --parallel",
+    "dev": "turbo run dev --parallel"
   },
   "workspaces": [
     "packages/*"
@@ -37,11 +28,13 @@
     "prettier": "^3.5.3",
     "start-server-and-test": "^2.0.12",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3",
+    "turbo": "^2.5.5",
+    "typescript": "5.9.0-beta",
     "typescript-eslint": "^8.31.0"
   },
   "resolutions": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
-  }
+  },
+  "packageManager": "pnpm@10.13.1"
 }
