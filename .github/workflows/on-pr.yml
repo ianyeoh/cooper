@@ -1,7 +1,7 @@
 # # This workflow will do a clean installation of node dependencies, run unit tests, generate code coverage, cache them,
 # # then comment them on the PR. On every subsequent commit to the PR, it will comment the code coverage difference between the base
 # # branch of the PR.
-# name: pr
+# name: on-pr
 # permissions:
 #   contents: read
 #   pull-requests: write

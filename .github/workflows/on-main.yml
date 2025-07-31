@@ -1,4 +1,4 @@
-name: main
+name: on-main
 permissions:
   contents: read
   pull-requests: write
