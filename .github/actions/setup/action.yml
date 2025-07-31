@@ -1,8 +1,9 @@
-name: setup
+name: Setup build tools and compile
 description: Install dependencies, lint and build
 
 runs:
   using: composite
+  shell: bash
   steps:
     - name: Install pnpm
       uses: pnpm/action-setup@v4

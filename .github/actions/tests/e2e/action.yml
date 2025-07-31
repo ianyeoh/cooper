@@ -1,5 +1,4 @@
-name: tests/e2e
-description: Run end-to-end tests
+name: Run end-to-end tests
 permissions:
   contents: read
   pull-requests: write
@@ -8,6 +7,7 @@ on: workflow_call
 
 runs:
   using: composite
+  shell: bash
   steps:
     - name: Run tests
       run: turbo run test --filter=@cooper/web

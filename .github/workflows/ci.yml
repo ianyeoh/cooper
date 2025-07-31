@@ -1,4 +1,4 @@
-name: CI
+name: Continuous Integration
 description: Lint, build, and test
 permissions:
   contents: read
