@@ -10,7 +10,7 @@ on:
       - main
 
 jobs:
-  tests:
+  Checks:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

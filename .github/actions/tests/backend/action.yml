@@ -7,9 +7,9 @@ on: workflow_call
 
 runs:
   using: composite
-  shell: bash
   steps:
     - name: Run tests and generate coverage report
+      shell: bash
       run: turbo run test --filter=@cooper/backend
 
   # publish-coverage:
