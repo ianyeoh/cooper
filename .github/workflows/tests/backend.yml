@@ -1,0 +1,38 @@
+name: tests/backend
+description: Run backend tests
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: GitHub branch ref to run checks against
+        type: string
+        required: false
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout, install dependencies, lint and build
+        uses: ./.github/actions/build
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Run tests and generate coverage report
+        run: turbo run test --filter=@cooper/backend
+
+  # publish-coverage:
+  #   runs-on: ubuntu-latest
+  #   needs: test
+  #   steps:
+  #     - name: Move backend coverage artifacts to root
+  #       run: cp -R packages/backend/coverage/ coverage/
+
+  #     - name: Upload coverage report to gh-pages
+  #       if:
+  #         github.ref == format('refs/heads/{0}',
+  #         github.event.repository.default_branch)
+  #       uses: ./.github/actions/coverage-report

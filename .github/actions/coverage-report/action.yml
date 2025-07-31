@@ -1,7 +1,7 @@
 # Forked from https://github.com/we-cli/coverage-badge-action/blob/main/action.yml
 # with slight modifications to this file to upload generated code coverage HTML to gh-pages
 
-name: Upload coverage report
+name: coverage-report
 description: Upload code coverage report to gh-pages
 
 runs:
@@ -74,10 +74,10 @@ runs:
           git commit -m 'Update coverage'
           git push
 
-    # Without this, will get Error:
-    # Can't find 'action.yml', 'action.yaml' or 'Dockerfile' under '/home/runner/work/coverage-badge-action/coverage-badge-action/action.yml'.
-    # Did you forget to run actions/checkout before running your local action?
-    - name: Checkout Back
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ github.ref }}
+    # # Without this, will get Error:
+    # # Can't find 'action.yml', 'action.yaml' or 'Dockerfile' under '/home/runner/work/coverage-badge-action/coverage-badge-action/action.yml'.
+    # # Did you forget to run actions/checkout before running your local action?
+    # - name: Checkout Back
+    #   uses: actions/checkout@v4
+    #   with:
+    #     ref: ${{ github.ref }}

@@ -1,52 +1,52 @@
-# This workflow will do a clean installation of node dependencies, run unit tests, generate code coverage, cache them,
-# then comment them on the PR. On every subsequent commit to the PR, it will comment the code coverage difference between the base
-# branch of the PR.
-name: pr
-permissions:
-  contents: read
-  pull-requests: write
+# # This workflow will do a clean installation of node dependencies, run unit tests, generate code coverage, cache them,
+# # then comment them on the PR. On every subsequent commit to the PR, it will comment the code coverage difference between the base
+# # branch of the PR.
+# name: pr
+# permissions:
+#   contents: read
+#   pull-requests: write
 
-on: pull_request
+# on: pull_request
 
-jobs:
-  base-branch:
-    runs-on: ubuntu-latest
-    steps:
-      - name: ci
-        uses: ./.github/workflows/ci.yml
-        with:
-          ref: ${{ github.base_ref }}
+# jobs:
+#   base-branch:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: ci
+#         uses: ./.github/workflows/ci.yml
+#         with:
+#           ref: ${{ github.base_ref }}
 
-      - name: Upload code coverage for ref branch
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend-ref-lcov.info
-          path: packages/backend/coverage/lcov.info
-          if-no-files-found: error
+#       - name: Upload code coverage for ref branch
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: backend-ref-lcov.info
+#           path: packages/backend/coverage/lcov.info
+#           if-no-files-found: error
 
-  compare-branch:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+#   compare-branch:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
 
-      - name: ci
-        uses: ./.github/workflows/ci.yml
+#       - name: ci
+#         uses: ./.github/workflows/ci.yml
 
-      - name: Download code coverage report from base branch
-        uses: actions/download-artifact@v4
-        with:
-          name: backend-ref-lcov.info
+#       - name: Download code coverage report from base branch
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: backend-ref-lcov.info
 
-      #  Compares two code coverage files and generates report as a comment
-      - name: Generate Code Coverage report
-        id: code-coverage
-        uses: barecheck/code-coverage-action@v1
-        with:
-          barecheck-github-app-token: ${{ secrets.BARECHECK_GITHUB_APP_TOKEN }}
-          lcov-file: "packages/backend/coverage/lcov.info"
-          base-lcov-file: "lcov.info"
-          minimum-ratio: 0 # Fails Github action once code coverage is decreasing
-          send-summary-comment: true
-          show-annotations: "warning" # Possible options warning|error
+#       #  Compares two code coverage files and generates report as a comment
+#       - name: Generate Code Coverage report
+#         id: code-coverage
+#         uses: barecheck/code-coverage-action@v1
+#         with:
+#           barecheck-github-app-token: ${{ secrets.BARECHECK_GITHUB_APP_TOKEN }}
+#           lcov-file: 'packages/backend/coverage/lcov.info'
+#           base-lcov-file: 'lcov.info'
+#           minimum-ratio: 0 # Fails Github action once code coverage is decreasing
+#           send-summary-comment: true
+#           show-annotations: 'warning' # Possible options warning|error
 

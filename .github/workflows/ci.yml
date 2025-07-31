@@ -13,61 +13,16 @@ on:
         required: false
 
 jobs:
-  setup:
+  backend-tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: ./.github/workflows/tests/backend.yml
         with:
-          ref: ${{ inputs.ref }}
+          ref: ${{ github.base_ref }}
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+  e2e-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/workflows/tests/e2e.yml
         with:
-          run_install: false
-
-      - name: Install Node.js v22.x
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22.x
-          cache: 'pnpm'
-
-      - name: Install dependencies, build and compile
-        uses: cypress-io/github-action@v6
-        with:
-          runTests: false
-          build: pnpm run build
-
-  lint:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - name: Run linter
-        run: pnpm run lint
-
-  build:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - name: Build and compile
-        run: pnpm run build
-
-  test:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Run tests and generate coverage reports
-        run: pnpm run test
-
-  publish-coverage:
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - name: Move backend coverage artifacts to root
-        run: cp -R packages/backend/coverage/ coverage/
-
-      - name: Upload coverage report to gh-pages
-        if:
-          github.ref == format('refs/heads/{0}',
-          github.event.repository.default_branch)
-        uses: ./.github/actions/coverage-report
+          ref: ${{ github.base_ref }}
