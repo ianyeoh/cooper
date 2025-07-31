@@ -4,22 +4,11 @@ permissions:
   contents: read
   pull-requests: write
 
-on:
-  workflow_call:
-    inputs:
-      ref:
-        description: GitHub branch ref to run checks against
-        type: string
-        required: false
+on: workflow_call
 
 runs:
   using: composite
   steps:
-    - name: Checkout, install dependencies, lint and build
-      uses: ianyeoh/cooper/.github/actions/setup
-      with:
-        ref: ${{ inputs.ref }}
-
     - name: Run tests and generate coverage report
       run: turbo run test --filter=@cooper/backend
 

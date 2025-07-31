@@ -1,19 +1,9 @@
 name: setup
-description: Checkout, lint and build all packages
-inputs:
-  ref:
-    description: GitHub branch reference to checkout
-    type: string
-    required: false
+description: Install dependencies, lint and build
 
 runs:
   using: composite
   steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ inputs.ref }}
-
     - name: Install pnpm
       uses: pnpm/action-setup@v4
       with:
@@ -41,11 +31,3 @@ runs:
 
     - name: Build
       run: pnpm run build
-
-    # Without this, will get Error:
-    # Can't find 'action.yml', 'action.yaml' or 'Dockerfile' under '/home/runner/work/coverage-badge-action/coverage-badge-action/action.yml'.
-    # Did you forget to run actions/checkout before running your local action?
-    - name: Checkout Back
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ github.ref }}
