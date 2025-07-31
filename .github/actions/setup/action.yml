@@ -1,4 +1,4 @@
-name: build
+name: setup
 description: Checkout, lint and build all packages
 inputs:
   ref:

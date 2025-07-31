@@ -1,5 +1,5 @@
-name: tests/e2e
-description: Run end-to-end tests
+name: tests/backend
+description: Run backend tests
 permissions:
   contents: read
   pull-requests: write
@@ -12,17 +12,16 @@ on:
         type: string
         required: false
 
-jobs:
-  tests:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout, install dependencies, lint and build
-        uses: ./.github/actions/setup
-        with:
-          ref: ${{ inputs.ref }}
+runs:
+  using: composite
+  steps:
+    - name: Checkout, install dependencies, lint and build
+      uses: ianyeoh/cooper/.github/actions/setup
+      with:
+        ref: ${{ inputs.ref }}
 
-      - name: Run tests
-        run: turbo run test --filter=@cooper/web
+    - name: Run tests and generate coverage report
+      run: turbo run test --filter=@cooper/backend
 
   # publish-coverage:
   #   runs-on: ubuntu-latest
