@@ -16,13 +16,13 @@ jobs:
   backend:
     runs-on: ubuntu-latest
     steps:
-      - uses: ianyeoh/cooper/.github/actions/tests/backend
+      - uses: ./.github/actions/tests/backend/
         with:
           ref: ${{ inputs.ref }}
 
   e2e:
     runs-on: ubuntu-latest
     steps:
-      - uses: ianyeoh/cooper/.github/actions/tests/e2e
+      - uses: ./.github/actions/tests/e2e/
         with:
           ref: ${{ inputs.ref }}
