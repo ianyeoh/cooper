@@ -85,7 +85,7 @@
     "@tailwindcss/postcss": "^4.1.4",
     "@tanstack/react-query-devtools": "^5.74.6",
     "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^20.16.10",
+    "@types/node": "^24.2.1",
     "@types/react": "19.1.2",
     "@types/react-dom": "19.1.2",
     "babel-plugin-istanbul": "^7.0.0",
